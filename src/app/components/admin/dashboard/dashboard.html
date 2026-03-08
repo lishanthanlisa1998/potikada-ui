@@ -1,0 +1,152 @@
+<div class="dashboard">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-sub">Welcome back! Here's what's happening.</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-grid">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+  }
+
+  @if (!loading && stats) {
+
+    <!-- Stats -->
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.total_products }}</div>
+          <div class="stat-label">Total Products</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.total_orders }}</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">Rs. {{ stats.total_revenue | number }}</div>
+          <div class="stat-label">Total Revenue</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon purple">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.total_affiliates }}</div>
+          <div class="stat-label">Affiliates</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon red">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.pending_orders }}</div>
+          <div class="stat-label">Pending Orders</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon yellow">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">Rs. {{ stats.pending_payouts | number }}</div>
+          <div class="stat-label">Pending Payouts</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom grid -->
+    <div class="bottom-grid">
+
+      <!-- Recent orders -->
+      <div class="data-card">
+        <div class="data-card-header">
+          <h3>Recent Orders</h3>
+          <a routerLink="/admin/orders" class="view-all">View all →</a>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of recentOrders; track order.id) {
+                <tr>
+                  <td class="order-id">#{{ order.id }}</td>
+                  <td>{{ order.first_name }} {{ order.last_name }}</td>
+                  <td class="amount">Rs. {{ order.total | number }}</td>
+                  <td>
+                    <span class="status-badge" [class]="getStatusClass(order.status)">
+                      {{ order.status }}
+                    </span>
+                  </td>
+                  <td class="date">{{ order.created_at | date:'d MMM' }}</td>
+                </tr>
+              }
+              @if (recentOrders.length === 0) {
+                <tr>
+                  <td colspan="5" class="empty-row">No orders yet</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Top products -->
+      <div class="data-card">
+        <div class="data-card-header">
+          <h3>Top Products</h3>
+          <a routerLink="/admin/products" class="view-all">View all →</a>
+        </div>
+        @for (product of topProducts; track product.id) {
+          <div class="top-product">
+            <div class="tp-rank">{{ $index + 1 }}</div>
+            <div class="tp-info">
+              <div class="tp-name">{{ product.name }}</div>
+              <div class="tp-cat">{{ product.category }}</div>
+            </div>
+            <div class="tp-orders">{{ product.order_items_count }} orders</div>
+          </div>
+        }
+        @if (topProducts.length === 0) {
+          <div class="empty-tip">No sales data yet</div>
+        }
+      </div>
+
+    </div>
+  }
+
+</div>

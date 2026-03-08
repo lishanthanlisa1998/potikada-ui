@@ -1,0 +1,101 @@
+<div class="success-page">
+
+  <div class="success-hero">
+    <div class="brand">potikada</div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Confirming your order...</p>
+    </div>
+  }
+
+  @if (!loading) {
+    <div class="success-card">
+
+      <div class="status-icon">{{ getStatusIcon() }}</div>
+
+      @if (payment?.status === 'completed' || order?.order_status === 'confirmed') {
+        <h1 class="success-title">Order Confirmed!</h1>
+        <p class="success-sub">Thank you for your purchase. We'll deliver it to you soon! 🎉</p>
+      } @else if (payment?.status === 'pending' || !payment) {
+        <h1 class="success-title">Order Placed!</h1>
+        <p class="success-sub">Your order has been received. Payment confirmation may take a moment.</p>
+      } @else {
+        <h1 class="success-title">Payment Issue</h1>
+        <p class="success-sub">There was an issue with your payment. Please contact us.</p>
+      }
+
+      <!-- Order details -->
+      <div class="order-details">
+        <div class="order-detail-row">
+          <span>Order ID</span>
+          <span class="order-id-val">#{{ orderId }}</span>
+        </div>
+        @if (order?.order_status) {
+          <div class="order-detail-row">
+            <span>Status</span>
+            <span class="status-badge status-{{ order.order_status }}">
+              {{ order.order_status }}
+            </span>
+          </div>
+        }
+        @if (payment?.method) {
+          <div class="order-detail-row">
+            <span>Payment</span>
+            <span>{{ payment.method | uppercase }}</span>
+          </div>
+        }
+        @if (payment?.amount) {
+          <div class="order-detail-row total">
+            <span>Total Paid</span>
+            <span>Rs. {{ payment.amount | number }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- What's next -->
+      <div class="whats-next">
+        <h3>What happens next?</h3>
+        <div class="next-steps">
+          <div class="next-step">
+            <div class="step-dot active"></div>
+            <div class="step-content">
+              <div class="step-title">Order Received</div>
+              <div class="step-desc">We've got your order!</div>
+            </div>
+          </div>
+          <div class="next-step">
+            <div class="step-dot"></div>
+            <div class="step-content">
+              <div class="step-title">Preparing</div>
+              <div class="step-desc">Your items are being packed</div>
+            </div>
+          </div>
+          <div class="next-step">
+            <div class="step-dot"></div>
+            <div class="step-content">
+              <div class="step-title">On the way</div>
+              <div class="step-desc">Delivery in 3–7 business days</div>
+            </div>
+          </div>
+          <div class="next-step">
+            <div class="step-dot"></div>
+            <div class="step-content">
+              <div class="step-title">Delivered!</div>
+              <div class="step-desc">Enjoy your purchase 🎉</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="success-actions">
+        <a routerLink="/" class="btn-continue">Continue Shopping →</a>
+        <a routerLink="/contact" class="btn-help">Need Help?</a>
+      </div>
+
+    </div>
+  }
+
+</div>

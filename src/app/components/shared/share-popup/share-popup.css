@@ -1,0 +1,127 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  backdrop-filter: blur(3px);
+
+  &.show { opacity: 1; pointer-events: all; }
+}
+
+.bottom-popup {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(110%);
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: 24px 24px 0 0;
+  z-index: 201;
+  transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+  padding-bottom: 32px;
+
+  &.show { transform: translateX(-50%) translateY(0); }
+}
+
+.popup-handle {
+  width: 40px; height: 4px;
+  background: #DDD;
+  border-radius: 2px;
+  margin: 14px auto 0;
+}
+
+.share-inner {
+  padding: 14px 20px 0;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 4px;
+    color: #1A1A2E;
+  }
+
+  p {
+    font-size: 12px;
+    color: #9999AA;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+}
+
+.share-link-box {
+  background: #F8F8FC;
+  border-radius: 12px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+
+  span {
+    flex: 1;
+    font-size: 12px;
+    color: #555570;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.btn-copy {
+  background: #F5A623;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+
+  &.copied { background: #27AE60; }
+}
+
+.share-commission-box {
+  background: #FFF3DC;
+  border-radius: 12px;
+  padding: 11px 16px;
+  text-align: center;
+  margin-bottom: 14px;
+
+  p {
+    font-size: 11px;
+    color: #E08C00;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  strong {
+    font-size: 17px;
+    color: #E08C00;
+    display: block;
+    margin-top: 2px;
+  }
+}
+
+.btn-primary {
+  width: 100%;
+  background: #F5A623;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:active { background: #E08C00; }
+}

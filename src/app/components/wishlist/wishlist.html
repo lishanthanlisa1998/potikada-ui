@@ -1,0 +1,156 @@
+<app-top-banner />
+
+<div class="wishlist-page">
+
+  <!-- Header -->
+  <header class="wishlist-header">
+    <button class="back-btn" (click)="goBack()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h1 class="header-title">My Wishlist ❤️</h1>
+    <div class="header-count">
+      {{ cartService.wishlistCount() }} item{{ cartService.wishlistCount() !== 1 ? 's' : '' }}
+    </div>
+  </header>
+
+  <!-- Empty wishlist -->
+  @if (cartService.wishlist().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">❤️</div>
+      <h2>Your wishlist is empty</h2>
+      <p>Save products you love to buy them later!</p>
+      <button class="btn-shop" (click)="goBack()">Start Shopping →</button>
+    </div>
+  }
+
+  <!-- Wishlist items -->
+  @if (cartService.wishlist().length > 0) {
+    <div class="wishlist-layout">
+
+      <div class="wishlist-grid">
+        @for (item of cartService.wishlist(); track item.product.id) {
+          <div class="wish-card" (click)="goToProduct(item.product.id)">
+
+            <!-- Image -->
+            <div class="wish-img">
+              <img [src]="item.product.image" [alt]="item.product.name">
+
+              @if (item.product.badge) {
+                <div class="wish-badge"
+                     [class.sale]="item.product.badge === 'Sale'"
+                     [class.new]="item.product.badge === 'New'">
+                  {{ item.product.badge }}
+                </div>
+              }
+
+              <!-- Remove -->
+              <button class="wish-remove" (click)="remove(item); $event.stopPropagation()">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+
+            <!-- Info -->
+            <div class="wish-info">
+              <div class="wish-category">{{ item.product.category }}</div>
+              <div class="wish-name">{{ item.product.name }}</div>
+
+              <!-- Hearts -->
+              <div class="wish-hearts">
+                @for (filled of heartsArray(item.product.hearts); track $index) {
+                  <svg viewBox="0 0 24 24" [class.empty]="!filled">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                }
+              </div>
+
+              <!-- Price -->
+              <div class="wish-price-row">
+                <span class="wish-price">Rs. {{ item.product.price | number }}</span>
+                @if (item.product.originalPrice > item.product.price) {
+                  <span class="wish-price-orig">Rs. {{ item.product.originalPrice | number }}</span>
+                }
+              </div>
+
+              <!-- Size selector -->
+              <div class="wish-sizes" (click)="$event.stopPropagation()">
+                @for (size of item.product.sizes; track size) {
+                  <button class="size-btn"
+                    [class.active]="getSelectedSize(item) === size"
+                    (click)="selectedSize[item.product.id] = size">
+                    {{ size }}
+                  </button>
+                }
+              </div>
+
+              <!-- Actions -->
+              <div class="wish-actions" (click)="$event.stopPropagation()">
+                <button class="btn-move-cart" (click)="moveToCart(item)">
+                  <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  Move to Cart
+                </button>
+                <button class="btn-share-earn"
+                  (click)="openShare($event, item.product.shareLink)">
+                  <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Sidebar -->
+      <div class="wishlist-sidebar">
+
+        <!-- Summary card -->
+        <div class="summary-card">
+          <h3>Wishlist Summary</h3>
+
+          <div class="summary-stat">
+            <span class="stat-label">Total Items</span>
+            <span class="stat-value">{{ cartService.wishlistCount() }}</span>
+          </div>
+
+          <div class="summary-stat">
+            <span class="stat-label">Total Value</span>
+            <span class="stat-value gold">
+              Rs. {{ cartService.getWishlistTotal() | number }}
+            </span>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <button class="btn-move-all" (click)="cartService.wishlist().forEach(moveToCart.bind(this))">
+            Move All to Cart →
+          </button>
+
+          <a class="btn-go-cart" routerLink="/cart">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            View Cart
+            @if (cartService.cartCount() > 0) {
+              <span class="cart-badge">{{ cartService.cartCount() }}</span>
+            }
+          </a>
+        </div>
+
+        <!-- Earn tip -->
+        <div class="earn-tip-card">
+          <div class="earn-tip-emoji">💰</div>
+          <h4>Share & Earn!</h4>
+          <p>Share your wishlist products and earn 7% commission on every sale.</p>
+          <button class="btn-affiliate" routerLink="/affiliate/login">
+            Join Affiliate Program →
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>
+
+<!-- Share popup -->
+<app-share-popup
+  [isOpen]="sharePopupOpen"
+  [shareLink]="activeShareLink"
+  (closed)="sharePopupOpen = false" />

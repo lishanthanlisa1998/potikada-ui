@@ -1,0 +1,251 @@
+<div class="affiliates-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Affiliates</h1>
+      <p class="page-sub">{{ filtered.length }} affiliates</p>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Search by name, email or code..."
+           (input)="search($event)">
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading-rows">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="skeleton-row"></div>
+      }
+    </div>
+  }
+
+  @if (!loading) {
+    <div class="affiliates-layout" [class.has-detail]="selectedAffiliate">
+
+      <!-- Table -->
+      <div class="table-card">
+        <table class="affiliates-table">
+          <thead>
+            <tr>
+              <th>Affiliate</th>
+              <th>Code</th>
+              <th>This Week</th>
+              <th>Balance</th>
+              <th>Total Earned</th>
+              <th>Pending Payout</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (affiliate of filtered; track affiliate.id) {
+              <tr [class.selected]="selectedAffiliate?.id === affiliate.id"
+                  (click)="selectAffiliate(affiliate)">
+
+                <td class="affiliate-info">
+                  <div class="affiliate-avatar">
+                    {{ affiliate.name.charAt(0) }}
+                  </div>
+                  <div>
+                    <div class="affiliate-name">{{ affiliate.name }}</div>
+                    <div class="affiliate-email">{{ affiliate.email }}</div>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="code-badge">{{ affiliate.affiliate_code }}</span>
+                </td>
+
+                <td class="amount green">
+                  Rs. {{ affiliate.this_week | number }}
+                </td>
+
+                <td class="amount">
+                  Rs. {{ affiliate.balance | number }}
+                </td>
+
+                <td class="amount">
+                  Rs. {{ affiliate.total_earned | number }}
+                </td>
+
+                <td>
+                  @if (affiliate.pending_payout > 0) {
+                    <span class="payout-badge">
+                      Rs. {{ affiliate.pending_payout | number }}
+                    </span>
+                  } @else {
+                    <span class="no-payout">—</span>
+                  }
+                </td>
+
+                <td>
+                  <span class="status-dot"
+                        [class.active]="affiliate.status === 'active'">
+                    {{ affiliate.status }}
+                  </span>
+                </td>
+
+                <td class="date">{{ affiliate.joined }}</td>
+
+                <td>
+                  <button class="btn-view"
+                    (click)="selectAffiliate(affiliate); $event.stopPropagation()">
+                    View
+                  </button>
+                </td>
+
+              </tr>
+            }
+            @if (filtered.length === 0) {
+              <tr>
+                <td colspan="9" class="empty-row">No affiliates found</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Detail panel -->
+      @if (selectedAffiliate) {
+        <div class="detail-panel">
+
+          <div class="detail-header">
+            <h3>{{ selectedAffiliate.name }}</h3>
+            <button class="close-btn" (click)="closeDetail()">×</button>
+          </div>
+
+          @if (detailLoading) {
+            <div class="detail-loading">Loading...</div>
+          }
+
+          @if (!detailLoading && affiliateDetail) {
+
+            <!-- Stats -->
+            <div class="detail-stats">
+              <div class="d-stat">
+                <div class="d-stat-val green">
+                  Rs. {{ affiliateDetail.weekly_earnings | number }}
+                </div>
+                <div class="d-stat-label">This Week</div>
+              </div>
+              <div class="d-stat">
+                <div class="d-stat-val">
+                  Rs. {{ affiliateDetail.affiliate.balance | number }}
+                </div>
+                <div class="d-stat-label">Balance</div>
+              </div>
+              <div class="d-stat">
+                <div class="d-stat-val orange">
+                  Rs. {{ affiliateDetail.affiliate.total_earned | number }}
+                </div>
+                <div class="d-stat-label">Total Earned</div>
+              </div>
+            </div>
+
+            <!-- Affiliate info -->
+            <div class="detail-section">
+              <div class="detail-section-title">Details</div>
+              <div class="detail-row">
+                <span>Code</span>
+                <span class="code-badge">
+                  {{ affiliateDetail.affiliate.affiliate_code }}
+                </span>
+              </div>
+              <div class="detail-row">
+                <span>Phone</span>
+                <span>{{ affiliateDetail.affiliate.phone }}</span>
+              </div>
+              <div class="detail-row">
+                <span>Bank</span>
+                <span>{{ affiliateDetail.affiliate.bank_name }}</span>
+              </div>
+              <div class="detail-row">
+                <span>Account</span>
+                <span>{{ affiliateDetail.affiliate.account_number }}</span>
+              </div>
+            </div>
+
+            <!-- Pending withdrawals -->
+            <div class="detail-section">
+              <div class="detail-section-title">Pending Withdrawals</div>
+
+              @if (affiliateDetail.pending_withdrawals?.length === 0) {
+                <div class="no-withdrawals">No pending withdrawals</div>
+              }
+
+              @for (w of affiliateDetail.pending_withdrawals; track w.id) {
+                <div class="withdrawal-row">
+                  <div class="withdrawal-info">
+                    <div class="withdrawal-amount">
+                      Rs. {{ w.amount | number }}
+                    </div>
+                    <div class="withdrawal-date">
+                      Requested: {{ w.created_at | date:'d MMM y' }}
+                    </div>
+                  </div>
+                  @if (payingId === w.id) {
+                    <div class="pay-confirm">
+                      <input type="text" [(ngModel)]="payNote"
+                             placeholder="Payment note (optional)"
+                             class="pay-note-input">
+                      <div class="pay-actions">
+                        <button class="btn-cancel-pay" (click)="cancelPay()">
+                          Cancel
+                        </button>
+                        <button class="btn-confirm-pay" (click)="confirmPay()">
+                          Confirm Sent ✓
+                        </button>
+                      </div>
+                    </div>
+                  } @else {
+                    <button class="btn-pay" (click)="openPay(w.id)">
+                      Mark Paid
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Earnings history -->
+            <div class="detail-section">
+              <div class="detail-section-title">Earnings History</div>
+              <div class="earnings-list">
+                @for (e of affiliateDetail.earnings_history; track $index) {
+                  <div class="earning-row">
+                    <div class="earning-info">
+                      <div class="earning-order">
+                        Order #{{ e.order_id }}
+                      </div>
+                      <div class="earning-date">{{ e.date }}</div>
+                    </div>
+                    <div class="earning-right">
+                      <div class="earning-amount">
+                        Rs. {{ e.amount | number }}
+                      </div>
+                      <span class="status-badge"
+                            [class]="getStatusClass(e.status)">
+                        {{ e.status }}
+                      </span>
+                    </div>
+                  </div>
+                }
+                @if (affiliateDetail.earnings_history?.length === 0) {
+                  <div class="no-withdrawals">No earnings yet</div>
+                }
+              </div>
+            </div>
+
+          }
+        </div>
+      }
+
+    </div>
+  }
+
+</div>

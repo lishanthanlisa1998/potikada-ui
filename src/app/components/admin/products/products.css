@@ -1,0 +1,368 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+.products-page { font-family: 'Nunito', sans-serif; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Header */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  animation: fadeUp 0.4s ease;
+}
+
+.page-title {
+  font-size: 24px; font-weight: 900;
+  color: #1A1A2E;
+}
+
+.page-sub {
+  font-size: 13px; color: #9999AA;
+  margin-top: 4px;
+}
+
+.btn-add {
+  display: flex; align-items: center; gap: 8px;
+  background: #F5A623; color: white;
+  border: none; border-radius: 12px;
+  padding: 11px 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 800;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(245,166,35,0.3);
+}
+
+.btn-add:hover {
+  background: #E08C00;
+  transform: translateY(-1px);
+}
+
+.btn-add svg {
+  width: 16px; height: 16px;
+  stroke: white; fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+/* Filters */
+.filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.4s ease 0.05s both;
+}
+
+.search-box {
+  display: flex; align-items: center; gap: 10px;
+  background: white; border-radius: 12px;
+  padding: 10px 16px; flex: 1; min-width: 200px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.search-box svg {
+  width: 16px; height: 16px;
+  stroke: #9999AA; fill: none;
+  stroke-width: 2; flex-shrink: 0;
+}
+
+.search-box input {
+  border: none; outline: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px; color: #1A1A2E;
+  width: 100%; background: transparent;
+}
+
+.cat-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.cat-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(0,0,0,0.08);
+  background: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px; font-weight: 700;
+  color: #9999AA; cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cat-btn:hover { border-color: #F5A623; color: #F5A623; }
+.cat-btn.active { background: #F5A623; color: white; border-color: #F5A623; }
+
+/* Loading */
+.loading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.skeleton-card {
+  height: 320px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 16px;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Products grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transition: all 0.3s;
+  animation: fadeUp 0.4s ease both;
+}
+
+.product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+}
+
+/* Image */
+.card-image {
+  position: relative;
+  width: 100%; padding-top: 75%;
+  background: #FFF3DC;
+  overflow: hidden;
+}
+
+.card-image img {
+  position: absolute;
+  inset: 0; width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.product-card:hover .card-image img { transform: scale(1.05); }
+
+.card-badge {
+  position: absolute;
+  top: 10px; left: 10px;
+  padding: 3px 8px; border-radius: 6px;
+  font-size: 9px; font-weight: 800;
+  text-transform: uppercase;
+}
+
+.card-badge.sale { background: #E74C3C; color: white; }
+.card-badge.new  { background: #27AE60; color: white; }
+
+.card-status {
+  position: absolute;
+  top: 10px; right: 10px;
+  padding: 3px 8px; border-radius: 6px;
+  font-size: 9px; font-weight: 800;
+  background: #27AE60; color: white;
+}
+
+.card-status.inactive { background: #9999AA; }
+
+/* Info */
+.card-info { padding: 14px; }
+
+.card-category {
+  font-size: 10px; font-weight: 700;
+  color: #F5A623;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.card-name {
+  font-size: 14px; font-weight: 800;
+  color: #1A1A2E; margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-price-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+}
+
+.card-price {
+  font-size: 16px; font-weight: 900;
+  color: #1A1A2E;
+}
+
+.card-orig {
+  font-size: 12px; color: #9999AA;
+  text-decoration: line-through;
+}
+
+.card-meta {
+  display: flex; gap: 6px;
+  font-size: 11px; color: #9999AA;
+  font-weight: 600;
+}
+
+/* Actions */
+.card-actions {
+  padding: 12px 14px;
+  border-top: 1px solid #F8F8FC;
+  display: flex; gap: 8px; align-items: center;
+}
+
+.btn-toggle {
+  flex: 1;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(0,0,0,0.08);
+  background: #F8F8FC;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px; font-weight: 800;
+  color: #9999AA; cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-toggle.active {
+  background: #E8F8EF;
+  color: #27AE60;
+  border-color: #27AE60;
+}
+
+.btn-edit, .btn-delete {
+  width: 32px; height: 32px;
+  border-radius: 8px; border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.btn-edit {
+  background: #EEF2FF;
+}
+
+.btn-edit:hover { background: #3498DB; }
+.btn-edit:hover svg { stroke: white; }
+
+.btn-edit svg {
+  width: 14px; height: 14px;
+  stroke: #3498DB; fill: none;
+  stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke 0.2s;
+}
+
+.btn-delete { background: #FEF0EE; }
+.btn-delete:hover { background: #E74C3C; }
+.btn-delete:hover svg { stroke: white; }
+
+.btn-delete svg {
+  width: 14px; height: 14px;
+  stroke: #E74C3C; fill: none;
+  stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke 0.2s;
+}
+
+/* Empty */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+
+.empty-state h3 {
+  font-size: 18px; font-weight: 800;
+  color: #1A1A2E; margin-bottom: 6px;
+}
+
+.empty-state p {
+  font-size: 13px; color: #9999AA;
+  margin-bottom: 20px;
+}
+
+.btn-add-empty {
+  display: inline-block;
+  background: #F5A623; color: white;
+  border-radius: 12px; padding: 12px 24px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 800;
+  text-decoration: none; transition: all 0.2s;
+}
+
+.btn-add-empty:hover { background: #E08C00; }
+
+/* Delete modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 380px; width: 90%;
+  text-align: center;
+  animation: fadeUp 0.3s ease;
+}
+
+.modal-icon { font-size: 40px; margin-bottom: 12px; }
+
+.modal h3 {
+  font-size: 18px; font-weight: 900;
+  color: #1A1A2E; margin-bottom: 8px;
+}
+
+.modal p {
+  font-size: 13px; color: #9999AA;
+  margin-bottom: 24px; line-height: 1.6;
+}
+
+.modal-actions { display: flex; gap: 10px; }
+
+.btn-cancel {
+  flex: 1; padding: 12px;
+  background: #F8F8FC; border: none;
+  border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 800;
+  color: #9999AA; cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover { background: #EEEEF8; }
+
+.btn-confirm-delete {
+  flex: 1; padding: 12px;
+  background: #E74C3C; color: white;
+  border: none; border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: all 0.2s;
+}
+
+.btn-confirm-delete:hover:not(:disabled) { background: #C0392B; }
+.btn-confirm-delete:disabled { opacity: 0.6; cursor: not-allowed; }

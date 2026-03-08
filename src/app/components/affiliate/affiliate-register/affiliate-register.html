@@ -1,0 +1,167 @@
+<div class="register-page">
+  <div class="register-container">
+
+    <!-- Hero -->
+    <div class="page-hero">
+      <h1>Affiliate <span>Registration</span></h1>
+      <div class="underline-gold"></div>
+      <p>Join our affiliate program and start earning 7% commission on every sale!</p>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="form-card animate-1">
+      <h2>Personal Information</h2>
+
+      <div class="form-row">
+        <div class="field">
+          <label>First Name <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="firstName" placeholder="Enter your first name">
+        </div>
+        <div class="field">
+          <label>Last Name <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="lastName" placeholder="Enter your last name">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>NIC Number <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="nicNumber" placeholder="Enter your NIC number">
+        </div>
+        <div class="field">
+          <label>NIC Document <span class="required">*</span></label>
+          <div class="upload-box" (click)="triggerNicUpload()">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            @if (nicFileName) {
+              <p class="file-selected">✅ {{ nicFileName }}</p>
+            } @else {
+              <p><span class="upload-link">Upload a file</span> or drag and drop</p>
+              <small>PNG, JPG, PDF up to 10MB</small>
+            }
+          </div>
+          <input type="file" id="nicFileInput" accept=".png,.jpg,.jpeg,.pdf"
+                 style="display:none" (change)="onNicFileSelected($event)">
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="field">
+          <label>Address <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="address" placeholder="Enter your address">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>City <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="city" placeholder="Enter your city">
+        </div>
+        <div class="field">
+          <label>Email <span class="required">*</span></label>
+          <input type="email" [(ngModel)]="email" placeholder="Enter your email address">
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Info -->
+    <div class="form-card animate-2">
+      <h2>Account Information</h2>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Username <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="username" placeholder="Choose a username">
+        </div>
+        <div class="field">
+          <label>Password <span class="required">*</span></label>
+          <div class="field-password">
+            <input [type]="showPassword ? 'text' : 'password'"
+                   [(ngModel)]="password"
+                   placeholder="Create a password">
+            <button class="toggle-pw" (click)="togglePassword()">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <small class="hint">Password must be at least 8 characters long</small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Confirm Password <span class="required">*</span></label>
+          <div class="field-password">
+            <input [type]="showConfirmPassword ? 'text' : 'password'"
+                   [(ngModel)]="confirmPassword"
+                   placeholder="Confirm your password">
+            <button class="toggle-pw" (click)="toggleConfirmPassword()">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Phone Number <span class="required">*</span></label>
+          <input type="tel" [(ngModel)]="phoneNumber" placeholder="Enter your phone number">
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="field">
+          <label>WhatsApp Number <span class="required">*</span></label>
+          <input type="tel" [(ngModel)]="whatsappNumber" placeholder="Enter your WhatsApp number">
+        </div>
+      </div>
+    </div>
+
+    <!-- Banking Info -->
+    <div class="form-card animate-3">
+      <h2>Banking Information</h2>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Bank Name <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="bankName" placeholder="Enter your bank name">
+        </div>
+        <div class="field">
+          <label>Branch <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="branch" placeholder="Enter your branch">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Account Name <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="accountName" placeholder="Enter account name">
+        </div>
+        <div class="field">
+          <label>Bank Book Document <span class="required">*</span></label>
+          <div class="upload-box" (click)="triggerBankUpload()">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            @if (bankFileName) {
+              <p class="file-selected">✅ {{ bankFileName }}</p>
+            } @else {
+              <p><span class="upload-link">Upload a file</span> or drag and drop</p>
+              <small>PNG, JPG, PDF up to 10MB</small>
+            }
+          </div>
+          <input type="file" id="bankFileInput" accept=".png,.jpg,.jpeg,.pdf"
+                 style="display:none" (change)="onBankFileSelected($event)">
+        </div>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="terms" [(ngModel)]="agreeTerms">
+        <label for="terms">
+          I agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>
+        </label>
+      </div>
+
+      <button class="btn-submit" (click)="submit()">Submit Application →</button>
+    </div>
+
+    <div class="login-link">
+      Already have an account?
+      <a (click)="goToLogin()">Sign in here</a>
+    </div>
+
+  </div>
+</div>

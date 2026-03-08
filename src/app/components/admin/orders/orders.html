@@ -1,0 +1,203 @@
+<div class="orders-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Orders</h1>
+      <p class="page-sub">{{ filtered.length }} orders</p>
+    </div>
+  </div>
+
+  <!-- Status filters -->
+  <div class="status-filters">
+    @for (s of statuses; track s.key) {
+      <button class="status-filter-btn"
+              [class.active]="activeStatus === s.key"
+              (click)="filterStatus(s.key)">
+        {{ s.label }}
+        @if (s.key !== 'all') {
+          <span class="filter-count">
+           {{ countByStatus(s.key) }}
+          </span>
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading-rows">
+      @for (i of [1,2,3,4,5]; track i) {
+        <div class="skeleton-row"></div>
+      }
+    </div>
+  }
+
+  <!-- Orders table -->
+  @if (!loading) {
+    <div class="orders-layout" [class.has-detail]="selectedOrder">
+
+      <!-- Table -->
+      <div class="table-card">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Customer</th>
+              <th>City</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of filtered; track order.id) {
+              <tr [class.selected]="selectedOrder?.id === order.id"
+                  (click)="selectOrder(order)">
+                <td class="order-id">#{{ order.id }}</td>
+                <td class="customer">
+                  <div class="customer-name">{{ order.customer }}</div>
+                  <div class="customer-phone">{{ order.phone }}</div>
+                </td>
+                <td>{{ order.city }}</td>
+                <td class="items-count">{{ order.items_count }} items</td>
+                <td class="amount">Rs. {{ order.total | number }}</td>
+                <td>
+                  <span class="payment-badge" [class.cod]="order.payment_method === 'cod'"
+                        [class.bank]="order.payment_method === 'bank'">
+                    {{ order.payment_method | uppercase }}
+                  </span>
+                </td>
+                <td>
+                  <span class="status-badge" [class]="getStatusClass(order.status)">
+                    {{ order.status }}
+                  </span>
+                </td>
+                <td class="date">{{ order.created_at }}</td>
+                <td>
+                  <button class="btn-view" (click)="selectOrder(order); $event.stopPropagation()">
+                    View
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (filtered.length === 0) {
+              <tr>
+                <td colspan="9" class="empty-row">No orders found</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Order detail panel -->
+      @if (selectedOrder) {
+        <div class="order-detail">
+
+          <div class="detail-header">
+            <h3>Order #{{ selectedOrder.id }}</h3>
+            <button class="close-btn" (click)="closeOrder()">×</button>
+          </div>
+
+          <!-- Customer info -->
+          <div class="detail-section">
+            <div class="detail-section-title">Customer</div>
+            <div class="detail-row">
+              <span>Name</span>
+              <span>{{ selectedOrder.customer }}</span>
+            </div>
+            <div class="detail-row">
+              <span>Phone</span>
+              <span>{{ selectedOrder.phone }}</span>
+            </div>
+            <div class="detail-row">
+              <span>City</span>
+              <span>{{ selectedOrder.city }}</span>
+            </div>
+            @if (selectedOrder.affiliate_code) {
+              <div class="detail-row">
+                <span>Ref Code</span>
+                <span class="ref-code">{{ selectedOrder.affiliate_code }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Items -->
+          <div class="detail-section">
+            <div class="detail-section-title">Items</div>
+            @for (item of selectedOrder.items; track $index) {
+              <div class="order-item-row">
+                <div class="item-details">
+                  <div class="item-name">{{ item.product_name }}</div>
+                  <div class="item-meta">
+                    Size: {{ item.size }} × {{ item.quantity }}
+                  </div>
+                </div>
+                <div class="item-price">Rs. {{ item.subtotal | number }}</div>
+              </div>
+            }
+          </div>
+
+          <!-- Payment summary -->
+          <div class="detail-section">
+            <div class="detail-section-title">Payment</div>
+            <div class="detail-row">
+              <span>Method</span>
+              <span>{{ selectedOrder.payment_method | uppercase }}</span>
+            </div>
+            <div class="detail-row total-row">
+              <span>Total</span>
+              <span class="total-amount">Rs. {{ selectedOrder.total | number }}</span>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="detail-section">
+            <div class="detail-section-title">Status</div>
+            <div class="current-status">
+              <span class="status-badge" [class]="getStatusClass(selectedOrder.status)">
+                {{ selectedOrder.status }}
+              </span>
+            </div>
+
+            <!-- Next status button -->
+            @if (getNext(selectedOrder.status)) {
+              <button class="btn-next-status"
+                      [disabled]="updatingStatus"
+                      (click)="updateStatus(selectedOrder, getNext(selectedOrder.status)!)">
+                @if (updatingStatus) {
+                  Updating...
+                } @else {
+                  Mark as {{ getNext(selectedOrder.status) }} →
+                }
+              </button>
+            }
+
+            <!-- Return button -->
+            @if (selectedOrder.status === 'delivered' ||
+                 selectedOrder.status === 'return_period') {
+              <button class="btn-returning"
+                      [disabled]="updatingStatus"
+                      (click)="markReturning(selectedOrder)">
+                Mark as Returning
+              </button>
+            }
+
+            @if (selectedOrder.status === 'completed') {
+              <div class="completed-msg">✅ Order completed!</div>
+            }
+
+            @if (selectedOrder.status === 'returned') {
+              <div class="returned-msg">📦 Order returned</div>
+            }
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+
+</div>

@@ -1,0 +1,28 @@
+<!-- Overlay -->
+<div class="overlay" [class.show]="isOpen" (click)="close()"></div>
+
+<!-- Popup -->
+<div class="bottom-popup" [class.show]="isOpen">
+  <div class="popup-handle"></div>
+
+  <div class="share-inner">
+    <h3>Share & Earn 🔗</h3>
+    <p>Share this product and earn 7% on every sale!</p>
+
+    <div class="share-link-box">
+      <span>{{ shareLink }}</span>
+      <button class="btn-copy" [class.copied]="copied" (click)="copyLink()">
+        {{ copied ? 'Copied!' : 'Copy' }}
+      </button>
+    </div>
+
+    <div class="share-commission-box">
+      <p>You earn on every purchase through your link</p>
+      <strong>7% Commission</strong>
+    </div>
+
+    <button class="btn-primary" (click)="shareOnWhatsApp()">
+      Share on WhatsApp 💬
+    </button>
+  </div>
+</div>

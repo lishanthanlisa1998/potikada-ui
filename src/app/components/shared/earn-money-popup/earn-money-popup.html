@@ -1,0 +1,47 @@
+<!-- Overlay -->
+<div class="overlay" [class.show]="isOpen" (click)="close()"></div>
+
+<!-- Popup -->
+<div class="bottom-popup" [class.show]="isOpen">
+  <div class="popup-handle"></div>
+
+  <div class="popup-dark-header">
+    <span class="emoji">💰</span>
+    <h2>Start Earning Money Today!</h2>
+    <p>Share Potikada products and earn on every sale</p>
+    <div class="popup-commission">7% Commission Per Sale</div>
+  </div>
+
+  <div class="popup-steps">
+    <div class="popup-step">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <h4>Sign Up Free</h4>
+        <p>Create your affiliate account — no cost</p>
+      </div>
+    </div>
+    <div class="popup-step">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <h4>Share Your Link</h4>
+        <p>Share on WhatsApp, Instagram, Facebook</p>
+      </div>
+    </div>
+    <div class="popup-step">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <h4>Earn 7% Commission</h4>
+        <p>Paid monthly on every successful referral</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-cta">
+    <button class="btn-primary" (click)="openLogin()">
+      Become an Affiliate →
+    </button>
+    <button class="btn-secondary" (click)="close()">
+      Maybe Later
+    </button>
+  </div>
+</div>

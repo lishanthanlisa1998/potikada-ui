@@ -1,0 +1,96 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 68px;
+  background: white;
+  border-top: 1px solid rgba(0,0,0,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 150;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  padding: 0 10px;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  flex: 1;
+
+  svg {
+    width: 22px; height: 22px;
+    stroke: #9999AA;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: all 0.2s;
+  }
+
+  span {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: #9999AA;
+    transition: all 0.2s;
+  }
+
+  &.active svg { stroke: #F5A623; }
+  &.active span { color: #F5A623; }
+}
+
+.nav-earn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  flex: 1.5;
+}
+
+.nav-earn-pill {
+  background: #F5A623;
+  color: white;
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(245,166,35,0.4);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+
+  &:active { transform: scale(0.95); }
+
+  svg {
+    width: 13px; height: 13px;
+    stroke: white;
+    fill: none;
+    stroke-width: 2.5;
+  }
+}
+.cart-dot {
+  position: absolute;
+  top: -6px; right: -8px;
+  width: 16px; height: 16px;
+  background: #F5A623;
+  color: white;
+  border-radius: 50%;
+  font-size: 9px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}

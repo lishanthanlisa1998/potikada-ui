@@ -1,0 +1,21 @@
+/* ===== VARIABLES ===== */
+:root {
+  --primary: #F5A623;
+  --primary-dark: #E08C00;
+  --primary-light: #FFF3DC;
+  --green: #27AE60;
+  --red: #E74C3C;
+  --ink: #1A1A2E;
+  --ink-light: #555570;
+  --ink-muted: #9999AA;
+  --bg: #F8F8FC;
+  --white: #FFFFFF;
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --radius: 16px;
+  --bottom-nav-h: 68px;
+}
+
+body{
+  margin: 0px;
+  padding: 0px;
+}

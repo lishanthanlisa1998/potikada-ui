@@ -1,0 +1,60 @@
+<div class="dashboard-page">
+
+  <!-- Header -->
+  <div class="dash-header">
+    <div class="dash-header-inner">
+      <div class="dash-greeting">
+        <div>
+          <div class="dash-id">AFFILIATE ID — {{ affiliateId }}</div>
+          <h2>Good morning, <span>{{ affiliateName }}</span> 👋</h2>
+          <div class="dash-joined">Member since {{ joinedDate }}</div>
+        </div>
+        <div class="dash-header-right">
+          <div class="dash-status">Active</div>
+          <button class="btn-logout" (click)="logout()">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="dash-cards">
+    @for (stat of stats; track stat.label) {
+      <div class="stat-card">
+        <div class="stat-icon" [class]="stat.iconClass">{{ stat.icon }}</div>
+        <div class="stat-label">{{ stat.label }}</div>
+        <div class="stat-value" [class]="stat.valueClass || ''">{{ stat.value }}</div>
+        <div class="stat-sub">{{ stat.sub }}</div>
+        <div class="stat-trend" [class]="stat.trendType">{{ stat.trend }}</div>
+      </div>
+    }
+  </div>
+
+  <!-- Body -->
+  <div class="dash-body">
+
+    
+
+    <!-- Sidebar -->
+    <div class="dash-sidebar">
+
+    
+      
+
+      <!-- How earnings work -->
+      <div class="logic-card">
+        <h3>How Your Earnings Work</h3>
+        @for (step of logicSteps; track $index) {
+          <div class="logic-step">
+            <div class="logic-num">{{ $index + 1 }}</div>
+            <div class="logic-text">
+              <h4>{{ step.title }}</h4>
+              <p>{{ step.desc }}</p>
+            </div>
+          </div>
+        }
+      </div>
+
+    </div>
+  </div>
+</div>
