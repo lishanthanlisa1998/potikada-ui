@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TopBanner } from '../shared/top-banner/top-banner';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -10,7 +9,7 @@ declare const payhere: any;
 
 @Component({
   selector: 'app-checkout',
-  imports: [CommonModule, FormsModule, TopBanner],
+  imports: [CommonModule, FormsModule],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })

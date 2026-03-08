@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
 
 .products-page { font-family: 'Nunito', sans-serif; }
 
@@ -190,7 +190,6 @@
   font-size: 14px; font-weight: 800;
   color: #1A1A2E; margin-bottom: 8px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
