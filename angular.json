@@ -13,6 +13,7 @@
         "build": {
   "builder": "@angular/build:application",
   "options": {
+    "inlineStyleLanguage": "css",
     "browser": "src/main.ts",
     "polyfills": [
       "zone.js"
@@ -48,7 +49,16 @@
       "outputHashing": "all"
     },
     "development": {
-      "optimization": false,
+      "optimization": {
+      "fonts": {
+        "inline": false
+      },
+      "styles": {
+        "minify": true,
+        "inlineCritical": false
+      },
+      "scripts": true
+    },
       "extractLicenses": false,
       "sourceMap": true
     }
@@ -72,6 +82,7 @@
         },
         "test": {
           "builder": "@angular/build:karma",
+          
           "options": {
             "polyfills": [
               "zone.js",
