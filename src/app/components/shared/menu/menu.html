@@ -1,0 +1,107 @@
+<!-- Overlay -->
+<div class="menu-overlay" [class.visible]="open" (click)="close()"></div>
+
+<!-- Drawer -->
+<div class="menu-drawer" [class.open]="open">
+
+  <!-- Header -->
+  <div class="menu-header">
+    <div class="menu-logo">potikada</div>
+    <button class="menu-close" (click)="close()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Social icons -->
+  <div class="menu-social">
+    <a href="https://facebook.com/potikada" target="_blank" class="social-btn fb">
+      <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+    </a>
+    <a href="https://tiktok.com/@potikada" target="_blank" class="social-btn tiktok">
+      <svg viewBox="0 0 24 24"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+    </a>
+    <a href="https://instagram.com/potikada" target="_blank" class="social-btn insta">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+    </a>
+    <a href="https://wa.me/94XXXXXXXXX" target="_blank" class="social-btn whatsapp">
+      <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    </a>
+  </div>
+
+  <!-- Nav links -->
+  <nav class="menu-nav">
+
+    <div class="menu-group-label">Information</div>
+
+    <a class="menu-item" (click)="navigate('/about')">
+      <div class="menu-item-icon">🏪</div>
+      <span>About Us</span>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <a class="menu-item" (click)="navigate('/contact')">
+      <div class="menu-item-icon">💬</div>
+      <span>Contact</span>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <a class="menu-item" (click)="navigate('/faq')">
+      <div class="menu-item-icon">❓</div>
+      <span>FAQ</span>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <a class="menu-item" (click)="navigate('/shipping-policy')">
+      <div class="menu-item-icon">🚚</div>
+      <span>Shipping Policy</span>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <a class="menu-item" (click)="navigate('/returns-refunds')">
+      <div class="menu-item-icon">↩️</div>
+      <span>Returns & Refunds</span>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <a class="menu-item" (click)="navigate('/privacy-policy')">
+      <div class="menu-item-icon">🔒</div>
+      <span>Privacy Policy</span>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <a class="menu-item" (click)="navigate('/terms-conditions')">
+      <div class="menu-item-icon">📄</div>
+      <span>Terms & Conditions</span>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <div class="menu-divider"></div>
+    <div class="menu-group-label">Community</div>
+
+    <a class="menu-item" (click)="navigate('/sell-on-potikada')">
+      <div class="menu-item-icon">🛍️</div>
+      <span>Sell on Potikada</span>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <a class="menu-item" (click)="navigate('/our-mission')">
+      <div class="menu-item-icon">🌟</div>
+      <span>Our Mission</span>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <a class="menu-item" (click)="navigate('/affiliate/register')">
+      <div class="menu-item-icon">💰</div>
+      <span>Become an Affiliate</span>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+  </nav>
+
+  <!-- Footer -->
+  <div class="menu-footer">
+    <div class="menu-footer-logo">potikada</div>
+    <div class="menu-footer-sub">එකම කඩේ · ஒரே கடை · One Shop</div>
+  </div>
+
+</div>

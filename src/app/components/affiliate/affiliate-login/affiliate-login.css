@@ -4,9 +4,17 @@
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
+  height: 100vh;           /* ← add this */
+  margin: 0;               /* ← add */
+  padding: 20px;
   background: linear-gradient(135deg, #FFF8EC 0%, #F8F8FC 60%, #EEF2FF 100%);
   position: relative;
   overflow: hidden;
+}
+.container, .row{
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: 100% !important;
 }
 
 .login-page::before {
@@ -134,12 +142,13 @@
   background: #F8F8FC;
   outline: none;
   transition: border 0.2s;
+  box-sizing: border-box;
 }
 
 .field input:focus { border-color: #F5A623; background: white; }
 
 .field-password { position: relative; }
-.field-password input { padding-right: 44px; }
+.field-password input { padding-right: 44px;box-sizing: border-box; }
 
 .toggle-pw {
   position: absolute;
@@ -150,6 +159,7 @@
   border: none;
   cursor: pointer;
   color: #9999AA;
+  z-index: 2;
 }
 
 .toggle-pw svg {

@@ -1,3 +1,27 @@
 <div class="top-banner">
-  <span>MAKING LOCAL GLOBAL</span> — Your Purchase lifts local Talent
+  @if (authService.isAffiliateUser()) {
+    <div class="top-banner-inner">
+      <div class="top-banner-left">
+        <span class="banner-item">👋 Hi, {{ authService.getAffiliateUser()?.name?.split(' ')[0] }}!</span>
+        <span class="banner-sep">◆</span>
+       <span class="banner-item highlight">
+        💰 Rs. {{ liveBalance | number:'1.2-2' }} in your Wallet!
+      </span>
+
+        
+      </div>
+      <button class="banner-logout-btn" (click)="logout()">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Logout
+      </button>
+    </div>
+  } @else {
+    <div class="top-banner-inner center-banner">
+      <span>👋 Hi buddy! Earn with share 💰 </span> <span class="banner-sep"> ◆ </span>🌿 Grow with us
+    </div>
+  }
 </div>

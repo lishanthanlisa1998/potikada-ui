@@ -120,7 +120,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./components/admin/affiliates/affiliates')
             .then(m => m.Affiliates)
-      }
+      },
+      { path: 'banners', loadComponent: () =>
+    import('./components/admin/banners/banners')
+    .then(m => m.Banners) }
+      
     ]
   }
 ];

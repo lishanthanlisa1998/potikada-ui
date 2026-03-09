@@ -10,6 +10,8 @@ import { CartService } from '../../../services/cart';
 })
 export class BottomNav {
   @Output() earnMoneyClicked = new EventEmitter<void>();
+  @Output() menuClicked = new EventEmitter<void>();
+  
 
   activeNav = 'allProducts';
 
@@ -24,6 +26,9 @@ export class BottomNav {
 
   openEarn() {
     this.earnMoneyClicked.emit();
+  }
+  openMenu() {
+    this.menuClicked.emit();
   }
   goCart() { this.router.navigate(['/cart']); }
   goWishlist() { this.router.navigate(['/wishlist']); }

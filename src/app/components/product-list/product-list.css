@@ -11,7 +11,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: sticky;
   top: 33px;
   z-index: 99;
   box-shadow: 0 2px 10px rgba(0,0,0,0.06);
@@ -31,7 +30,22 @@
   overflow: hidden;
   position: relative;
   background: linear-gradient(135deg, #FFF3DC, #FFE8B0);
-  height: 160px;
+  height: 120px;
+  
+}
+
+.hero-sticky{
+  z-index: 100;
+  top: 33px;
+  position: sticky;
+
+}
+.hero-sticky-for-category{
+  z-index: 100;
+  top: 153px;
+  position: sticky;
+  transform: translateZ(0);
+
 }
 
 .hero-slide {
@@ -127,11 +141,13 @@
 
 /* Filter tabs */
 .filter-tabs {
-  padding: 0 16px 14px;
+  
+  padding: 12px 16px 14px;
   display: flex;
   gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
+  background: white;
 }
 
 .filter-tabs::-webkit-scrollbar { display: none; }
@@ -158,7 +174,8 @@
 /* Vertical product list */
 .mobile-products-list {
   padding: 0 16px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   flex-direction: column;
   gap: 14px;
 }
@@ -334,11 +351,15 @@
 }
 
 .btn-wish {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
   width: 34px;
   height: 34px;
   background: var(--bg);
   border: none;
-  border-radius: 10px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -396,7 +417,7 @@
 
 
 /* ==================== DESKTOP ==================== */
-@media (min-width: 768px) {
+@media (min-width: 720px) {
   .mobile-layout { display: none; }
   .desktop-layout { display: block; }
   .whatsapp-fab { right: 32px; bottom: 32px; }
@@ -406,13 +427,13 @@
     margin: 0 auto;
     padding: 28px 32px;
     gap: 28px;
-    align-items: start;
+    align-items: flex-start;
   }
 
   .desktop-main {
     background: white;
     border-radius: 20px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 2px 20px rgba(0,0,0,0.06);
   }
 
@@ -451,7 +472,7 @@
    top: 0;
    right: 0;
    background: var(--primary);       /* Example background color */
-   color: var(--ink) ;          /* Text color */
+   color: var(--primary-light) !important;          /* Text color */
    font-size: 8px;       /* Adjust size */
    padding: 2px 6px;      /* Small padding for badge look */
    border-radius: 50%;
@@ -468,6 +489,9 @@
 
   /* Desktop header */
   .desktop-header {
+    position: sticky;
+    top: 30px;
+    z-index: 100;
     padding: 16px 24px;
     display: flex;
     align-items: center;
@@ -475,6 +499,7 @@
     border-bottom: 1px solid rgba(0,0,0,0.06);
     background: white;
     gap: 16px;
+    
   }
 
   .desktop-logo {
@@ -530,18 +555,36 @@
   .btn-earn-desktop:hover { background: var(--primary-dark); }
 
   /* Desktop products */
-  .desktop-products-area { padding: 24px; }
+  .desktop-products-area {  }
 
   .desktop-products-area h3 {
     font-size: 20px;
     font-weight: 800;
     margin-bottom: 16px;
+    margin-top: 0px;
+    padding-left: 12px;
   }
 
   .desktop-filter-tabs {
     display: flex;
     gap: 8px;
-    margin-bottom: 20px;
+    position: sticky;
+    top: 111px; /* just below the sticky header */
+    background: white;
+    padding: 4px 12px;
+    z-index: 50;
+
+    }
+
+  .desktop-products-header-sticky {
+    position: sticky;
+    top: 112px;
+    
+    z-index: 50;
+    padding: 12px ;
+
+    background: white;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
   }
 
   .desktop-filter-tab {
@@ -565,8 +608,9 @@
   /* 4 col grid */
   .desktop-products-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
+    padding: 12px;
   }
 
   /* Desktop card */
@@ -716,7 +760,9 @@
   /* Sidebar */
   .desktop-sidebar {
     position: sticky;
-    top: calc(33px + 28px);
+    margin-top: 12px;margin-right: 16px;
+    top: 126px;
+    align-self: flex-start;
   }
 
   .affiliate-card {
@@ -760,6 +806,7 @@
     padding: 4px 14px;
     border-radius: 20px;
     margin-top: 10px;
+    margin-bottom: 10px;
   }
 
   .affiliate-body { padding: 20px; }
@@ -803,4 +850,211 @@
   }
 
   .btn-aff:hover { background: var(--primary-dark); }
+}
+
+.banners-section {
+  margin: 12px 16px;
+  margin-top: 12px;
+}
+
+.banner-slider {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  height: 120px;
+}
+
+.banner-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.banner-slide.active { opacity: 1; }
+
+.banner-slide.clickable { cursor: pointer; }
+
+.banner-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.menu-btn {
+  width: 36px; height: 36px;
+  background: none; border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.menu-btn:hover { background: rgba(0,0,0,0.05); }
+
+.menu-btn svg {
+  width: 20px; height: 20px;
+  stroke: #0F0A06; fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+
+.m-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-direction: column;   /* force horizontal */
+  justify-content: flex-start; /* or space-between / center */
+  align-items: center;   
+}
+
+
+
+
+
+/* Add to Cart — solid dark */
+.btn-add-cart {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  background: #0F0A06;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.btn-add-cart::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(200,137,42,0.15);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.btn-add-cart:hover::after { opacity: 1; }
+.btn-add-cart:active { transform: scale(0.96); }
+
+.btn-add-cart svg {
+  width: 12px; height: 12px;
+  stroke: white; fill: none;
+  stroke-width: 2.5;
+  flex-shrink: 0;
+}
+
+.btn-label {
+  white-space: nowrap;
+}
+
+/* ===== Share & Earn Button ===== */
+.btn-share-earn {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #C8892A 0%, #E8B96A 50%, #C8892A 100%);
+  background-size: 200% 200%;
+  color: #0F0A06;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  animation: goldPulse 2s ease infinite;
+  transition: transform 0.2s;
+  box-shadow: 0 0 0 0 rgba(200,137,42,0.7);
+  width: 100%;
+}
+
+.btn-share-earn:active { transform: scale(0.96); }
+
+@keyframes goldPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(200,137,42,0.7); background-position: 0% 50%; }
+  50%  { box-shadow: 0 0 0 6px rgba(200,137,42,0); background-position: 100% 50%; }
+  100% { box-shadow: 0 0 0 0 rgba(200,137,42,0); background-position: 0% 50%; }
+}
+
+/* Shine sweep */
+.btn-shine {
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255,255,255,0.5) 50%,
+    transparent 100%
+  );
+  animation: shine 2s ease infinite;
+  animation-delay: 1s;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0%   { left: -75%; }
+  40%  { left: 125%; }
+  100% { left: 125%; }
+}
+
+
+
+@keyframes moneyDrop {
+  0%   { top: -16px; opacity: 0; }
+  20%  { opacity: 1; }
+  70%  { top: 4px; opacity: 1; }
+  100% { top: 4px; opacity: 0; }
+}
+
+/* Icon bounce */
+.btn-share-earn svg {
+  width: 12px; height: 12px;
+  stroke: #0F0A06; fill: none;
+  stroke-width: 2.5;
+  flex-shrink: 0;
+  animation: iconBounce 2s ease infinite;
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-2px); }
+}
+
+/* $ Earn badge — wiggles */
+.btn-badge {
+  background: #0F0A06;
+  color: #E8B96A;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  animation: wiggle 1.5s ease infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25%       { transform: rotate(-8deg) scale(1.1); }
+  75%       { transform: rotate(8deg) scale(1.1); }
+}
+
+.btn-share-earn .btn-label {
+  color: #0F0A06;
+  white-space: nowrap;
+  z-index: 1;
 }

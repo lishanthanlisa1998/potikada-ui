@@ -50,6 +50,12 @@ export class ProductDetail implements OnInit {
       const id = +params['id'];
       this.loadProduct(id);
     });
+
+    // In product-detail ngOnInit
+    const ref = this.route.snapshot.queryParams['ref'];
+    if (ref) {
+      localStorage.setItem('ref_code', ref);
+    }
   }
 
   loadProduct(id: number) {

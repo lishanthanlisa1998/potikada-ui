@@ -8,13 +8,15 @@ import { BottomNav } from '../shared/bottom-nav/bottom-nav';
 import { SharePopup } from '../shared/share-popup/share-popup';
 import { EarnMoneyPopup } from '../shared/earn-money-popup/earn-money-popup';
 import { Api } from '../../services/api';
+import { CartService } from '../../services/cart';
+import { Menu } from '../shared/menu/menu';
 
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
   imports: [
-    CommonModule,TopBanner,BottomNav,SharePopup,EarnMoneyPopup
+    CommonModule,TopBanner,BottomNav,SharePopup,EarnMoneyPopup,Menu
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css'
@@ -24,55 +26,117 @@ export class ProductListComponent implements OnInit {
 
   filteredProducts: Product[] = [];
   activeFilter = 'all';
-  filters = ['all', 'Books', 'Food', 'Oil'];
+  filters: string[] = ['all'];
 
   likedIds = new Set<number>();
   cartCount = 0;
 
   earnPopupOpen = false;
   sharePopupOpen = false;
+  menuOpen = false
   activeShareLink = '';
 
   products : Product[] = [];
+  allProducts: any[] = [];
+
+  addedToCart = false;
 
   slideIndex = 0;
-  slides = [
-    { tag: '📚 New Release',  title: 'Neeye en Kaadhali',     img: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&q=80' },
-    { tag: '🌿 100% Natural', title: 'Fresh Smoothie & Juice', img: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=200&q=80' },
-    { tag: '🫙 Handmade',     title: 'Pure Village Oil',       img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=80' },
-  ];
-
+  banners: any[] = [];
+  private bannerInterval: any;
+  bannerIndex = 0;
   private sliderInterval: any;
+  slides = [];
+
+  
 
   constructor(
     private router: Router,
     private productService: ProductService,
-    private apiService: Api
+    private apiService: Api,
+    public cartService: CartService
+    
   ) {}
 
   ngOnInit() {
+    this.loadBanners();
     this.loadProducts();
     this.startSlider();
+    this.loadCategories();
+    
+    
   }
-  loadProducts(category: string = 'all') {
-  this.apiService.getProducts(category).subscribe({
-    next: (products) => {
-      this.products = products;
-      this.filteredProducts = products;
+  loadCategories() {
+  this.apiService.getCategories().subscribe({
+    next: (cats) => {
+      this.filters = ['all', ...cats.map(c => c.name)];
     },
-    error: (err) => {
-      console.error('API error, using mock data', err);
-      // fallback to mock data
-      this.products = this.productService.getAll();
-      this.filteredProducts = this.products;
+    error: () => {
+      // fallback to defaults
+      this.filters = ['all', 'Books', 'Food', 'Oil'];
     }
   });
 }
 
-  setFilter(cat: string) {
-    this.activeFilter = cat;
-    this.loadProducts(cat);
+loadBanners() {
+  this.apiService.getBanners().subscribe({
+    next: (data) => {
+      this.banners = data;
+      this.startBannerSlider();
+    },
+    error: () => {}
+  });
+}
+
+startBannerSlider() {
+  if (this.banners.length > 1) {
+    this.bannerInterval = setInterval(() => {
+      this.bannerIndex = (this.bannerIndex + 1) % this.banners.length;
+    }, 3000);
   }
+}
+
+goBannerSlide(i: number) {
+  this.bannerIndex = i;
+}
+
+
+  openBanner(banner: any) {
+    if (banner.link_url) {
+      if (banner.open_new_tab) {
+        window.open(banner.link_url, '_blank');
+      } else {
+        window.location.href = banner.link_url;
+      }
+    }
+  }
+  loadProducts() {
+    this.apiService.getProducts('all').subscribe({
+      next: (products: any) => {
+        this.allProducts      = products;
+        this.products         = products;
+        this.filteredProducts = products;
+      },
+      error: (err: any) => {
+        console.error('API error, using mock data', err);
+        this.allProducts      = this.productService.getAll();
+        this.products         = this.allProducts;
+        this.filteredProducts = this.allProducts;
+      }
+    });
+  }
+
+setFilter(cat: string) {
+  this.activeFilter = cat;
+  console.log('Filter:', cat);
+  console.log('Sample product category:', this.allProducts[0]?.category);
+  
+  this.filteredProducts = cat === 'all'
+    ? [...this.allProducts]
+    : this.allProducts.filter((p: any) => p.category === cat);
+    
+  console.log('Filtered count:', this.filteredProducts.length);
+}
 
   ngOnDestroy() {
     clearInterval(this.sliderInterval);
@@ -90,21 +154,43 @@ export class ProductListComponent implements OnInit {
     this.slideIndex = n % this.slides.length;
   }
 
-  toggleLike(event: Event, id: number) {
-    event.stopPropagation();
-    this.likedIds.has(id)
-      ? this.likedIds.delete(id)
-      : this.likedIds.add(id);
+  toggleLike(event: Event, product: any) {
+    if (event) event.stopPropagation();
+
+     if (product) {
+      this.cartService.toggleWishlist(product);
+      this.likedIds.has(product.id)
+      ? this.likedIds.delete(product.id)
+      : this.likedIds.add(product.id);
+      
+      
+      
+    }
+    
   }
+
+
+
+
+  addToCart(event: Event, product: any) {
+  if (event) event.stopPropagation();
+
+  
+  if (product) {
+    this.cartService.addToCart(product, product.sizes?.[0] || '', 1);
+    
+  }
+}
+
+
 
   isLiked(id: number): boolean {
     return this.likedIds.has(id);
   }
 
-  addToCart(event: Event, id: number) {
-    event.stopPropagation();
-    this.cartCount++;
-  }
+  
+
+
 
   goToProduct(id: number) {
     this.router.navigate(['/product', id]);
@@ -113,14 +199,33 @@ export class ProductListComponent implements OnInit {
   openEarnPopup() {
     this.earnPopupOpen = true;
   }
+  goCart() { this.router.navigate(['/cart']); }
+  goWishlist() { this.router.navigate(['/wishlist']); }
+
+
 
   openSharePopup(event: Event, link: string) {
     event.stopPropagation();
-    this.activeShareLink = link;
-    this.sharePopupOpen = true;
+    const affiliate = localStorage.getItem('affiliate_user');
+    console.log("affiliate",affiliate)
+
+    if(affiliate){
+      const user = JSON.parse(affiliate);
+     
+      this.activeShareLink = `${link}?ref=${user.affiliate_code}`;
+      this.sharePopupOpen = true;
+
+    }
+    else{
+      this.earnPopupOpen = true;
+    }
+    
+    
   }
 
   heartsArray(n: number): boolean[] {
     return Array.from({ length: 5 }, (_, i) => i < n);
   }
 }
+
+

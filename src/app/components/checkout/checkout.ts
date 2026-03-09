@@ -53,6 +53,11 @@ export class Checkout implements OnInit {
       this.router.navigate(['/']);
     }
 
+    const refCode = localStorage.getItem('ref_code');
+    if (refCode) {
+      this.form.affiliate_code = refCode;
+    }
+
     // Load PayHere script
     this.loadPayHereScript();
   }

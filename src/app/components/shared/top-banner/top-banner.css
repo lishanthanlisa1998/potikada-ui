@@ -1,15 +1,64 @@
 .top-banner {
   background: #1A1A2E;
   color: white;
-  text-align: center;
-  padding: 8px 16px;
+  padding: 0 16px;
   font-size: 12px;
   font-weight: 600;
   position: sticky;
   top: 0;
   z-index: 100;
+  height: 33px;
+  display: flex;
+  align-items: center;
 
   span {
     color: #F5A623;
   }
+}
+
+.top-banner-inner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.center-banner {
+  justify-content: center;
+}
+
+.top-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.banner-item { color: white; font-size: 11px; }
+.banner-sep  { color: #F5A623; font-size: 8px; }
+
+.banner-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.banner-logout-btn:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: #F5A623;
+  color: #F5A623;
+}
+
+.banner-logout-btn svg {
+  width: 12px; height: 12px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }

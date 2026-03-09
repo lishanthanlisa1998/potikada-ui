@@ -1,0 +1,184 @@
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,10,6,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.menu-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.menu-drawer {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 300px;
+  background: #FAF6EE;
+  z-index: 999;
+  transform: translateX(-100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.menu-drawer.open {
+  transform: translateX(0);
+}
+
+/* Header */
+.menu-header {
+  background: #0F0A06;
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.menu-logo {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 26px;
+  color: #C8892A;
+}
+
+.menu-close {
+  width: 34px; height: 34px;
+  background: rgba(250,246,238,0.1);
+  border: none; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.menu-close:hover { background: rgba(250,246,238,0.2); }
+
+.menu-close svg {
+  width: 16px; height: 16px;
+  stroke: #FAF6EE; fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+/* Social */
+.menu-social {
+  background: #0F0A06;
+  padding: 0 20px 20px;
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.social-btn {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, opacity 0.2s;
+  text-decoration: none;
+}
+
+.social-btn:hover { transform: translateY(-2px); opacity: 0.85; }
+
+.social-btn svg {
+  width: 17px; height: 17px;
+  fill: none; stroke: white;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fb       { background: #1877F2; }
+.tiktok   { background: #000000; }
+.insta    { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+.whatsapp { background: #25D366; }
+
+/* Nav */
+.menu-nav {
+  flex: 1;
+  padding: 16px 0;
+}
+
+.menu-group-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #C8892A;
+  padding: 8px 20px 6px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-decoration: none;
+  color: #0F0A06;
+  border-bottom: 1px solid rgba(200,137,42,0.08);
+}
+
+.menu-item:hover { background: rgba(200,137,42,0.06); }
+
+.menu-item-icon {
+  width: 34px; height: 34px;
+  background: white;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.menu-item span {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0F0A06;
+}
+
+.menu-arrow {
+  width: 14px; height: 14px;
+  stroke: #C8892A; fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.menu-divider {
+  height: 1px;
+  background: rgba(200,137,42,0.15);
+  margin: 8px 20px;
+}
+
+/* Footer */
+.menu-footer {
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid rgba(200,137,42,0.15);
+  flex-shrink: 0;
+}
+
+.menu-footer-logo {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 20px;
+  color: #C8892A;
+  margin-bottom: 4px;
+}
+
+.menu-footer-sub {
+  font-size: 11px;
+  color: #6B4226;
+  letter-spacing: 0.5px;
+}

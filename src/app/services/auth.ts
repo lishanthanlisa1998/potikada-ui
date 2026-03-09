@@ -1,4 +1,3 @@
-
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
@@ -7,20 +6,36 @@ import { Api } from './api';
 @Injectable({ providedIn: 'root' })
 export class Auth {
 
-  currentUser = signal<any>(null);
-  isLoggedIn  = signal<boolean>(false);
+  currentUser  = signal<any>(null);
+  isLoggedIn   = signal<boolean>(false);
+  isAffiliateUser = signal<boolean>(!!localStorage.getItem('affiliate_user'));
+  isAdminUser  = signal<boolean>(!!localStorage.getItem('admin_token'));
 
   constructor(
     private api: Api,
     private router: Router
   ) {
-    // Check if token exists on app load
     const token = localStorage.getItem('token');
     const user  = localStorage.getItem('user');
     if (token && user) {
       this.currentUser.set(JSON.parse(user));
       this.isLoggedIn.set(true);
     }
+  }
+
+  getAffiliateUser(): any {
+    const raw = localStorage.getItem('affiliate_user');
+    return raw ? JSON.parse(raw) : null;
+  }
+
+  affiliateLogin(userData: any) {
+    localStorage.setItem('affiliate_user', JSON.stringify(userData));
+    this.isAffiliateUser.set(true);
+  }
+
+  affiliateLogout() {
+    localStorage.removeItem('affiliate_user');
+    this.isAffiliateUser.set(false);
   }
 
   login(email: string, password: string) {
@@ -47,7 +62,7 @@ export class Auth {
     return localStorage.getItem('token');
   }
 
-  isAffiliate(): boolean {
+  isAffiliateRole(): boolean {
     const user = this.currentUser();
     return user?.role === 'affiliate';
   }

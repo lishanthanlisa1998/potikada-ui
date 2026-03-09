@@ -40,7 +40,7 @@ export class Orders implements OnInit {
 
   constructor(private apiService: Api) {}
 
-  ngOnInit() { this.loadOrders(); }
+  ngOnInit() { this.loadOrders();localStorage.removeItem('ref_code'); }
 
   loadOrders() {
     this.loading = true;

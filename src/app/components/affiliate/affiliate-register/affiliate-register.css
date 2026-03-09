@@ -103,6 +103,7 @@
   background: #F8F8FC;
   outline: none;
   transition: border 0.2s;
+  box-sizing: border-box !important;
 }
 
 .field input:focus {
@@ -247,4 +248,86 @@
   .form-card { padding: 20px; }
   .page-hero h1 { font-size: 24px; }
   .register-page { padding: 24px 16px 40px; }
+}
+
+.bank-notice {
+  background: rgba(200,137,42,0.08);
+  border: 1px solid rgba(200,137,42,0.3);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #6B4226;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.form-error {
+  background: #fff0f0;
+  border: 1px solid #ffcccc;
+  color: #cc0000;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.form-success {
+  background: #f0fff4;
+  border: 1px solid #b2f5cc;
+  color: #1a7f3c;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e0d5c5;
+  border-radius: 10px;
+  font-size: 14px;
+  background: white;
+  color: #0F0A06;
+  appearance: none;
+  cursor: pointer;
+}
+
+select:focus {
+  outline: none;
+  border-color: #C8892A;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.otp-hint {
+  color: #6B4226;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.otp-field input {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  text-align: center;
+}
+
+.resend-otp {
+  text-align: center;
+  font-size: 13px;
+  color: #6B4226;
+  margin-top: 12px;
+}
+
+.resend-otp a {
+  color: #C8892A;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
 }

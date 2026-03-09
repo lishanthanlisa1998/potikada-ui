@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class Api {
 
-  private baseUrl = 'https://potikada-api-production.up.railway.app/api';
+  //private baseUrl = 'https://potikada-api-production.up.railway.app/api';
+  private baseUrl = 'http://127.0.0.1:8000/api';
 
   constructor(private http: HttpClient) {}
 
@@ -72,23 +73,69 @@ export class Api {
   }
 
   // ===== AFFILIATE =====
+  private getAffiliateHeaders(): HttpHeaders {
+    const affiliate = JSON.parse(localStorage.getItem('affiliate_user') || '{}');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      ...(affiliate.token ? { Authorization: `Bearer ${affiliate.token}` } : {})
+    });
+  }
+
   affiliateRegister(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/affiliate/register`, data, {
       headers: this.getHeaders()
     });
   }
 
+  affiliateLogin(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/affiliate/login`, data, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      })
+    });
+  }
+
+  sendOtp(data: any): Observable<any> {
+  return this.http.post(`${this.baseUrl}/affiliate/send-otp`, data, {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    })
+  });
+}
+
+verifyOtp(data: any): Observable<any> {
+  return this.http.post(`${this.baseUrl}/affiliate/verify-otp`, data, {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    })
+  });
+}
+
   affiliateDashboard(): Observable<any> {
     return this.http.get(`${this.baseUrl}/affiliate/dashboard`, {
-      headers: this.getHeaders()
+      headers: this.getAffiliateHeaders()
     });
   }
 
   affiliateWithdraw(amount: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/affiliate/withdraw`, { amount }, {
-      headers: this.getHeaders()
+      headers: this.getAffiliateHeaders()
     });
   }
+  getAffiliateBalance(): Observable<any> {
+    const affiliate = JSON.parse(localStorage.getItem('affiliate_user') || '{}');
+    return this.http.get(`${this.baseUrl}/affiliate/balance`, {
+      headers: { Authorization: `Bearer ${affiliate.token}` }
+    });
+  }
+
+
+  // ===== admin =====
+
   adminLogin(email: string, password: string): Observable<any> {
   return this.http.post(`${this.baseUrl}/admin/login`, { email, password }, {
     headers: new HttpHeaders({
@@ -195,5 +242,34 @@ createOrder(data: any): Observable<any> {
       'Accept': 'application/json'
     })
   });
+}
+
+// Banners
+getBanners(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.baseUrl}/banners`);
+}
+
+// Admin banners
+getAdminBanners(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.baseUrl}/admin/banners`,
+    { headers: this.getAdminHeaders() });
+}
+
+createBanner(data: any): Observable<any> {
+  return this.http.post(`${this.baseUrl}/admin/banners`, data,
+    { headers: this.getAdminHeaders() });
+}
+
+updateBanner(id: number, data: any): Observable<any> {
+  return this.http.put(`${this.baseUrl}/admin/banners/${id}`, data,
+    { headers: this.getAdminHeaders() });
+}
+
+deleteBanner(id: number): Observable<any> {
+  return this.http.delete(`${this.baseUrl}/admin/banners/${id}`,
+    { headers: this.getAdminHeaders() });
+}
+getCategories(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.baseUrl}/categories`);
 }
 }

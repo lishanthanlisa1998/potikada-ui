@@ -18,18 +18,36 @@
   </div>
 
   <!-- Stat Cards -->
-  <div class="dash-cards">
-    @for (stat of stats; track stat.label) {
-      <div class="stat-card">
-        <div class="stat-icon" [class]="stat.iconClass">{{ stat.icon }}</div>
-        <div class="stat-label">{{ stat.label }}</div>
-        <div class="stat-value" [class]="stat.valueClass || ''">{{ stat.value }}</div>
-        <div class="stat-sub">{{ stat.sub }}</div>
-        <div class="stat-trend" [class]="stat.trendType">{{ stat.trend }}</div>
-      </div>
-    }
+ <!-- Stat Cards — real data -->
+<div class="dash-cards">
+  <div class="stat-card">
+    <div class="stat-icon gold">💰</div>
+    <div class="stat-label">Total Earned</div>
+    <div class="stat-value gold-text">Rs. {{ totalEarned | number }}</div>
+    <div class="stat-sub">Lifetime earnings</div>
   </div>
 
+  <div class="stat-card">
+    <div class="stat-icon blue">🔗</div>
+    <div class="stat-label">Link Clicks</div>
+    <div class="stat-value">{{ totalClicks | number }}</div>
+    <div class="stat-sub">Total clicks</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon orange">🚚</div>
+    <div class="stat-label">Pending Delivery</div>
+    <div class="stat-value">{{ pendingDelivery }}</div>
+    <div class="stat-sub">Orders in transit</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon green">🔄</div>
+    <div class="stat-label">Return Period</div>
+    <div class="stat-value">{{ inReturnPeriod }}</div>
+    <div class="stat-sub">Orders in 7-day window</div>
+  </div>
+</div>
   <!-- Body -->
   <div class="dash-body">
 
