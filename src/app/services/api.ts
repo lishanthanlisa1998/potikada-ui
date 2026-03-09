@@ -132,6 +132,23 @@ verifyOtp(data: any): Observable<any> {
       headers: { Authorization: `Bearer ${affiliate.token}` }
     });
   }
+  getAffiliateProfile(): Observable<any> {
+  return this.http.get(`${this.baseUrl}/affiliate/profile`, {
+    headers: this.getAffiliateHeaders()
+  });
+}
+
+updateAffiliateProfile(data: any): Observable<any> {
+  return this.http.put(`${this.baseUrl}/affiliate/profile`, data, {
+    headers: this.getAffiliateHeaders()
+  });
+}
+
+updateAffiliatePassword(data: any): Observable<any> {
+  return this.http.put(`${this.baseUrl}/affiliate/password`, data, {
+    headers: this.getAffiliateHeaders()
+  });
+}
 
 
   // ===== admin =====

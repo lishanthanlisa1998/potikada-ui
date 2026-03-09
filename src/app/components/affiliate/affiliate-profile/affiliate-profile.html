@@ -1,0 +1,161 @@
+<div class="profile-page">
+
+  <div class="profile-container">
+
+    <!-- Header -->
+    <div class="profile-hero">
+      <button class="btn-back" (click)="goBack()">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <h1>My <span>Profile</span></h1>
+      <p>Manage your account details and banking information</p>
+    </div>
+
+    @if (error) {
+      <div class="form-error">⚠️ {{ error }}</div>
+    }
+    @if (success) {
+      <div class="form-success">✅ {{ success }}</div>
+    }
+
+    <!-- Affiliate Badge -->
+    <div class="affiliate-badge">
+      <div class="badge-avatar">{{ getInitials() }}</div>
+      <div class="badge-info">
+        <div class="badge-name">{{ form.name }}</div>
+        <div class="badge-code">🔗 {{ affiliateCode }}</div>
+        <div class="badge-email">{{ email }}</div>
+      </div>
+      <div class="badge-status">Active</div>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="form-card">
+      <h2>👤 Personal Information</h2>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Full Name <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="form.name" placeholder="Your full name">
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" [value]="email" disabled class="field-disabled">
+          <small class="hint">Email cannot be changed</small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Phone Number <span class="required">*</span></label>
+          <input type="tel" [(ngModel)]="form.phone" placeholder="07X XXX XXXX">
+        </div>
+        <div class="field">
+          <label>WhatsApp Number</label>
+          <input type="tel" [(ngModel)]="form.whatsapp" placeholder="07X XXX XXXX (optional)">
+        </div>
+      </div>
+
+      <button class="btn-save" (click)="saveProfile()" [disabled]="profileLoading">
+        {{ profileLoading ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+
+    <!-- Banking Info -->
+    <div class="form-card">
+      <h2>🏦 Banking Information</h2>
+
+      <div class="bank-notice">
+        🔒 Your bank details are used only for sending your earnings. Potikada will never withdraw money from your account.
+      </div>
+
+      <div class="form-row single">
+        <div class="field">
+          <label>Account Holder Name <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="form.account_name" placeholder="Exactly as in your bank book">
+          <small class="hint">⚠️ Must match your bank book exactly</small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Bank Name <span class="required">*</span></label>
+          <select [(ngModel)]="form.bank_name">
+            <option value="">Select your bank</option>
+            <option>Bank of Ceylon (BOC)</option>
+            <option>People's Bank</option>
+            <option>Commercial Bank</option>
+            <option>Hatton National Bank (HNB)</option>
+            <option>Sampath Bank</option>
+            <option>Seylan Bank</option>
+            <option>Nations Trust Bank (NTB)</option>
+            <option>DFCC Bank</option>
+            <option>Pan Asia Bank</option>
+            <option>Union Bank</option>
+            <option>NSB (National Savings Bank)</option>
+            <option>Regional Development Bank (RDB)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Account Number <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="form.account_number" placeholder="Enter account number">
+        </div>
+      </div>
+
+      <button class="btn-save" (click)="saveBanking()" [disabled]="bankingLoading">
+        {{ bankingLoading ? 'Saving...' : 'Save Banking Details' }}
+      </button>
+    </div>
+
+    <!-- Change Password -->
+    <div class="form-card">
+      <h2>🔐 Change Password</h2>
+
+      <div class="form-row single">
+        <div class="field">
+          <label>Current Password <span class="required">*</span></label>
+          <div class="field-password">
+            <input [type]="showCurrent ? 'text' : 'password'"
+                   [(ngModel)]="passwords.current"
+                   placeholder="Enter current password">
+            <button class="toggle-pw" (click)="showCurrent = !showCurrent">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>New Password <span class="required">*</span></label>
+          <div class="field-password">
+            <input [type]="showNew ? 'text' : 'password'"
+                   [(ngModel)]="passwords.new"
+                   placeholder="Enter new password">
+            <button class="toggle-pw" (click)="showNew = !showNew">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <small class="hint">Minimum 8 characters</small>
+        </div>
+        <div class="field">
+          <label>Confirm New Password <span class="required">*</span></label>
+          <div class="field-password">
+            <input [type]="showConfirm ? 'text' : 'password'"
+                   [(ngModel)]="passwords.confirm"
+                   placeholder="Confirm new password">
+            <button class="toggle-pw" (click)="showConfirm = !showConfirm">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-save" (click)="changePassword()" [disabled]="passwordLoading">
+        {{ passwordLoading ? 'Updating...' : 'Update Password' }}
+      </button>
+    </div>
+
+  </div>
+</div>

@@ -161,4 +161,7 @@ export class AffiliateDashboard implements OnInit, AfterViewInit {
     };
     return map[status] || status;
   }
+  goToProfile() {
+  this.router.navigate(['/affiliate/profile']);
+}
 }

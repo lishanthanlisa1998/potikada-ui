@@ -73,6 +73,11 @@ export const routes: Routes = [
             import('./components/order-success/order-success')
               .then(m => m.OrderSuccess)
         },
+        { 
+        path: 'affiliate/profile', loadComponent: () =>
+          import('./components/affiliate/affiliate-profile/affiliate-profile')
+            .then(m => m.AffiliateProfile) 
+      },
   {
     path: 'admin',
     loadComponent: () =>
@@ -121,10 +126,13 @@ export const routes: Routes = [
           import('./components/admin/affiliates/affiliates')
             .then(m => m.Affiliates)
       },
-      { path: 'banners', loadComponent: () =>
-    import('./components/admin/banners/banners')
-    .then(m => m.Banners) }
+      { 
+        path: 'banners', loadComponent: () =>
+          import('./components/admin/banners/banners')
+            .then(m => m.Banners) 
+      },
       
-    ]
-  }
-];
+          
+        ]
+      }
+    ];

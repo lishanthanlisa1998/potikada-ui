@@ -1,0 +1,249 @@
+.profile-page {
+  min-height: 100vh;
+  background: #FAF6EE;
+  padding: 20px 16px 100px;
+}
+
+.profile-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.profile-hero {
+  margin-bottom: 24px;
+}
+
+.profile-hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  color: #0F0A06;
+  margin: 8px 0 4px;
+}
+
+.profile-hero h1 span { color: #C8892A; }
+
+.profile-hero p {
+  color: #6B4226;
+  font-size: 13px;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #C8892A;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.btn-back svg {
+  width: 16px; height: 16px;
+  stroke: #C8892A; fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+/* Badge */
+.affiliate-badge {
+  background: #0F0A06;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.badge-avatar {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, #C8892A, #E8B96A);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  color: #0F0A06;
+  flex-shrink: 0;
+}
+
+.badge-info { flex: 1; }
+
+.badge-name {
+  color: white;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.badge-code {
+  color: #C8892A;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 2px 0;
+}
+
+.badge-email {
+  color: rgba(255,255,255,0.5);
+  font-size: 11px;
+}
+
+.badge-status {
+  background: rgba(39,174,96,0.15);
+  color: #27AE60;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(39,174,96,0.3);
+}
+
+/* Form cards */
+.form-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.form-card h2 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0F0A06;
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row.single {
+  grid-template-columns: 1fr;
+}
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+
+.field label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6B4226;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.field input, .field select {
+  padding: 12px 14px;
+  border: 1.5px solid #e0d5c5;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #0F0A06;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: #C8892A;
+}
+
+.field-disabled {
+  background: #f5f5f5 !important;
+  color: #999 !important;
+  cursor: not-allowed;
+}
+
+.field-password {
+  position: relative;
+  display: flex;
+}
+
+.field-password input {
+  flex: 1;
+  border-radius: 10px;
+  padding-right: 44px;
+}
+
+.toggle-pw {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.toggle-pw svg {
+  width: 16px; height: 16px;
+  stroke: #999; fill: none;
+  stroke-width: 2;
+}
+
+.hint {
+  font-size: 11px;
+  color: #999;
+}
+
+.required { color: #C8892A; }
+
+.bank-notice {
+  background: rgba(200,137,42,0.08);
+  border: 1px solid rgba(200,137,42,0.3);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #6B4226;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.btn-save {
+  background: #0F0A06;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-save:hover { background: #C8892A; }
+.btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.form-error {
+  background: #fff0f0;
+  border: 1px solid #ffcccc;
+  color: #cc0000;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.form-success {
+  background: #f0fff4;
+  border: 1px solid #b2f5cc;
+  color: #1a7f3c;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+}
