@@ -407,7 +407,7 @@
 
 .desktop-ad{
   display: grid !important;
-  grid-template-columns: 1fr 300px;
+  /*grid-template-columns: 1fr 300px;*/
 }
 .icon-btn {
   position: relative; /* Needed so the badge can be positioned inside */
@@ -423,9 +423,6 @@
   .whatsapp-fab { right: 32px; bottom: 32px; }
 
   .desktop-wrapper {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 28px 32px;
     gap: 28px;
     align-items: flex-start;
   }

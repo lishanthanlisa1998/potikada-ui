@@ -8,6 +8,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../../models/product';
 import { Api } from '../../services/api';
 import { CartService } from '../../services/cart';
+import { Header } from '../shared/header/header';
+import { Menu } from '../shared/menu/menu';
 
 @Component({
   selector: 'app-product-detail',
@@ -15,7 +17,7 @@ import { CartService } from '../../services/cart';
     TopBanner,
     BottomNav,
     SharePopup,
-    EarnMoneyPopup],
+    EarnMoneyPopup,Header,Menu],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css',
 })
@@ -34,6 +36,7 @@ export class ProductDetail implements OnInit {
 
   sharePopupOpen = false;
   earnPopupOpen = false;
+  menuOpen = false
 
   // Cart feedback
   addedToCart = false;

@@ -4,12 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CartService } from '../../services/cart';
 import { Api } from '../../services/api';
+import { Header } from '../shared/header/header';
+import { Menu } from '../shared/menu/menu';
 
 declare const payhere: any; 
 
 @Component({
   selector: 'app-checkout',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,Header,Menu],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })
@@ -21,6 +23,7 @@ export class Checkout implements OnInit {
   cartSubtotal  = 0;
   cartDelivery  = 0;
   cartTotal     = 0;
+  menuOpen = false;
 
   paymentMethod = 'card'; // 'card' | 'cod'
   loading       = false;
@@ -102,10 +105,10 @@ export class Checkout implements OnInit {
         if (this.paymentMethod === 'cod') {
           // COD — go straight to success
           this.cartService.clearCart();
-          this.router.navigate(['/order-success', res.order.id]);
+          this.router.navigate(['/order-success', res.order_id]);
         } else {
           // Card — initiate PayHere
-          this.initiatePayHere(res.order.id);
+          this.initiatePayHere(res.order_id);
         }
       },
       error: (err) => {

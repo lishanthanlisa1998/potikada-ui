@@ -410,3 +410,17 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 }
 
 .page-bottom-pad { height: calc(var(--bottom-nav-h) + 80px); }
+
+.desktop-wrapper {
+   
+    margin: 0 auto;
+    gap: 28px;
+    align-items: flex-start;
+  }
+
+  .desktop-main {
+    background: white;
+    border-radius: 20px;
+    overflow: visible;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  }

@@ -1,12 +1,8 @@
-<div class="checkout-page">
 
-  <div class="checkout-header">
-    <a routerLink="/cart" class="back-btn">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to Cart
-    </a>
-    <div class="brand">potikada</div>
-  </div>
+<app-menu [open]="menuOpen" (closed)="menuOpen = false"></app-menu>
+<div class="checkout-page">
+<app-header [showBack]="true" (menuClicked)="menuOpen = true"></app-header>
+  
 
   <div class="checkout-layout">
 

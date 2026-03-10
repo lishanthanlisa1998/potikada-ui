@@ -10,13 +10,14 @@ import { EarnMoneyPopup } from '../shared/earn-money-popup/earn-money-popup';
 import { Api } from '../../services/api';
 import { CartService } from '../../services/cart';
 import { Menu } from '../shared/menu/menu';
+import { Header } from '../shared/header/header';
 
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
   imports: [
-    CommonModule,TopBanner,BottomNav,SharePopup,EarnMoneyPopup,Menu
+    CommonModule,TopBanner,BottomNav,SharePopup,EarnMoneyPopup,Menu,Header
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css'
@@ -207,7 +208,6 @@ setFilter(cat: string) {
   openSharePopup(event: Event, link: string) {
     event.stopPropagation();
     const affiliate = localStorage.getItem('affiliate_user');
-    console.log("affiliate",affiliate)
 
     if(affiliate){
       const user = JSON.parse(affiliate);

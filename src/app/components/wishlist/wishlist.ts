@@ -4,10 +4,12 @@ import { SharePopup } from '../shared/share-popup/share-popup';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { CartService, WishlistItem } from '../../services/cart';
+import { Menu } from '../shared/menu/menu';
+import { Header } from '../shared/header/header';
 
 @Component({
   selector: 'app-wishlist',
-  imports: [CommonModule, RouterLink, TopBanner, SharePopup],
+  imports: [CommonModule, RouterLink, TopBanner, SharePopup,Menu,Header],
   templateUrl: './wishlist.html',
   styleUrl: './wishlist.css',
 })
@@ -15,7 +17,7 @@ export class Wishlist {
 sharePopupOpen = false;
   activeShareLink = '';
   selectedSize: { [productId: number]: string } = {};
-  
+  menuOpen = false ;
 
   constructor(
     public cartService: CartService,

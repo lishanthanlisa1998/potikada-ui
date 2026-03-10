@@ -1,17 +1,8 @@
-<app-top-banner />
+<app-menu [open]="menuOpen" (closed)="menuOpen = false"></app-menu>
 
 <div class="wishlist-page">
 
-  <!-- Header -->
-  <header class="wishlist-header">
-    <button class="back-btn" (click)="goBack()">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <h1 class="header-title">My Wishlist ❤️</h1>
-    <div class="header-count">
-      {{ cartService.wishlistCount() }} item{{ cartService.wishlistCount() !== 1 ? 's' : '' }}
-    </div>
-  </header>
+  <app-header [showBack]="true"  (menuClicked)="menuOpen = true"></app-header>
 
   <!-- Empty wishlist -->
   @if (cartService.wishlist().length === 0) {
