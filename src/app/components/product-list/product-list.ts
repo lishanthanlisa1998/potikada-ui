@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Product } from '../../models/product';
 import { ProductService } from '../../services/product';
-import { TopBanner } from '../shared/top-banner/top-banner';
 import { BottomNav } from '../shared/bottom-nav/bottom-nav';
 import { SharePopup } from '../shared/share-popup/share-popup';
 import { EarnMoneyPopup } from '../shared/earn-money-popup/earn-money-popup';
@@ -17,7 +16,7 @@ import { Header } from '../shared/header/header';
   selector: 'app-product-list',
   standalone: true,
   imports: [
-    CommonModule,TopBanner,BottomNav,SharePopup,EarnMoneyPopup,Menu,Header
+    CommonModule,BottomNav,SharePopup,EarnMoneyPopup,Menu,Header
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css'

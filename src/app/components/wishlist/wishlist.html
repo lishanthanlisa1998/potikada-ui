@@ -47,7 +47,7 @@
 
               <!-- Hearts -->
               <div class="wish-hearts">
-                @for (filled of heartsArray(item.product.hearts); track $index) {
+                @for (filled of heartsArray(item.product.hearts ?? 0); track $index) {
                   <svg viewBox="0 0 24 24" [class.empty]="!filled">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                   </svg>
@@ -57,7 +57,7 @@
               <!-- Price -->
               <div class="wish-price-row">
                 <span class="wish-price">Rs. {{ item.product.price | number }}</span>
-                @if (item.product.originalPrice > item.product.price) {
+                @if (item.product.originalPrice ?? 0 > item.product.price) {
                   <span class="wish-price-orig">Rs. {{ item.product.originalPrice | number }}</span>
                 }
               </div>
@@ -80,7 +80,7 @@
                   Move to Cart
                 </button>
                 <button class="btn-share-earn"
-                  (click)="openShare($event, item.product.shareLink)">
+                  (click)="openShare($event, item.product.shareLink ?? '')">
                   <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
                 </button>
               </div>

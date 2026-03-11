@@ -52,11 +52,9 @@ export class Api {
     return this.http.get(url, { headers: this.getHeaders() });
   }
 
-  getProduct(id: number, ref?: string): Observable<any> {
-    const url = ref
-      ? `${this.baseUrl}/products/${id}?ref=${ref}`
-      : `${this.baseUrl}/products/${id}`;
-    return this.http.get(url, { headers: this.getHeaders() });
+
+  getProduct(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/products/${id}`);
   }
 
   // ===== ORDERS =====
@@ -288,5 +286,13 @@ deleteBanner(id: number): Observable<any> {
 }
 getCategories(): Observable<any[]> {
   return this.http.get<any[]>(`${this.baseUrl}/categories`);
+}
+
+calculateShipping(weightGrams: number): Observable<any> {
+  return this.http.get(`${this.baseUrl}/shipping/calculate?weight=${weightGrams}`);
+}
+
+getShippingTiers(): Observable<any> {
+  return this.http.get(`${this.baseUrl}/shipping/tiers`);
 }
 }

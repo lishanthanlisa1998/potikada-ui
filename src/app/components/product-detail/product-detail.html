@@ -246,11 +246,14 @@
 
         <div class="d-product-name">{{ product.name }}</div>
 
+        <!-- Replace price display -->
+          
+
         <div class="d-price-row">
-          <span class="d-price">Rs. {{ product.price }}</span>
-          @if (product.originalPrice > product.price) {
-            <span class="d-price-orig">Rs. {{ product.originalPrice }}</span>
-          }
+          <span class="m-price">Rs. {{ currentPrice }}</span>
+            @if (product.originalPrice > currentPrice) {
+              <span class="m-price-orig">Rs. {{ product.originalPrice }}</span>
+            }
           @if (product.offerTag) {
             <span class="d-offer-tag">{{ product.offerTag }}</span>
           }
@@ -290,17 +293,52 @@
           </div>
         </div>
 
-        <!-- Size -->
-        <div class="d-section-title">Size</div>
-        <div class="d-size-options">
-          @for (size of product.sizes; track size) {
-            <button class="d-size-btn"
-                    [class.active]="selectedSize === size"
-                    (click)="selectSize(size)">
-              {{ size }}
-            </button>
-          }
-        </div>
+
+        <!-- Size variants -->
+@for (v of variants.sizes; track v.id) {
+  <button class="size-btn"
+          [class.active]="selectedSize === v.size"
+          (click)="selectSize(v)">
+    {{ v.size }}
+    @if (v.price) {
+      <span class="size-price">Rs.{{ v.price }}</span>
+    }
+  </button>
+}
+<!-- Color variants -->
+@if (variants.colors?.length > 0) {
+  <div class="m-section-title">Color</div>
+  <div class="color-options">
+    @for (v of variants.colors; track v.id) {
+      <button class="color-btn"
+              [class.active]="selectedColor === v.color"
+              (click)="selectColor(v)"
+              [title]="v.color">
+        <span class="color-dot"
+              [style.background]="v.color_hex || '#ccc'">
+        </span>
+        <span class="color-label">{{ v.color }}</span>
+      </button>
+    }
+  </div>
+}
+
+<!-- Design variants -->
+@if (variants.designs?.length > 0) {
+  <div class="m-section-title">Design</div>
+  <div class="design-options">
+    @for (v of variants.designs; track v.id) {
+      <button class="design-btn"
+              [class.active]="selectedDesign === v.design"
+              (click)="selectDesign(v)">
+        @if (v.image) {
+          <img [src]="v.image" [alt]="v.design">
+        }
+        <span>{{ v.design }}</span>
+      </button>
+    }
+  </div>
+}
 
         <!-- Quantity -->
         <div class="d-section-title">Quantity</div>

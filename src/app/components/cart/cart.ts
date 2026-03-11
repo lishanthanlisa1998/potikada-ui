@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { TopBanner } from '../shared/top-banner/top-banner';
 import { CartService, CartItem } from '../../services/cart';
 import { Menu } from '../shared/menu/menu';
 import { Header } from '../shared/header/header';
 
 @Component({
   selector: 'app-cart',
-  imports: [CommonModule, RouterLink, TopBanner,Header,Menu],
+  imports: [CommonModule, RouterLink,Header,Menu],
   templateUrl: './cart.html',
   styleUrl: './cart.css',
 })

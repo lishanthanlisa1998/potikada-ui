@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { TopBanner } from '../shared/top-banner/top-banner';
 import { SharePopup } from '../shared/share-popup/share-popup';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -9,7 +8,7 @@ import { Header } from '../shared/header/header';
 
 @Component({
   selector: 'app-wishlist',
-  imports: [CommonModule, RouterLink, TopBanner, SharePopup,Menu,Header],
+  imports: [CommonModule, RouterLink, SharePopup,Menu,Header],
   templateUrl: './wishlist.html',
   styleUrl: './wishlist.css',
 })
@@ -24,8 +23,8 @@ sharePopupOpen = false;
     private router: Router
   ) {}
 
-  getSelectedSize(item: WishlistItem): string {
-    return this.selectedSize[item.product.id] || item.product.sizes[0];
+ getSelectedSize(item: WishlistItem): string {
+    return this.selectedSize[item.product.id] || item.product.sizes?.[0] || '';
   }
 
   moveToCart(item: WishlistItem) {
