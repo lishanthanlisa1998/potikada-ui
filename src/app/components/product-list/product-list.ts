@@ -222,9 +222,10 @@ setFilter(cat: string) {
     
   }
 
-  heartsArray(n: number): boolean[] {
-    return Array.from({ length: 5 }, (_, i) => i < n);
-  }
+  heartsArray(n: number = 0): boolean[] {
+  return Array.from({ length: 5 }, (_, i) => i < n);
+}
+
 }
 
 

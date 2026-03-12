@@ -1,6 +1,12 @@
+<!-- ── Reusable Popup ── -->
+<app-popup
+  [config]="popup"
+  (confirmed)="onPopupConfirmed()"
+  (cancelled)="onPopupCancelled()">
+</app-popup>
+
 <div class="product-form-page">
 
-  <!-- Header -->
   <div class="page-header">
     <button class="back-btn" (click)="goBack()">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
@@ -11,47 +17,30 @@
     </div>
   </div>
 
-  @if (loading) {
-    <div class="loading-state">Loading product...</div>
-  }
+  @if (loading) { <div class="loading-state">Loading product...</div> }
 
   @if (!loading) {
-
-    @if (error) {
-      <div class="alert error">⚠️ {{ error }}</div>
-    }
-
-    @if (success) {
-      <div class="alert success">✅ {{ success }}</div>
-    }
-
     <div class="form-layout">
 
-      <!-- Left column -->
+      <!-- ═══ LEFT ═══ -->
       <div class="form-left">
 
-        <!-- Basic info -->
         <div class="form-card">
           <h3 class="card-title">Basic Information</h3>
 
           <div class="field">
             <label>Product Name <span class="req">*</span></label>
-            <input type="text" [(ngModel)]="form.name" placeholder="e.g. Neeye en Kaadhali">
+            <input type="text" [(ngModel)]="form.name" placeholder="e.g. Potikada Art T-Shirt">
           </div>
-
           <div class="field">
             <label>Description <span class="req">*</span></label>
-            <textarea [(ngModel)]="form.description" rows="4"
-                      placeholder="Describe your product..."></textarea>
+            <textarea [(ngModel)]="form.description" rows="4" placeholder="Describe your product..."></textarea>
           </div>
-
           <div class="form-row">
             <div class="field">
               <label>Category <span class="req">*</span></label>
               <select [(ngModel)]="form.category">
-                @for (cat of categories; track cat) {
-                  <option [value]="cat">{{ cat }}</option>
-                }
+                @for (cat of categories; track cat) { <option [value]="cat">{{ cat }}</option> }
               </select>
             </div>
             <div class="field">
@@ -59,128 +48,250 @@
               <input type="text" [(ngModel)]="form.unit" placeholder="e.g. Per copy">
             </div>
           </div>
-
           <div class="form-row">
             <div class="field">
-              <label>Author / Maker</label>
-              <input type="text" [(ngModel)]="form.author" placeholder="Who made this?">
+              <label>Maker Label</label>
+              <select [(ngModel)]="form.maker_label">
+                @for (lbl of makerLabels; track lbl) { <option [value]="lbl">{{ lbl }}</option> }
+              </select>
             </div>
             <div class="field">
-              <label>Brand</label>
-              <input type="text" [(ngModel)]="form.brand" placeholder="Brand name">
+              <label>Maker Name</label>
+              <input type="text" [(ngModel)]="form.maker_name" placeholder="e.g. Nimal Crafts">
             </div>
           </div>
-
-        </div>
-
-        <!-- Pricing -->
-        <div class="form-card">
-          <h3 class="card-title">Pricing</h3>
-
           <div class="form-row">
             <div class="field">
-              <label>Price (Rs.) <span class="req">*</span></label>
+              <label>Base Price (Rs.) <span class="req">*</span></label>
               <input type="number" [(ngModel)]="form.price" placeholder="0">
+              <span class="field-hint">Used when no variant overrides price</span>
             </div>
             <div class="field">
               <label>Original Price (Rs.)</label>
               <input type="number" [(ngModel)]="form.original_price" placeholder="0">
+              <span class="field-hint">Set higher to show discount %</span>
             </div>
           </div>
-
           <div class="form-row">
+            <div class="field">
+              <label>Weight (grams)</label>
+              <input type="number" [(ngModel)]="form.weight_grams" placeholder="e.g. 250">
+            </div>
             <div class="field">
               <label>Badge</label>
               <select [(ngModel)]="form.badge">
-                @for (b of badges; track b) {
-                  <option [value]="b">{{ b || 'None' }}</option>
-                }
+                @for (b of badges; track b) { <option [value]="b">{{ b || 'None' }}</option> }
               </select>
             </div>
-            <div class="field">
-              <label>Offer Tag</label>
-              <input type="text" [(ngModel)]="form.offer_tag"
-                     placeholder="e.g. Buy 2 Get 1 Free">
-            </div>
           </div>
-
-          <div class="form-row">
-            <div class="field">
-              <label>Delivery Price (Rs.)</label>
-              <input type="number" [(ngModel)]="form.delivery_price">
-            </div>
-            <div class="field">
-              <label>Delivery Date</label>
-              <input type="text" [(ngModel)]="form.delivery_date"
-                     placeholder="e.g. 18-20 March">
-            </div>
+          <div class="field">
+            <label>Offer Tag</label>
+            <input type="text" [(ngModel)]="form.offer_tag" placeholder="e.g. Buy 2 Get 1 Free">
           </div>
-
           <div class="toggle-row">
             <span class="toggle-label">Product Active</span>
-            <div class="toggle-switch" [class.on]="form.is_active"
-                 (click)="form.is_active = !form.is_active">
+            <div class="toggle-switch" [class.on]="form.is_active" (click)="form.is_active = !form.is_active">
               <div class="toggle-knob"></div>
             </div>
           </div>
-
         </div>
 
-        <!-- Sizes -->
+        <!-- Step 1 -->
         <div class="form-card">
-          <h3 class="card-title">Sizes / Variants</h3>
+          <h3 class="card-title">Step 1 — Define Options <span class="card-title-hint">Add values for each variant type</span></h3>
 
-          <div class="size-input-row">
-            <input type="text" [(ngModel)]="newSize"
-                   placeholder="e.g. S, M, L, 250ml..."
-                   (keyup.enter)="addSize()">
-            <button class="btn-add-size" (click)="addSize()">Add</button>
+          <div class="option-section">
+            <div class="option-label"><span class="option-icon">📏</span><strong>Sizes</strong></div>
+            <div class="option-add-row">
+              <input type="text" [(ngModel)]="newSizeName" placeholder="e.g. S, M, L, 250ml" (keyup.enter)="addSizeOption()">
+              <button class="btn-add-option" (click)="addSizeOption()">Add</button>
+            </div>
+            <div class="option-tags">
+              @for (s of sizeOptions; track s) {
+                <div class="option-tag">{{ s }}<button (click)="removeSizeOption(s)">×</button></div>
+              }
+              @if (sizeOptions.length === 0) { <span class="option-empty">No sizes added</span> }
+            </div>
           </div>
 
-          <div class="sizes-list">
-            @for (size of form.sizes; track size) {
-              <div class="size-tag">
-                {{ size }}
-                <button (click)="removeSize(size)">×</button>
+          <div class="option-section">
+            <div class="option-label"><span class="option-icon">🎨</span><strong>Colors</strong></div>
+            <div class="option-add-row">
+              <input type="color" [(ngModel)]="newColorHex" class="color-picker-input">
+              <input type="text" [(ngModel)]="newColorName" placeholder="e.g. Red, Navy" (keyup.enter)="addColorOption()">
+              <button class="btn-add-option" (click)="addColorOption()">Add</button>
+            </div>
+            <div class="option-tags">
+              @for (c of colorOptions; track c.name) {
+                <div class="option-tag color-tag">
+                  <span class="color-dot-sm" [style.background]="c.hex"></span>
+                  {{ c.name }}<button (click)="removeColorOption(c.name)">×</button>
+                </div>
+              }
+              @if (colorOptions.length === 0) { <span class="option-empty">No colors added</span> }
+            </div>
+          </div>
+
+          <div class="option-section">
+            <div class="option-label"><span class="option-icon">✨</span><strong>Designs</strong></div>
+            <div class="option-add-row">
+              <input type="text" [(ngModel)]="newDesignName" placeholder="e.g. Cat, Plain, Floral" (keyup.enter)="addDesignOption()">
+              <button class="btn-add-option" (click)="addDesignOption()">Add</button>
+            </div>
+            <div class="option-tags">
+              @for (d of designOptions; track d) {
+                <div class="option-tag">{{ d }}<button (click)="removeDesignOption(d)">×</button></div>
+              }
+              @if (designOptions.length === 0) { <span class="option-empty">No designs added</span> }
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="form-card">
+          <h3 class="card-title">Step 2 — Add Variants <span class="card-title-hint">Pick combination, set details</span></h3>
+
+          <div class="variant-builder">
+            <div class="variant-picker-row">
+              @if (sizeOptions.length > 0) {
+                <div class="field">
+                  <label>Size</label>
+                  <select [(ngModel)]="newVariant.size">
+                    <option value="">— none —</option>
+                    @for (s of sizeOptions; track s) { <option [value]="s">{{ s }}</option> }
+                  </select>
+                </div>
+              }
+              @if (colorOptions.length > 0) {
+                <div class="field">
+                  <label>Color</label>
+                  <select [(ngModel)]="newVariant.color" (ngModelChange)="onNewVariantColorChange()">
+                    <option value="">— none —</option>
+                    @for (c of colorOptions; track c.name) { <option [value]="c.name">{{ c.name }}</option> }
+                  </select>
+                </div>
+              }
+              @if (designOptions.length > 0) {
+                <div class="field">
+                  <label>Design</label>
+                  <select [(ngModel)]="newVariant.design">
+                    <option value="">— none —</option>
+                    @for (d of designOptions; track d) { <option [value]="d">{{ d }}</option> }
+                  </select>
+                </div>
+              }
+            </div>
+
+            @if (sizeOptions.length === 0 && colorOptions.length === 0 && designOptions.length === 0) {
+              <div class="builder-hint">☝️ Add some options in Step 1 first</div>
+            }
+
+            <div class="variant-details-row">
+              <div class="field">
+                <label>Price (Rs.)</label>
+                <input type="number" [(ngModel)]="newVariant.price" [placeholder]="form.price || '0'">
+                <span class="field-hint">Blank = base price</span>
               </div>
-            }
-            @if (form.sizes.length === 0) {
-              <span class="empty-sizes">No sizes added yet</span>
-            }
+              <div class="field">
+                <label>Stock</label>
+                <input type="number" [(ngModel)]="newVariant.stock" placeholder="0">
+              </div>
+              <div class="field">
+                <label>Weight (g)</label>
+                <input type="number" [(ngModel)]="newVariant.weight_grams" [placeholder]="form.weight_grams || '0'">
+              </div>
+              <div class="field">
+                <label>Image URL</label>
+                <input type="text" [(ngModel)]="newVariant.image" placeholder="https://... or upload">
+              </div>
+            </div>
+
+            <button class="btn-add-variant" (click)="addVariant()">+ Add This Variant</button>
           </div>
+
+          @if (variants.length > 0) {
+            <div class="variants-table-wrap">
+              <table class="variants-table">
+                <thead>
+                  <tr>
+                    <th>Combination</th>
+                    <th>Price (Rs.)</th>
+                    <th>Stock</th>
+                    <th>Weight (g)</th>
+                    <th>Image</th>
+                    <th>Default</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (v of variants; track $index) {
+                    <tr [class.row-default]="v.is_default">
+                      <td class="combo-cell">
+                        @if (v.color && v.color_hex) {
+                          <span class="color-dot-sm" [style.background]="v.color_hex"></span>
+                        }
+                        <span class="combo-text">{{ variantLabel(v) }}</span>
+                        @if (v.is_default) { <span class="default-chip">Default</span> }
+                      </td>
+                      <td><input class="table-input" type="number" [(ngModel)]="v.price" [placeholder]="form.price"></td>
+                      <td><input class="table-input stock-input" type="number" [(ngModel)]="v.stock" [class.stock-out]="v.stock === 0"></td>
+                      <td><input class="table-input" type="number" [(ngModel)]="v.weight_grams"></td>
+                      <td class="img-cell">
+                        @if (v.image) {
+                          <img [src]="v.image" class="variant-img-thumb" [alt]="variantLabel(v)">
+                        }
+                        <label class="btn-upload-variant">
+                          {{ v.image ? '↺' : '📷' }}
+                          <input type="file" accept="image/*" style="display:none" (change)="onVariantImageSelected($event, $index)">
+                        </label>
+                        @if (!v.image) {
+                          <input class="table-input url-input" type="text" [(ngModel)]="v.image" placeholder="URL">
+                        }
+                      </td>
+                      <td class="center-cell">
+                        @if (v.is_default) {
+                          <span class="default-chip">✓</span>
+                        } @else {
+                          <button class="btn-set-default" (click)="setDefault($index)">Set</button>
+                        }
+                      </td>
+                      <td class="center-cell">
+                        <button class="btn-delete-row" (click)="removeVariant($index)">×</button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <p class="no-variants-msg">No variants added yet — product will use base price &amp; stock</p>
+          }
         </div>
 
       </div>
 
-      <!-- Right column -->
+      <!-- ═══ RIGHT ═══ -->
       <div class="form-right">
 
-        <!-- Images -->
         <div class="form-card">
           <h3 class="card-title">Product Images</h3>
 
-          <!-- Existing images (edit mode) -->
           @if (existingImages.length > 0) {
             <p class="img-section-label">Current Images</p>
             <div class="images-grid">
               @for (img of existingImages; track img.id) {
                 <div class="img-thumb">
                   <img [src]="img.image_url" alt="Product image">
-                  @if (img.is_primary) {
-                    <div class="img-primary">Primary</div>
-                  }
+                  @if (img.is_primary) { <div class="img-primary">Primary</div> }
                   <button class="img-remove" (click)="markDeleteImage(img.id)">×</button>
                 </div>
               }
             </div>
           }
 
-          <!-- Add by URL -->
           <p class="img-section-label">Add by URL</p>
           <div class="url-input-row">
-            <input type="text" [(ngModel)]="newImageUrl"
-                   placeholder="https://example.com/image.jpg"
-                   (keyup.enter)="addImageUrl()">
+            <input type="text" [(ngModel)]="newImageUrl" placeholder="https://res.cloudinary.com/..." (keyup.enter)="addImageUrl()">
             <button class="btn-add-url" (click)="addImageUrl()">Add</button>
           </div>
 
@@ -188,50 +299,38 @@
             <div class="images-grid">
               @for (url of form.images; track url) {
                 <div class="img-thumb">
-                  <img [src]="url" alt="New image"
-                       onerror="this.src='https://via.placeholder.com/100?text=Error'">
+                  <img [src]="url" alt="New image" onerror="this.src='https://via.placeholder.com/100?text=Error'">
                   <button class="img-remove" (click)="removeImageUrl(url)">×</button>
                 </div>
               }
             </div>
           }
 
-          <!-- Upload file -->
-          <p class="img-section-label">Upload Files</p>
-          <div class="upload-area" (click)="fileInput.click()">
+          <p class="img-section-label">Upload from Device</p>
+          <div class="upload-area" onclick="this.querySelector('input').click()">
             <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-            <p>Click to upload images</p>
-            <span>PNG, JPG up to 5MB each</span>
+            @if (uploadingImage) { <p>Uploading to Cloudinary...</p> }
+            @else { <p>Click to upload images</p><span>PNG, JPG → uploads to Cloudinary</span> }
+            <input type="file" accept="image/*" multiple style="display:none" (change)="onFileSelected($event)">
           </div>
-          <input #fileInput type="file" accept="image/*" multiple
-                 style="display:none" (change)="onFileSelected($event)">
-
-          @if (imagePreviews.length > 0) {
-            <div class="images-grid">
-              @for (preview of imagePreviews; track $index) {
-                <div class="img-thumb">
-                  <img [src]="preview" alt="Preview">
-                  <button class="img-remove" (click)="removeFilePreview($index)">×</button>
-                </div>
-              }
-            </div>
-          }
-
         </div>
 
-        <!-- Save button -->
+        <div class="form-card summary-card">
+          <h3 class="card-title">Summary</h3>
+          <div class="summary-row"><span>Variants</span><strong>{{ variants.length }}</strong></div>
+          <div class="summary-row"><span>In stock</span><strong>{{ variants | countInStock }}</strong></div>
+          <div class="summary-row"><span>Size options</span><strong>{{ sizeOptions.length }}</strong></div>
+          <div class="summary-row"><span>Color options</span><strong>{{ colorOptions.length }}</strong></div>
+          <div class="summary-row"><span>Design options</span><strong>{{ designOptions.length }}</strong></div>
+          <div class="summary-row"><span>Images</span><strong>{{ existingImages.length + form.images.length }}</strong></div>
+        </div>
+
         <button class="btn-save" [disabled]="saving" (click)="save()">
-          @if (saving) {
-            <span class="spinner"></span> Saving...
-          } @else {
-            {{ isEdit ? 'Update Product' : 'Create Product' }} →
-          }
+          @if (saving) { <span class="spinner"></span> Saving... }
+          @else { {{ isEdit ? 'Update Product' : 'Create Product' }} → }
         </button>
-
         <button class="btn-cancel" (click)="goBack()">Cancel</button>
-
       </div>
     </div>
   }
-
 </div>

@@ -1,0 +1,108 @@
+/* ── Popup Overlay ──────────────────────────────────────── */
+.popup-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 99999 !important;
+  animation: popupFadeIn 0.2s ease;
+}
+
+@keyframes popupFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Box ── */
+.popup-box {
+  background: #fff;
+  border-radius: 18px;
+  padding: 2.5rem 2rem 2rem;
+  max-width: 400px;
+  width: 92%;
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+  animation: popupSlideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  z-index: 100000;
+}
+
+@keyframes popupSlideUp {
+  from { transform: translateY(50px) scale(0.95); opacity: 0; }
+  to   { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+
+/* Top accent border per type */
+.popup-success { border-top: 5px solid #C8892A; }
+.popup-error   { border-top: 5px solid #e74c3c; }
+.popup-warning { border-top: 5px solid #f39c12; }
+.popup-confirm { border-top: 5px solid #3498db; }
+
+/* ── Icon ── */
+.popup-icon {
+  font-size: 3.2rem;
+  line-height: 1;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* ── Title ── */
+.popup-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0F0A06;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Message ── */
+.popup-message {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+/* ── Actions ── */
+.popup-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-direction: column;
+}
+.popup-actions.has-cancel {
+  flex-direction: row;
+}
+
+/* ── Buttons ── */
+.popup-btn {
+  flex: 1;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+}
+.popup-btn:hover  { opacity: 0.88; }
+.popup-btn:active { transform: scale(0.97); }
+
+.popup-btn.confirm {
+  background: #C8892A;
+  color: #fff;
+}
+.popup-error   .popup-btn.confirm { background: #e74c3c; }
+.popup-warning .popup-btn.confirm { background: #f39c12; }
+.popup-confirm .popup-btn.confirm { background: #3498db; }
+
+.popup-btn.cancel {
+  background: #f5f0ea;
+  color: #555;
+  border: 1px solid #ddd;
+}
+.popup-btn.cancel:hover { background: #ece8e1; }

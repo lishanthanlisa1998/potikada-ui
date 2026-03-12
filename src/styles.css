@@ -30,3 +30,16 @@ body{
   background: var(--liked-badge) !important; /* A vibrant 'heart' red/pink */
   /* Optional: background: linear-gradient(45deg, #ff4757, #ff6b81); */
 }
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.header-logo img {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}

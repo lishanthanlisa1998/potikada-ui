@@ -21,19 +21,22 @@ export class ProductDetail implements OnInit {
   product: any;
   productImages: string[] = [];
 
-  // Variants
-  variants: any = { sizes: [], colors: [], designs: [] };
-  selectedSize    = '';
-  selectedColor   = '';
-  selectedDesign  = '';
+  // Flat combo variants from API
+  variants: any[]    = [];
+  sizes:    string[] = [];
+  colors:   any[]    = [];   // [{color, color_hex}]
+  designs:  string[] = [];
+  defaultVariant: any = null;
+
+  selectedSize   = '';
+  selectedColor  = '';
+  selectedDesign = '';
   selectedVariantPrice: number | null = null;
   selectedVariantStock: number | null = null;
 
-  // Delivery
   deliveryFee = 0;
-
-  loading = true;
-  error   = false;
+  loading     = true;
+  error       = false;
 
   activeImage      = '';
   activeImageIndex = 0;
@@ -47,17 +50,14 @@ export class ProductDetail implements OnInit {
   menuOpen       = false;
 
   constructor(
-    private route:       ActivatedRoute,
-    private router:      Router,
-    private apiService:  Api,
+    private route:      ActivatedRoute,
+    private router:     Router,
+    private apiService: Api,
     public  cartService: CartService
   ) {}
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      this.loadProduct(+params['id']);
-    });
-
+    this.route.params.subscribe(params => this.loadProduct(+params['id']));
     const ref = this.route.snapshot.queryParams['ref'];
     if (ref) localStorage.setItem('ref_code', ref);
   }
@@ -68,26 +68,39 @@ export class ProductDetail implements OnInit {
 
     this.apiService.getProduct(id).subscribe({
       next: (res: any) => {
-        const p          = res.product ?? res;
-        this.product     = this.formatProduct(p);
-        this.variants    = res.variants ?? { sizes: [], colors: [], designs: [] };
+        const p = res.product ?? res;
+        this.product = this.formatProduct(p);
 
         // Images
         const images       = p.images?.map((img: any) => img.image_url) ?? [];
         this.productImages = images;
         this.activeImage   = images[0] ?? '';
 
-        // Default selections
-        const sizes = this.variants.sizes ?? [];
-        if (sizes.length > 0) this.selectSize(sizes[0]);
+        // Flat variants + unique option lists
+        this.variants       = res.variants        ?? [];
+        this.sizes          = res.sizes           ?? [];
+        this.colors         = res.colors          ?? [];
+        this.designs        = res.designs         ?? [];
+        this.defaultVariant = res.default_variant ?? null;
 
-        const colors = this.variants.colors ?? [];
-        if (colors.length > 0) this.selectColor(colors[0]);
+        // Apply default variant
+        if (this.defaultVariant) {
+          this.selectedSize             = this.defaultVariant.size   ?? '';
+          this.selectedColor            = this.defaultVariant.color  ?? '';
+          this.selectedDesign           = this.defaultVariant.design ?? '';
+          this.selectedVariantPrice     = this.defaultVariant.price  ?? null;
+          this.selectedVariantStock     = this.defaultVariant.stock  ?? null;
+          if (this.defaultVariant.image) this.activeImage = this.defaultVariant.image;
+        } else if (this.variants.length > 0) {
+          const first = this.variants[0];
+          this.selectedSize             = first.size   ?? '';
+          this.selectedColor            = first.color  ?? '';
+          this.selectedDesign           = first.design ?? '';
+          this.selectedVariantPrice     = first.price  ?? null;
+          this.selectedVariantStock     = first.stock  ?? null;
+        }
 
-        const designs = this.variants.designs ?? [];
-        if (designs.length > 0) this.selectDesign(designs[0]);
-
-        // Calculate delivery fee based on product weight
+        // Delivery fee
         const weight = p.weight_grams ?? 0;
         if (weight > 0) this.calculateDelivery(weight);
 
@@ -128,56 +141,56 @@ export class ProductDetail implements OnInit {
 
   calculateDelivery(weightGrams: number) {
     this.apiService.calculateShipping(weightGrams).subscribe({
-      next: (res: any) => {
-        this.deliveryFee = res.delivery_fee ?? 0;
-      },
-      error: () => {
-        this.deliveryFee = 300; // fallback
-      }
+      next:  (res: any) => { this.deliveryFee = res.delivery_fee ?? 0; },
+      error: ()         => { this.deliveryFee = 300; }
     });
   }
 
   // ===== VARIANT SELECTION =====
-  selectSize(variant: any) {
-    this.selectedSize = variant.size ?? variant;
-    this.selectedVariantPrice = variant.price  ?? null;
-    this.selectedVariantStock = variant.stock  ?? null;
+  selectSize(size: string) {
+    this.selectedSize = size;
     this.updateVariantCombo();
   }
 
-  selectColor(variant: any) {
-    this.selectedColor = variant.color;
-    if (variant.image) this.activeImage = variant.image;
+  selectColor(c: any) {
+    this.selectedColor = c.color;
     this.updateVariantCombo();
   }
 
-  selectDesign(variant: any) {
-    this.selectedDesign = variant.design;
-    if (variant.image) this.activeImage = variant.image;
+  selectDesign(design: string) {
+    this.selectedDesign = design;
     this.updateVariantCombo();
   }
 
-  // When size+color+design all selected → find exact combo price/stock
   updateVariantCombo() {
-    if (!this.selectedSize && !this.selectedColor && !this.selectedDesign) return;
-
-    // Try to find exact matching variant
-    const allVariants = [
-      ...this.variants.sizes,
-      ...this.variants.colors,
-      ...this.variants.designs,
-    ];
-
-    // Find variant that matches all selected options
-    const match = allVariants.find((v: any) => {
-      const sizeMatch   = !this.selectedSize   || v.size   === this.selectedSize   || !v.size;
-      const colorMatch  = !this.selectedColor  || v.color  === this.selectedColor  || !v.color;
-      const designMatch = !this.selectedDesign || v.design === this.selectedDesign || !v.design;
-      return sizeMatch && colorMatch && designMatch && (v.size || v.color || v.design);
+    const match = this.variants.find((v: any) => {
+      const sizeOk   = !v.size   || !this.selectedSize   || v.size   === this.selectedSize;
+      const colorOk  = !v.color  || !this.selectedColor  || v.color  === this.selectedColor;
+      const designOk = !v.design || !this.selectedDesign || v.design === this.selectedDesign;
+      return sizeOk && colorOk && designOk;
     });
 
-    if (match?.price) this.selectedVariantPrice = match.price;
-    if (match?.stock !== undefined) this.selectedVariantStock = match.stock;
+    if (match) {
+      this.selectedVariantPrice = match.price ?? null;
+      this.selectedVariantStock = match.stock ?? 0;
+      if (match.image) this.activeImage = match.image;
+    }
+  }
+
+  // All combos for a size out of stock?
+  isSizeOutOfStock(size: string): boolean {
+    const combos = this.variants.filter((v: any) => v.size === size);
+    if (combos.length === 0) return false;
+    return combos.every((v: any) => v.stock === 0);
+  }
+
+  // All combos for a color (with current size) out of stock?
+  isColorOutOfStock(color: string): boolean {
+    const combos = this.variants.filter((v: any) =>
+      v.color === color && (!this.selectedSize || v.size === this.selectedSize)
+    );
+    if (combos.length === 0) return false;
+    return combos.every((v: any) => v.stock === 0);
   }
 
   get currentPrice(): number {
@@ -189,13 +202,14 @@ export class ProductDetail implements OnInit {
   }
 
   get isOutOfStock(): boolean {
-    return this.currentStock === 0;
+    return this.variants.length > 0 && this.currentStock === 0;
   }
 
   get stockLabel(): string {
-    if (this.currentStock === 0) return 'Out of stock';
-    if (this.currentStock <= 5) return `Only ${this.currentStock} left!`;
-    return `${this.currentStock} in stock`;
+    if (this.variants.length === 0) return '';
+    if (this.currentStock === 0)    return '😔 Out of stock';
+    if (this.currentStock <= 5)     return `🔥 Only ${this.currentStock} left!`;
+    return `✅ ${this.currentStock} in stock`;
   }
 
   // ===== IMAGE =====
@@ -205,12 +219,8 @@ export class ProductDetail implements OnInit {
   }
 
   // ===== QUANTITY =====
-  increaseQty() {
-    if (this.quantity < this.currentStock) this.quantity++;
-  }
-  decreaseQty() {
-    if (this.quantity > 1) this.quantity--;
-  }
+  increaseQty() { if (this.quantity < this.currentStock) this.quantity++; }
+  decreaseQty() { if (this.quantity > 1) this.quantity--; }
 
   // ===== WISHLIST =====
   toggleLike() {
@@ -221,20 +231,20 @@ export class ProductDetail implements OnInit {
   }
 
   // ===== CART =====
-addToCart(event?: Event) {
-  if (event) event.stopPropagation();
-  if (!this.product || this.isOutOfStock) return;
+  addToCart(event?: Event) {
+    if (event) event.stopPropagation();
+    if (!this.product || this.isOutOfStock) return;
 
-  this.cartService.addToCart(
-    { ...this.product, price: this.currentPrice },
-    this.selectedSize,   // size
-    this.quantity,       // quantity
-    this.selectedColor,  // color
-    this.selectedDesign  // design
-  );
-  this.addedToCart = true;
-  setTimeout(() => this.addedToCart = false, 2000);
-}
+    this.cartService.addToCart(
+      { ...this.product, price: this.currentPrice },
+      this.selectedSize,
+      this.quantity,
+      this.selectedColor,
+      this.selectedDesign
+    );
+    this.addedToCart = true;
+    setTimeout(() => this.addedToCart = false, 2000);
+  }
 
   buyNow() {
     this.addToCart();
@@ -246,13 +256,9 @@ addToCart(event?: Event) {
     this.sharePopupOpen = true;
   }
 
-  setTab(tab: 'description' | 'reviews' | 'qa') {
-    this.activeTab = tab;
-  }
-
+  setTab(tab: 'description' | 'reviews' | 'qa') { this.activeTab = tab; }
   goBack() { window.history.back(); }
-
-  heartsArray(n: number): boolean[] {
+  heartsArray(n: number = 0): boolean[] {
     return Array.from({ length: 5 }, (_, i) => i < n);
   }
 }

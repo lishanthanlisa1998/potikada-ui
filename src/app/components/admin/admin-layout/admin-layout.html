@@ -5,7 +5,9 @@
 
     <!-- Brand -->
     <div class="sidebar-brand">
-      <span class="brand-logo">potikada</span>
+      <a class="header-logo" routerLink="/">
+    <img src="assets/potikadalogo.png" alt="Potikada" />
+    </a>
       <span class="brand-sub">admin</span>
     </div>
 
@@ -30,6 +32,16 @@
       <a class="nav-item" routerLink="/admin/affiliates" routerLinkActive="active">
         <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span>Affiliates</span>
+      </a>
+
+      <a class="nav-item" routerLink="/admin/categories" routerLinkActive="active">
+        <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        <span>Categories</span>
+      </a>
+
+      <a class="nav-item" routerLink="/admin/banners" routerLinkActive="active">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="10" width="18" height="5" rx="1"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg>
+        <span>Banners</span>
       </a>
 
       <div class="nav-divider"></div>

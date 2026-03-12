@@ -1,0 +1,33 @@
+@if (config) {
+  <div class="popup-overlay" (click)="onOverlay()">
+    <div class="popup-box"
+         [class.popup-success]="config.type === 'success'"
+         [class.popup-error]="config.type === 'error'"
+         [class.popup-warning]="config.type === 'warning'"
+         [class.popup-confirm]="config.type === 'confirm'"
+         (click)="$event.stopPropagation()">
+
+      <div class="popup-icon">{{ icon }}</div>
+
+      @if (config.title) {
+        <div class="popup-title">{{ config.title }}</div>
+      }
+
+      <div class="popup-message">{{ config.message }}</div>
+
+      <div class="popup-actions" [class.has-cancel]="config.type === 'confirm'">
+
+        @if (config.type === 'confirm') {
+          <button class="popup-btn cancel" (click)="onCancel()">
+            {{ config.cancelLabel || 'Cancel' }}
+          </button>
+        }
+
+        <button class="popup-btn confirm" (click)="onConfirm()">
+          {{ config.confirmLabel || defaultConfirmLabel }}
+        </button>
+
+      </div>
+    </div>
+  </div>
+}

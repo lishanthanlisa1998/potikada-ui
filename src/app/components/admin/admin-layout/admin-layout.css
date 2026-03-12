@@ -254,5 +254,6 @@
     transform: translateX(0);
   }
 
-  .admin-content { padding: 16px; }
+  .admin-content { padding: 16px;overflow-y: auto; }
 }
+

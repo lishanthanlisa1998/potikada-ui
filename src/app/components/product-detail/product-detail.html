@@ -6,9 +6,7 @@
     <div class="skeleton-header"></div>
     <div class="skeleton-image"></div>
     <div class="skeleton-sub-images">
-      <div class="skeleton-sub"></div>
-      <div class="skeleton-sub"></div>
-      <div class="skeleton-sub"></div>
+      <div class="skeleton-sub"></div><div class="skeleton-sub"></div><div class="skeleton-sub"></div>
     </div>
     <div class="skeleton-info">
       <div class="skeleton-line wide"></div>
@@ -28,101 +26,101 @@
   </div>
 }
 
-
 <!-- ======== MOBILE ======== -->
 <div class="mobile-layout">
-
-  <header class="mobile-header">
-    <button class="back-btn" (click)="goBack()">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <a class="logo" routerLink="/">potikada</a>
-    <button class="header-cart">
-      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-    </button>
-  </header>
-
+  <app-header [showBack]="true"  [showCart]="false"  [showMenu]="false" [showMenu]="false"  (menuClicked)="menuOpen = true"></app-header>
   @if (product) {
-
-    <!-- Main image -->
     <div class="m-product-image">
       <img [src]="activeImage" [alt]="product.name">
       @if (product.badge) {
-        <div class="m-badge" [class.sale]="product.badge==='Sale'" [class.new]="product.badge==='New'">
-          {{ product.badge }}
-        </div>
+        <div class="m-badge" [class.sale]="product.badge==='Sale'" [class.new]="product.badge==='New'">{{ product.badge }}</div>
       }
       <button class="m-wish-btn" [class.liked]="isLiked" (click)="toggleLike()">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>
     </div>
 
-    <!-- Sub images -->
     <div class="m-sub-images">
       @for (img of product.images; track $index) {
-        <div class="m-sub-img" [class.active]="activeImageIndex === $index"
-             (click)="switchImage($index)">
-          <img [src]="img" [alt]="product.name + ' ' + $index">
+        <div class="m-sub-img" [class.active]="activeImageIndex === $index" (click)="switchImage($index)">
+          <img [src]="img" [alt]="product.name">
         </div>
       }
     </div>
 
-    <!-- Product info -->
     <div class="m-product-info">
-
       <div class="m-product-name">{{ product.name }}</div>
 
       <div class="m-price-row">
-        <span class="m-price">Rs. {{ product.price }}</span>
-        @if (product.originalPrice > product.price) {
+        <span class="m-price">Rs. {{ currentPrice }}</span>
+        @if ((product.originalPrice ?? 0) > currentPrice) {
           <span class="m-price-orig">Rs. {{ product.originalPrice }}</span>
         }
-        @if (product.offerTag) {
-          <span class="m-offer-tag">{{ product.offerTag }}</span>
-        }
+        @if (product.offerTag) { <span class="m-offer-tag">{{ product.offerTag }}</span> }
       </div>
 
       <div class="m-hearts">
         <div class="m-hearts-icons">
           @for (filled of heartsArray(product.hearts); track $index) {
-            <svg viewBox="0 0 24 24" [class.empty]="!filled">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
+            <svg viewBox="0 0 24 24" [class.empty]="!filled"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           }
         </div>
         <span class="m-reviews">(12 reviews)</span>
       </div>
 
       <div class="m-meta">
-        <div class="m-meta-row">
-          <span class="m-meta-label">Category:</span>
-          <span class="m-meta-value">{{ product.category }}</span>
-        </div>
-        <div class="m-meta-row">
-          <span class="m-meta-label">Unit:</span>
-          <span class="m-meta-value">{{ product.unit }}</span>
-        </div>
-        <div class="m-meta-row">
-          <span class="m-meta-label">Author:</span>
-          <span class="m-meta-value">{{ product.author }}</span>
-        </div>
-        <div class="m-meta-row">
-          <span class="m-meta-label">Brand:</span>
-          <span class="m-meta-value">{{ product.brand }}</span>
-        </div>
-      </div>
-
-      <!-- Size -->
-      <div class="m-section-title">Size</div>
-      <div class="size-options">
-        @for (size of product.sizes; track size) {
-          <button class="size-btn"
-                  [class.active]="selectedSize === size"
-                  (click)="selectSize(size)">
-            {{ size }}
-          </button>
+        <div class="m-meta-row"><span class="m-meta-label">Category:</span><span class="m-meta-value">{{ product.category }}</span></div>
+        <div class="m-meta-row"><span class="m-meta-label">Unit:</span><span class="m-meta-value">{{ product.unit }}</span></div>
+        @if (product.maker_label && product.maker_name) {
+          <div class="m-meta-row">
+            <span class="m-meta-label">{{ product.maker_label }}:</span>
+            <span class="m-meta-value">{{ product.maker_name }}</span>
+          </div>
         }
       </div>
+
+      <!-- VARIANTS -->
+      @if (sizes.length > 0) {
+        <div class="variant-section">
+          <div class="variant-label">📏 Size</div>
+          <div class="size-options">
+            @for (size of sizes; track size) {
+              <button class="size-btn" [class.active]="selectedSize === size" [class.out]="isSizeOutOfStock(size)" (click)="selectSize(size)">
+                {{ size }}@if (isSizeOutOfStock(size)) {<span class="out-x">✕</span>}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (colors.length > 0) {
+        <div class="variant-section">
+          <div class="variant-label">🎨 Color @if (selectedColor) {<span class="selected-val">— {{ selectedColor }}</span>}</div>
+          <div class="color-options">
+            @for (c of colors; track c.color) {
+              <button class="color-btn" [class.active]="selectedColor === c.color" [class.out]="isColorOutOfStock(c.color)" (click)="selectColor(c)">
+                <span class="color-dot" [style.background]="c.color_hex"></span>
+                {{ c.color }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (designs.length > 0) {
+        <div class="variant-section">
+          <div class="variant-label">✨ Design @if (selectedDesign) {<span class="selected-val">— {{ selectedDesign }}</span>}</div>
+          <div class="design-options">
+            @for (d of designs; track d) {
+              <button class="design-btn" [class.active]="selectedDesign === d" (click)="selectDesign(d)">{{ d }}</button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (stockLabel) {
+        <div class="stock-label" [class.out]="isOutOfStock">{{ stockLabel }}</div>
+      }
 
       <!-- Quantity -->
       <div class="m-section-title">Quantity</div>
@@ -134,289 +132,224 @@
         </div>
       </div>
 
-      <!-- Delivery -->
-      <div class="delivery-box">
-        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-        <div>
-          <div class="delivery-title">Standard</div>
-          <div class="delivery-sub">Guaranteed by {{ product.deliveryDate }}</div>
+      <!-- Delivery + Total -->
+      <div class="delivery-total-box">
+        <div class="delivery-row">
+          <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <div class="delivery-info">
+            <div class="delivery-title">Standard Delivery</div>
+            <div class="delivery-sub">{{ product.deliveryDate ? 'Guaranteed by ' + product.deliveryDate : 'Delivered in 3–5 days' }}</div>
+          </div>
+          <div class="delivery-fee-val">Rs. {{ deliveryFee }}</div>
         </div>
-        <div class="delivery-price">Rs. {{ product.deliveryPrice }}</div>
+        <div class="total-row">
+          <span class="total-label">Total ({{ quantity }} item{{ quantity > 1 ? 's' : '' }})</span>
+          <span class="total-val">Rs. {{ (currentPrice * quantity) + deliveryFee }}</span>
+        </div>
       </div>
 
     </div>
 
-    <!-- Tabs -->
     <div class="m-tabs-section">
       <div class="tab-headers">
-        <button class="tab-btn" [class.active]="activeTab==='description'"
-                (click)="setTab('description')">Description</button>
-        <button class="tab-btn" [class.active]="activeTab==='reviews'"
-                (click)="setTab('reviews')">Reviews (12)</button>
-        <button class="tab-btn" [class.active]="activeTab==='qa'"
-                (click)="setTab('qa')">Q&A (3)</button>
+        <button class="tab-btn" [class.active]="activeTab==='description'" (click)="setTab('description')">Description</button>
+        <button class="tab-btn" [class.active]="activeTab==='reviews'" (click)="setTab('reviews')">Reviews (12)</button>
+        <button class="tab-btn" [class.active]="activeTab==='qa'" (click)="setTab('qa')">Q&A (3)</button>
       </div>
-      @if (activeTab === 'description') {
-        <div class="tab-content">
-          <p>{{ product.description }}</p>
-        </div>
-      }
-      @if (activeTab === 'reviews') {
-        <div class="tab-content">
-          <p>⭐ Customer reviews coming soon!</p>
-        </div>
-      }
-      @if (activeTab === 'qa') {
-        <div class="tab-content">
-          <p>❓ Questions & Answers coming soon!</p>
-        </div>
-      }
+      @if (activeTab === 'description') { <div class="tab-content"><p>{{ product.description }}</p></div> }
+      @if (activeTab === 'reviews')     { <div class="tab-content"><p>⭐ Customer reviews coming soon!</p></div> }
+      @if (activeTab === 'qa')          { <div class="tab-content"><p>❓ Questions & Answers coming soon!</p></div> }
     </div>
 
     <div class="page-bottom-pad"></div>
 
-    <!-- Sticky action buttons -->
     <div class="m-actions">
       <button class="btn-like" [class.liked]="isLiked" (click)="toggleLike()">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>
-      <button class="btn-cart" (click)="addToCart()">
+      <button class="btn-cart" [disabled]="isOutOfStock" (click)="addToCart()">
         <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        Cart
+        {{ isOutOfStock ? 'Out of Stock' : 'Cart' }}
       </button>
-      <button class="btn-share" (click)="openSharePopup()">
-        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        Earn
+      <button class="btn-buy" [disabled]="isOutOfStock" (click)="buyNow()">
+        {{ isOutOfStock ? '😔 Unavailable' : 'Buy Now' }}
       </button>
-      <button class="btn-buy" (click)="buyNow()">Buy Now</button>
     </div>
-
   }
 
-  <app-bottom-nav (earnMoneyClicked)="earnPopupOpen = true"  />
-
+  <app-bottom-nav (earnMoneyClicked)="earnPopupOpen = true" />
 </div>
 
 <!-- ======== DESKTOP ======== -->
 <div class="desktop-layout">
-
-   <div class="desktop-wrapper">
+  <div class="desktop-wrapper">
     <div class="desktop-main">
+      <app-header [showBack]="true" (menuClicked)="menuOpen = true"></app-header>
 
- <app-header [showBack]="true" (menuClicked)="menuOpen = true"></app-header>
+      @if (product) {
+        <div class="breadcrumb">
+          <a routerLink="/">Home</a><span class="breadcrumb-sep">›</span>
+          <a href="#">{{ product.category }}</a><span class="breadcrumb-sep">›</span>
+          <span>{{ product.name }}</span>
+        </div>
 
-  @if (product) {
+        <div class="d-product-layout">
 
-    <!-- Breadcrumb -->
-    <div class="breadcrumb">
-      <a routerLink="/">Home</a>
-      <span class="breadcrumb-sep">›</span>
-      <a href="#">{{ product.category }}</a>
-      <span class="breadcrumb-sep">›</span>
-      <span>{{ product.name }}</span>
-    </div>
-
-    <!-- Product layout -->
-    <div class="d-product-layout">
-
-      <!-- Gallery -->
-      <div class="d-gallery">
-        <div class="d-main-image">
-          <img [src]="activeImage" [alt]="product.name">
-          @if (product.badge) {
-            <div class="d-main-badge"
-                 [class.sale]="product.badge==='Sale'"
-                 [class.new]="product.badge==='New'">
-              {{ product.badge }}
+          <!-- Gallery — fixed size -->
+          <div class="d-gallery">
+            <div class="d-main-image">
+              <img [src]="activeImage" [alt]="product.name">
+              @if (product.badge) {
+                <div class="d-main-badge" [class.sale]="product.badge==='Sale'" [class.new]="product.badge==='New'">{{ product.badge }}</div>
+              }
             </div>
-          }
-        </div>
-        <div class="d-sub-images">
-          @for (img of product.images; track $index) {
-            <div class="d-sub-img" [class.active]="activeImageIndex === $index"
-                 (click)="switchImage($index)">
-              <img [src]="img" [alt]="product.name + ' ' + $index">
+            <div class="d-sub-images">
+              @for (img of product.images; track $index) {
+                <div class="d-sub-img" [class.active]="activeImageIndex === $index" (click)="switchImage($index)">
+                  <img [src]="img" [alt]="product.name">
+                </div>
+              }
             </div>
-          }
-        </div>
-      </div>
+          </div>
 
-      <!-- Info -->
-      <div class="d-product-info">
+          <!-- Info -->
+          <div class="d-product-info">
+            <div class="d-product-name">{{ product.name }}</div>
 
-        <div class="d-product-name">{{ product.name }}</div>
+            <div class="d-price-row">
+              <span class="d-price">Rs. {{ currentPrice }}</span>
+              @if ((product.originalPrice ?? 0) > currentPrice) {
+                <span class="d-price-orig">Rs. {{ product.originalPrice }}</span>
+                <span class="d-discount-pct">
+                  {{ (((product.originalPrice ?? 0) - currentPrice) / (product.originalPrice ?? 1) * 100) | number:'1.0-0' }}% OFF
+                </span>
+              }
+              @if (product.offerTag) { <span class="d-offer-tag">{{ product.offerTag }}</span> }
+            </div>
 
-        <!-- Replace price display -->
-          
+            <div class="d-hearts">
+              <div class="d-hearts-icons">
+                @for (filled of heartsArray(product.hearts); track $index) {
+                  <svg viewBox="0 0 24 24" [class.empty]="!filled"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                }
+              </div>
+              <span class="d-reviews">(12 reviews)</span>
+            </div>
 
-        <div class="d-price-row">
-          <span class="m-price">Rs. {{ currentPrice }}</span>
-            @if (product.originalPrice > currentPrice) {
-              <span class="m-price-orig">Rs. {{ product.originalPrice }}</span>
+            <div class="d-meta">
+              <div class="d-meta-row"><span class="d-meta-label">Category</span><span class="d-meta-value">{{ product.category }}</span></div>
+              <div class="d-meta-row"><span class="d-meta-label">Unit</span><span class="d-meta-value">{{ product.unit }}</span></div>
+              @if (product.maker_label && product.maker_name) {
+                <div class="d-meta-row">
+                  <span class="d-meta-label">{{ product.maker_label }}</span>
+                  <span class="d-meta-value">{{ product.maker_name }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- VARIANTS -->
+            @if (sizes.length > 0) {
+              <div class="variant-section">
+                <div class="variant-label">📏 Size</div>
+                <div class="size-options">
+                  @for (size of sizes; track size) {
+                    <button class="size-btn" [class.active]="selectedSize === size" [class.out]="isSizeOutOfStock(size)" (click)="selectSize(size)">
+                      {{ size }}@if (isSizeOutOfStock(size)) {<span class="out-x">✕</span>}
+                    </button>
+                  }
+                </div>
+              </div>
             }
-          @if (product.offerTag) {
-            <span class="d-offer-tag">{{ product.offerTag }}</span>
-          }
-        </div>
 
-        <div class="d-hearts">
-          <div class="d-hearts-icons">
-            @for (filled of heartsArray(product.hearts); track $index) {
-              <svg viewBox="0 0 24 24" [class.empty]="!filled">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-              </svg>
+            @if (colors.length > 0) {
+              <div class="variant-section">
+                <div class="variant-label">🎨 Color @if (selectedColor) {<span class="selected-val">— {{ selectedColor }}</span>}</div>
+                <div class="color-options">
+                  @for (c of colors; track c.color) {
+                    <button class="color-btn" [class.active]="selectedColor === c.color" [class.out]="isColorOutOfStock(c.color)" (click)="selectColor(c)">
+                      <span class="color-dot" [style.background]="c.color_hex"></span>
+                      {{ c.color }}
+                      @if (isColorOutOfStock(c.color)) { <span class="out-x">✕</span> }
+                    </button>
+                  }
+                </div>
+              </div>
             }
-          </div>
-          <span class="d-reviews">(12 reviews)</span>
-        </div>
 
-        <div class="d-meta">
-          <div class="d-meta-row">
-            <span class="d-meta-label">Category:</span>
-            <span class="d-meta-value">{{ product.category }}</span>
-          </div>
-          <div class="d-meta-row">
-            <span class="d-meta-label">Unit:</span>
-            <span class="d-meta-value">{{ product.unit }}</span>
-          </div>
-          <div class="d-meta-row">
-            <span class="d-meta-label">Author:</span>
-            <span class="d-meta-value">{{ product.author }}</span>
-          </div>
-          <div class="d-meta-row">
-            <span class="d-meta-label">Idea Owner:</span>
-            <span class="d-meta-value">{{ product.brand }}</span>
-          </div>
-          <div class="d-meta-row">
-            <span class="d-meta-label">Brand:</span>
-            <span class="d-meta-value">{{ product.brand }}</span>
-          </div>
-        </div>
+            @if (designs.length > 0) {
+              <div class="variant-section">
+                <div class="variant-label">✨ Design @if (selectedDesign) {<span class="selected-val">— {{ selectedDesign }}</span>}</div>
+                <div class="design-options">
+                  @for (d of designs; track d) {
+                    <button class="design-btn" [class.active]="selectedDesign === d" (click)="selectDesign(d)">{{ d }}</button>
+                  }
+                </div>
+              </div>
+            }
 
+            @if (stockLabel) {
+              <div class="stock-label" [class.out]="isOutOfStock">{{ stockLabel }}</div>
+            }
 
-        <!-- Size variants -->
-@for (v of variants.sizes; track v.id) {
-  <button class="size-btn"
-          [class.active]="selectedSize === v.size"
-          (click)="selectSize(v)">
-    {{ v.size }}
-    @if (v.price) {
-      <span class="size-price">Rs.{{ v.price }}</span>
-    }
-  </button>
-}
-<!-- Color variants -->
-@if (variants.colors?.length > 0) {
-  <div class="m-section-title">Color</div>
-  <div class="color-options">
-    @for (v of variants.colors; track v.id) {
-      <button class="color-btn"
-              [class.active]="selectedColor === v.color"
-              (click)="selectColor(v)"
-              [title]="v.color">
-        <span class="color-dot"
-              [style.background]="v.color_hex || '#ccc'">
-        </span>
-        <span class="color-label">{{ v.color }}</span>
-      </button>
-    }
-  </div>
-}
+            <!-- Quantity -->
+            <div class="d-section-title">Quantity</div>
+            <div class="d-qty-row">
+              <div class="d-qty-controls">
+                <button class="d-qty-btn" (click)="decreaseQty()">−</button>
+                <span class="d-qty-val">{{ quantity }}</span>
+                <button class="d-qty-btn" (click)="increaseQty()">+</button>
+              </div>
+            </div>
 
-<!-- Design variants -->
-@if (variants.designs?.length > 0) {
-  <div class="m-section-title">Design</div>
-  <div class="design-options">
-    @for (v of variants.designs; track v.id) {
-      <button class="design-btn"
-              [class.active]="selectedDesign === v.design"
-              (click)="selectDesign(v)">
-        @if (v.image) {
-          <img [src]="v.image" [alt]="v.design">
-        }
-        <span>{{ v.design }}</span>
-      </button>
-    }
-  </div>
-}
+            <!-- Delivery + Total box -->
+            <div class="delivery-total-box">
+              <div class="delivery-row">
+                <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <div class="delivery-info">
+                  <div class="delivery-title">Standard Delivery</div>
+                  <div class="delivery-sub">{{ product.deliveryDate ? 'Guaranteed by ' + product.deliveryDate : 'Delivered in 3–5 days' }}</div>
+                </div>
+                <div class="delivery-fee-val">Rs. {{ deliveryFee }}</div>
+              </div>
+              <div class="total-row">
+                <span class="total-label">Total ({{ quantity }} item{{ quantity > 1 ? 's' : '' }})</span>
+                <span class="total-val">Rs. {{ (currentPrice * quantity) + deliveryFee }}</span>
+              </div>
+            </div>
 
-        <!-- Quantity -->
-        <div class="d-section-title">Quantity</div>
-        <div class="d-qty-row">
-          <div class="d-qty-controls">
-            <button class="d-qty-btn" (click)="decreaseQty()">−</button>
-            <span class="d-qty-val">{{ quantity }}</span>
-            <button class="d-qty-btn" (click)="increaseQty()">+</button>
+            <!-- Actions -->
+            <div class="d-actions">
+              <button class="d-btn-like" [class.liked]="isLiked" (click)="toggleLike()">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+              <button class="d-btn-cart" [disabled]="isOutOfStock" (click)="addToCart()">
+                <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                {{ isOutOfStock ? 'Out of Stock' : 'Add to Cart' }}
+              </button>
+              <button class="d-btn-buy" [disabled]="isOutOfStock" (click)="buyNow()">
+                {{ isOutOfStock ? '😔 Unavailable' : 'Buy Now →' }}
+              </button>
+            </div>
+
           </div>
         </div>
 
-        <!-- Delivery -->
-        <div class="d-delivery-box">
-          <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-          <div>
-            <div class="d-delivery-title">Standard</div>
-            <div class="d-delivery-sub">Guaranteed by {{ product.deliveryDate }}</div>
+        <div class="d-tabs-section">
+          <div class="d-tab-headers">
+            <button class="d-tab-btn" [class.active]="activeTab==='description'" (click)="setTab('description')">Description</button>
+            <button class="d-tab-btn" [class.active]="activeTab==='reviews'" (click)="setTab('reviews')">Reviews (12)</button>
+            <button class="d-tab-btn" [class.active]="activeTab==='qa'" (click)="setTab('qa')">Q&A (3)</button>
           </div>
-          <div class="d-delivery-price">Rs. {{ product.deliveryPrice }}/delivery</div>
+          <div class="d-tab-content">
+            @if (activeTab === 'description') { <p>{{ product.description }}</p> }
+            @if (activeTab === 'reviews')     { <p>⭐ Customer reviews coming soon!</p> }
+            @if (activeTab === 'qa')          { <p>❓ Questions & Answers coming soon!</p> }
+          </div>
         </div>
-
-        <!-- Action buttons -->
-        <div class="d-actions">
-          <button class="d-btn-like" [class.liked]="isLiked" (click)="toggleLike()">
-            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          </button>
-          <button class="d-btn-cart" (click)="addToCart()">
-            <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            Add to Cart
-          </button>
-
-          <!-- comment-for-afflite 
-          <button class="d-btn-share" (click)="openSharePopup()">
-            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            Share & Earn
-          </button>
-          -->
-          <button class="d-btn-buy" (click)="buyNow()">Buy Now →</button>
-        </div>
-
-      </div>
+      }
     </div>
-
-    <!-- Desktop Tabs -->
-    <div class="d-tabs-section">
-      <div class="d-tab-headers">
-        <button class="d-tab-btn" [class.active]="activeTab==='description'"
-                (click)="setTab('description')">Description</button>
-        <button class="d-tab-btn" [class.active]="activeTab==='reviews'"
-                (click)="setTab('reviews')">Reviews (12)</button>
-        <button class="d-tab-btn" [class.active]="activeTab==='qa'"
-                (click)="setTab('qa')">Q&A (3)</button>
-      </div>
-      <div class="d-tab-content">
-        @if (activeTab === 'description') {
-          <p>{{ product.description }}</p>
-        }
-        @if (activeTab === 'reviews') {
-          <p>⭐ Customer reviews coming soon!</p>
-        }
-        @if (activeTab === 'qa') {
-          <p>❓ Questions & Answers coming soon!</p>
-        }
-      </div>
-    </div>
-
-  }
-
-</div>
-</div>
+  </div>
 </div>
 
-<!-- Popups -->
-<app-share-popup
-  [isOpen]="sharePopupOpen"
-  [shareLink]="product?.shareLink || ''"
-  (closed)="sharePopupOpen = false" />
-
-<app-earn-money-popup
-  [isOpen]="earnPopupOpen"
-  (closed)="earnPopupOpen = false" />
+<app-share-popup [isOpen]="sharePopupOpen" [shareLink]="product?.shareLink || ''" (closed)="sharePopupOpen = false" />
+<app-earn-money-popup [isOpen]="earnPopupOpen" (closed)="earnPopupOpen = false" />

@@ -1,0 +1,110 @@
+<div class="mgmt-page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Categories</h1>
+      <p class="page-sub">Manage product categories</p>
+    </div>
+    <button class="btn-primary" (click)="showAddForm = !showAddForm">
+      {{ showAddForm ? 'Cancel' : '+ Add Category' }}
+    </button>
+  </div>
+
+  @if (error)   { <div class="alert error">⚠️ {{ error }}</div> }
+  @if (success) { <div class="alert success">✅ {{ success }}</div> }
+
+  <!-- Add form -->
+  @if (showAddForm) {
+    <div class="form-card add-form">
+      <h3 class="card-title">New Category</h3>
+      <div class="add-row">
+        <div class="field">
+          <label>Name <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="newCat.name" placeholder="e.g. Jewellery" (keyup.enter)="addCategory()">
+        </div>
+        <div class="field">
+          <label>Sort Order</label>
+          <input type="number" [(ngModel)]="newCat.sort_order" placeholder="0">
+        </div>
+        <div class="field toggle-field">
+          <label>Active</label>
+          <div class="toggle-switch" [class.on]="newCat.is_active" (click)="newCat.is_active = !newCat.is_active">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+        <button class="btn-save-inline" [disabled]="saving" (click)="addCategory()">
+          {{ saving ? 'Saving...' : 'Add →' }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Table -->
+  @if (loading) { <div class="loading-state">Loading...</div> }
+
+  @if (!loading) {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Sort</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cat of categories; track cat.id) {
+            <tr>
+              <td class="id-cell">{{ cat.id }}</td>
+
+              <!-- Name — editable inline -->
+              <td>
+                @if (editingId === cat.id) {
+                  <input class="inline-edit-input" type="text" [(ngModel)]="editCat.name" (keyup.enter)="saveEdit(cat.id)">
+                } @else {
+                  <span class="cat-name">{{ cat.name }}</span>
+                }
+              </td>
+
+              <td><span class="slug-chip">{{ cat.slug }}</span></td>
+
+              <!-- Sort order -->
+              <td>
+                @if (editingId === cat.id) {
+                  <input class="inline-edit-input sort-input" type="number" [(ngModel)]="editCat.sort_order">
+                } @else {
+                  {{ cat.sort_order }}
+                }
+              </td>
+
+              <!-- Active toggle -->
+              <td>
+                <div class="toggle-switch sm" [class.on]="cat.is_active" (click)="toggleActive(cat)">
+                  <div class="toggle-knob"></div>
+                </div>
+              </td>
+
+              <!-- Actions -->
+              <td class="actions-cell">
+                @if (editingId === cat.id) {
+                  <button class="btn-action save" (click)="saveEdit(cat.id)">Save</button>
+                  <button class="btn-action cancel" (click)="cancelEdit()">Cancel</button>
+                } @else {
+                  <button class="btn-action edit" (click)="startEdit(cat)">Edit</button>
+                  <button class="btn-action delete" (click)="deleteCategory(cat.id)">Delete</button>
+                }
+              </td>
+            </tr>
+          }
+          @if (categories.length === 0) {
+            <tr><td colspan="6" class="empty-row">No categories yet</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>

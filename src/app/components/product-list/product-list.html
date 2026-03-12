@@ -4,10 +4,8 @@
 <!-- ======== MOBILE ======== -->
 <div class="mobile-layout">
 
-  <!-- Header: logo only -->
-  <header class="mobile-header">
-    <a class="logo" href="#">potikada</a>
-  </header>
+  <app-header [showBack]="false"  [showCart]="false"  [showMenu]="false" [showWishlist]="false"  (menuClicked)="menuOpen = true"></app-header>
+  
 
 <div class="banners-section hero-sticky">
   <div class="banner-slider">
@@ -88,7 +86,7 @@
 
               <!-- Hearts -->
               <div class="card-hearts">
-                @for (filled of heartsArray(product.hearts); track $index) {
+                @for (filled of heartsArray(product.hearts ?? 0); track $index) {
                   <svg viewBox="0 0 24 24" [class.empty]="!filled">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                   </svg>
@@ -98,7 +96,7 @@
               <!-- Price -->
               <div class="card-price-row">
                 <span class="price-current">Rs. {{ product.price }}</span>
-                @if (product.originalPrice > product.price) {
+                @if ((product.originalPrice  ?? 0) > product.price) {
                   <span class="price-original">Rs. {{ product.originalPrice }}</span>
                 }
               </div>
@@ -238,7 +236,7 @@
 
                 <div class="card-price-row">
                   <span class="price-current">Rs. {{ product.price }}</span>
-                  @if (product.originalPrice > product.price) {
+                  @if ((product.originalPrice ?? 0) > product.price) {
                     <span class="price-original">Rs. {{ product.originalPrice }}</span>
                   }
                 </div>
