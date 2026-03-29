@@ -14,6 +14,14 @@
   --radius: 16px;
   --bottom-nav-h: 68px;
   --liked-badge:#FF4757;
+
+  --gold: #c9a84c;
+  --gold-light: #f0d080;
+  --gold-pale: #fdf6e3;
+  --dark: #1c1507;
+  --text: #2e2410;
+  --muted: #7a6a4a;
+  --border: rgba(201,168,76,0.25);
 }
 
 body{
@@ -39,7 +47,12 @@ body{
 }
 
 .header-logo img {
-  height: 32px;
+  height: 50px !important;
   width: auto;
   object-fit: contain;
+}
+@media (min-width: 727px) {
+  .hide-on-desktop {
+    display: none;
+  }
 }

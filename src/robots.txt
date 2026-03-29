@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+
+# ── Public pages Google CAN index ──
+# /
+# /about
+# /our-mission
+# /contact
+# /sell-on-potikada
+# /faq
+# /privacy-policy
+# /terms-conditions
+# /shipping-policy
+# /returns-refunds
+# /affiliate/login
+# /affiliate/register
+# /product/:id
+
+# ── Private pages Google should NOT index ──
+Disallow: /cart
+Disallow: /checkout
+Disallow: /wishlist
+Disallow: /order-success/
+Disallow: /affiliate/dashboard
+Disallow: /affiliate/profile
+Disallow: /admin/
+Disallow: /api/
+
+# ── Sitemap location ──
+Sitemap: https://www.potikada.lk/sitemap.xml

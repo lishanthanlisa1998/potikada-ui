@@ -11,15 +11,16 @@ import { Api } from '../../../services/api';
 })
 export class Products {
 
-products: any[] = [];
-  filtered: any[] = [];
-  loading = true;
-  searchTerm = '';
+  products: any[] = [];
+  filtered:  any[] = [];
+  loading        = true;
+  searchTerm     = '';
   activeCategory = 'all';
-  categories = ['all', 'Books', 'Food', 'Oil'];
+  categories     = ['all', 'Books', 'Food', 'Oil'];
 
   deleteConfirmId: number | null = null;
-  deleteLoading = false;
+  deleteLoading   = false;
+  deleteError     = '';
 
   constructor(
     private apiService: Api,
@@ -33,7 +34,7 @@ products: any[] = [];
     this.apiService.getAdminProducts().subscribe({
       next: (res) => {
         this.products = res;
-        this.filtered = res;
+        this.applyFilters();
         this.loading  = false;
       },
       error: () => { this.loading = false; }
@@ -52,8 +53,8 @@ products: any[] = [];
 
   applyFilters() {
     this.filtered = this.products.filter(p => {
-      const matchSearch = p.name.toLowerCase().includes(this.searchTerm) ||
-                          p.category.toLowerCase().includes(this.searchTerm);
+      const matchSearch = p.name?.toLowerCase().includes(this.searchTerm) ||
+                          p.category?.toLowerCase().includes(this.searchTerm);
       const matchCat    = this.activeCategory === 'all' ||
                           p.category === this.activeCategory;
       return matchSearch && matchCat;
@@ -62,23 +63,31 @@ products: any[] = [];
 
   confirmDelete(id: number) {
     this.deleteConfirmId = id;
+    this.deleteError     = '';
   }
 
   cancelDelete() {
     this.deleteConfirmId = null;
+    this.deleteError     = '';
   }
 
   deleteProduct() {
     if (!this.deleteConfirmId) return;
     this.deleteLoading = true;
+    this.deleteError   = '';
     this.apiService.deleteProduct(this.deleteConfirmId).subscribe({
       next: () => {
-        this.products = this.products.filter(p => p.id !== this.deleteConfirmId);
-        this.filtered = this.filtered.filter(p => p.id !== this.deleteConfirmId);
+        const deletedId = this.deleteConfirmId;
+        // Force new array reference for Angular change detection
+        this.products = [...this.products.filter(p => p.id !== deletedId)];
+        this.filtered = [...this.filtered.filter(p => p.id !== deletedId)];
         this.deleteConfirmId = null;
         this.deleteLoading   = false;
       },
-      error: () => { this.deleteLoading = false; }
+      error: (err) => {
+        this.deleteLoading = false;
+        this.deleteError   = err?.error?.message || 'Delete failed. Please try again.';
+      }
     });
   }
 

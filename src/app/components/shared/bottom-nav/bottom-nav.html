@@ -1,13 +1,16 @@
 <nav class="bottom-nav">
 
   <!-- New All Products Button -->
-  <button class="nav-item" [class.active]="activeNav === 'allProducts'"
-    (click)="setNav('allProducts')">
-    <svg viewBox="0 0 24 24">
-      <path d="M3 3h18v4H3V3zm0 6h18v4H3V9zm0 6h18v4H3v-4z"/>
-    </svg>
-    <span>Products</span>
-  </button>
+  <button class="nav-item"
+        [class.active]="activeNav === 'home'"
+        (click)="setNav('home'); gohome()">
+        
+  <svg viewBox="0 0 24 24">
+    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+  </svg>
+
+  <span>Home</span>
+</button>
 
   <!-- Existing Liked Button -->
   <button class="nav-item  nav-item-liked" [class.active]="activeNav === 'liked'"

@@ -1,0 +1,54 @@
+<!-- Category Custom Dropdown -->
+<div class="cat-wrap" (clickOutside)="closeDropdown()">
+
+  <!-- Trigger Button -->
+  <button
+    class="cat-btn"
+    [class.cat-btn-open]="isOpen"
+    (click)="toggleDropdown()"
+    type="button"
+  >
+    <span class="cat-btn-label">
+      @if (selectedCategory === 'all') {
+        🏪 All 
+      } @else {
+        {{ selectedCategory }}
+      }
+    </span>
+    <svg
+      class="cat-arrow"
+      [class.cat-arrow-open]="isOpen"
+      width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <path d="M2 4L6 8L10 4" stroke="#C8892A" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <!-- Dropdown Panel -->
+  @if (isOpen) {
+    <div class="cat-panel">
+
+      <!-- All option -->
+      <div
+        class="cat-option"
+        [class.cat-option-active]="selectedCategory === 'all'"
+        (click)="selectCategory('all')"
+      >
+        🏪 All
+      </div>
+
+      <!-- Dynamic categories -->
+      @for (cat of categories; track cat) {
+        <div
+          class="cat-option"
+          [class.cat-option-active]="selectedCategory === cat"
+          (click)="selectCategory(cat)"
+        >
+          {{ cat }}
+        </div>
+      }
+
+    </div>
+  }
+
+</div>

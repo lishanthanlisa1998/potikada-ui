@@ -1,0 +1,478 @@
+/*
+ * shipping.css — Potikada Shipping Policy Component Styles
+ *
+ * Global variables (from styles.css):
+ *   --gold, --gold-light, --gold-pale, --white, --dark, --text, --muted, --border
+ *
+ * Page-specific variables (--page-*) defined in :host below.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── PAGE VARIABLES ─────────────────────────────────────────── */
+:host {
+  --page-font-display:        'Playfair Display', serif;
+  --page-font-body:           'DM Sans', sans-serif;
+  --page-hero-overlay-1:      rgba(201, 168, 76, 0.18);
+  --page-hero-overlay-2:      rgba(201, 168, 76, 0.12);
+  --page-hero-sub:            rgba(255, 255, 255, 0.60);
+  --page-badge-bg:            rgba(201, 168, 76, 0.15);
+  --page-badge-border:        rgba(201, 168, 76, 0.35);
+  --page-card-shadow:         rgba(201, 168, 76, 0.10);
+  --page-card-shadow-hover:   rgba(201, 168, 76, 0.20);
+  --page-note-bg:             rgba(201, 168, 76, 0.08);
+  --page-note-border:         rgba(201, 168, 76, 0.25);
+  --page-note-gold-bg:        rgba(201, 168, 76, 0.12);
+  --page-note-gold-border:    rgba(201, 168, 76, 0.40);
+  --page-table-head-bg:       var(--dark);
+  --page-table-head-color:    var(--gold-light);
+  --page-table-row-alt:       rgba(201, 168, 76, 0.04);
+  --page-time-fast-bg:        rgba(34, 197, 94, 0.12);
+  --page-time-fast-color:     #166534;
+  --page-time-mid-bg:         rgba(234, 179, 8, 0.12);
+  --page-time-mid-color:      #854d0e;
+  --page-time-slow-bg:        rgba(201, 168, 76, 0.12);
+  --page-time-slow-color:     #78511a;
+  --page-wa-green:            #25d366;
+  --page-wa-hover:            #1ebe5d;
+  --page-closing-overlay:     rgba(201, 168, 76, 0.10);
+  --page-block-border:        rgba(201, 168, 76, 0.20);
+}
+
+/* ── BASE ───────────────────────────────────────────────────── */
+:host {
+  display: block;
+  font-family: var(--page-font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HERO ───────────────────────────────────────────────────── */
+.pk-hero {
+  background: var(--dark);
+  padding: 90px 40px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pk-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%, var(--page-hero-overlay-1), transparent),
+    radial-gradient(ellipse 50% 60% at 80% 30%, var(--page-hero-overlay-2), transparent);
+  pointer-events: none;
+}
+
+.pk-hero-tag {
+  display: inline-block;
+  background: var(--page-badge-bg);
+  border: 1px solid var(--page-badge-border);
+  color: var(--gold-light);
+  font-size: 0.78rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 6px 18px;
+  border-radius: 100px;
+  margin-bottom: 26px;
+}
+
+.pk-hero h1 {
+  font-family: var(--page-font-display);
+  color: var(--white);
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  line-height: 1.15;
+  margin-bottom: 22px;
+  position: relative;
+}
+
+.pk-hero h1 em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.pk-hero-sub {
+  color: var(--page-hero-sub);
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+
+.pk-gold-line {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 28px auto 0;
+}
+
+/* ── SUMMARY CARDS ──────────────────────────────────────────── */
+.pk-summary {
+  padding: 60px 40px;
+  background: var(--white);
+}
+
+.pk-summary-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.pk-summary-card {
+  background: var(--gold-pale);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  border-radius: 14px;
+  padding: 28px 22px;
+  text-align: center;
+  transition: transform 0.22s, box-shadow 0.22s;
+}
+
+.pk-summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px var(--page-card-shadow-hover);
+}
+
+.pk-summary-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.pk-summary-card h3 {
+  font-family: var(--page-font-display);
+  font-size: 1rem;
+  color: var(--dark);
+  margin-bottom: 6px;
+}
+
+.pk-summary-card p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* ── DIVIDER ────────────────────────────────────────────────── */
+.pk-divider {
+  max-width: 800px;
+  margin: 0 auto;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border), transparent);
+}
+
+/* ── POLICY DETAILS ─────────────────────────────────────────── */
+.pk-details {
+  padding: 70px 40px;
+  background: var(--white);
+}
+
+.pk-details-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.pk-policy-block {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 24px;
+  align-items: start;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--page-block-border);
+}
+
+.pk-policy-block:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.pk-policy-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--gold-pale);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.pk-policy-content h2 {
+  font-family: var(--page-font-display);
+  font-size: 1.35rem;
+  color: var(--dark);
+  margin-bottom: 14px;
+}
+
+.pk-policy-content p {
+  color: var(--muted);
+  font-size: 0.97rem;
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+
+.pk-policy-content p strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.pk-policy-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ── INFO NOTES ─────────────────────────────────────────────── */
+.pk-info-note {
+  background: var(--page-note-bg);
+  border: 1px solid var(--page-note-border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin-top: 14px;
+}
+
+.pk-note-gold {
+  background: var(--page-note-gold-bg);
+  border-color: var(--page-note-gold-border);
+}
+
+.pk-info-note strong {
+  color: var(--dark);
+  font-weight: 500;
+}
+
+/* ── DELIVERY TABLE ─────────────────────────────────────────── */
+.pk-delivery-table {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.pk-delivery-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 14px 20px;
+  gap: 16px;
+  font-size: 0.95rem;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.pk-delivery-row:last-child {
+  border-bottom: none;
+}
+
+.pk-delivery-row:nth-child(even) {
+  background: var(--page-table-row-alt);
+}
+
+.pk-delivery-head {
+  background: var(--page-table-head-bg);
+  color: var(--page-table-head-color);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 500;
+}
+
+.pk-time-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pk-time-fast {
+  background: var(--page-time-fast-bg);
+  color: var(--page-time-fast-color);
+}
+
+.pk-time-mid {
+  background: var(--page-time-mid-bg);
+  color: var(--page-time-mid-color);
+}
+
+.pk-time-slow {
+  background: var(--page-time-slow-bg);
+  color: var(--page-time-slow-color);
+}
+
+/* ── PAYMENT OPTIONS ────────────────────────────────────────── */
+.pk-payment-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.pk-payment-card {
+  background: var(--gold-pale);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px 22px;
+  transition: transform 0.2s;
+}
+
+.pk-payment-card:hover {
+  transform: translateY(-3px);
+}
+
+.pk-pay-icon {
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+}
+
+.pk-payment-card h4 {
+  font-family: var(--page-font-display);
+  font-size: 1rem;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.pk-payment-card p {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  margin-bottom: 0 !important;
+}
+
+.pk-payment-card p strong {
+  color: var(--text);
+}
+
+/* ── CLOSING ────────────────────────────────────────────────── */
+.pk-closing {
+  background: var(--dark);
+  padding: 80px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pk-closing::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 50% 50%, var(--page-closing-overlay), transparent);
+  pointer-events: none;
+}
+
+.pk-closing-inner {
+  max-width: 560px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.pk-closing-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.pk-closing h2 {
+  font-family: var(--page-font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  color: var(--white);
+  margin-bottom: 16px;
+  line-height: 1.25;
+}
+
+.pk-closing h2 span {
+  color: var(--gold-light);
+  font-style: italic;
+}
+
+.pk-closing p {
+  color: rgba(255, 255, 255, 0.60);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.pk-closing-btns {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pk-btn-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--page-wa-green);
+  color: var(--white);
+  padding: 13px 28px;
+  border-radius: 10px;
+  font-family: var(--page-font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.pk-btn-wa:hover {
+  background: var(--page-wa-hover);
+  transform: translateY(-2px);
+}
+
+.pk-btn-contact {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: var(--gold-light);
+  border: 1.5px solid rgba(201, 168, 76, 0.40);
+  padding: 13px 28px;
+  border-radius: 10px;
+  font-family: var(--page-font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.pk-btn-contact:hover {
+  border-color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .pk-summary-inner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pk-payment-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .pk-hero { padding: 60px 24px 50px; }
+  .pk-summary { padding: 40px 24px; }
+  .pk-summary-inner { grid-template-columns: repeat(2, 1fr); }
+  .pk-details { padding: 50px 24px; }
+  .pk-policy-block {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .pk-delivery-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .pk-closing { padding: 60px 24px; }
+}
+
+@media (max-width: 400px) {
+  .pk-summary-inner { grid-template-columns: 1fr; }
+}

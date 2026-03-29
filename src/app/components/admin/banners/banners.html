@@ -3,7 +3,7 @@
   <div class="page-header">
     <div>
       <h1 class="page-title">Banners</h1>
-      <p class="page-sub">Manage homepage banners</p>
+      <p class="page-sub">Manage homepage banners — desktop (1920×640) + mobile (750×320)</p>
     </div>
     <button class="btn-primary" (click)="showAddForm = !showAddForm">
       {{ showAddForm ? 'Cancel' : '+ Add Banner' }}
@@ -19,24 +19,44 @@
       <h3 class="card-title">New Banner</h3>
 
       <div class="banner-form-grid">
+
+        <!-- Desktop image -->
         <div class="banner-preview-col">
+          <div class="img-label">🖥️ Desktop Image <span class="img-size">1920 × 640px</span></div>
           @if (newBanner.image_url) {
-            <img [src]="newBanner.image_url" class="banner-preview" alt="Banner preview">
+            <img [src]="newBanner.image_url" class="banner-preview" alt="Desktop preview">
           } @else {
             <div class="banner-placeholder">
               <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>No image yet</span>
+              <span>No desktop image</span>
             </div>
           }
-          <!-- Upload -->
           <label class="btn-upload-banner">
-            {{ uploading ? 'Uploading...' : '📷 Upload Image' }}
-            <input type="file" accept="image/*" style="display:none" (change)="onBannerImageSelected($event, 'new')">
+            {{ uploading['new_desktop'] ? 'Uploading...' : '📷 Upload Desktop' }}
+            <input type="file" accept="image/*" style="display:none" (change)="onImageSelected($event, 'new_desktop')">
           </label>
-          <!-- or URL -->
-          <input type="text" class="url-field" [(ngModel)]="newBanner.image_url" placeholder="or paste Cloudinary URL">
+          <input type="text" class="url-field" [(ngModel)]="newBanner.image_url" placeholder="or paste URL">
         </div>
 
+        <!-- Mobile image -->
+        <div class="banner-preview-col">
+          <div class="img-label">📱 Mobile Image <span class="img-size">750 × 320px</span></div>
+          @if (newBanner.mobile_image_url) {
+            <img [src]="newBanner.mobile_image_url" class="banner-preview" alt="Mobile preview">
+          } @else {
+            <div class="banner-placeholder">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>No mobile image</span>
+            </div>
+          }
+          <label class="btn-upload-banner">
+            {{ uploading['new_mobile'] ? 'Uploading...' : '📷 Upload Mobile' }}
+            <input type="file" accept="image/*" style="display:none" (change)="onImageSelected($event, 'new_mobile')">
+          </label>
+          <input type="text" class="url-field" [(ngModel)]="newBanner.mobile_image_url" placeholder="or paste URL">
+        </div>
+
+        <!-- Fields -->
         <div class="banner-fields-col">
           <div class="field">
             <label>Title (optional)</label>
@@ -44,7 +64,7 @@
           </div>
           <div class="field">
             <label>Link URL (optional)</label>
-            <input type="text" [(ngModel)]="newBanner.link_url" placeholder="e.g. /category/clothing">
+            <input type="text" [(ngModel)]="newBanner.link_url" placeholder="e.g. /product/1">
           </div>
           <div class="field">
             <label>Sort Order</label>
@@ -60,6 +80,7 @@
             {{ saving ? 'Saving...' : 'Add Banner →' }}
           </button>
         </div>
+
       </div>
     </div>
   }
@@ -67,37 +88,51 @@
   @if (loading) { <div class="loading-state">Loading...</div> }
 
   @if (!loading) {
-    <!-- Banner Grid -->
     <div class="banners-grid">
       @for (b of banners; track b.id) {
         <div class="banner-card" [class.inactive]="!b.is_active">
 
-          <!-- Image -->
+          <!-- Image previews -->
           <div class="banner-img-wrap">
             <img [src]="b.image_url" [alt]="b.title || 'Banner'" class="banner-img">
             <div class="banner-status" [class.active]="b.is_active">
               {{ b.is_active ? 'Active' : 'Inactive' }}
             </div>
+            @if (b.mobile_image_url) {
+              <div class="mobile-img-badge">📱 Mobile ✓</div>
+            } @else {
+              <div class="mobile-img-badge missing">📱 No mobile</div>
+            }
           </div>
 
           @if (editingId === b.id) {
             <!-- Edit mode -->
             <div class="banner-edit-body">
-              <div class="field">
-                <label>Image URL</label>
-                <input type="text" [(ngModel)]="editBanner.image_url" placeholder="Cloudinary URL">
-              </div>
+
+              <div class="img-label">🖥️ Desktop Image</div>
+              <input type="text" class="url-field" [(ngModel)]="editBanner.image_url" placeholder="Desktop URL">
               <label class="btn-upload-banner sm">
-                {{ uploading ? 'Uploading...' : '📷 Replace Image' }}
-                <input type="file" accept="image/*" style="display:none" (change)="onBannerImageSelected($event, b.id)">
+                {{ uploading['edit_desktop'] ? 'Uploading...' : '📷 Replace Desktop' }}
+                <input type="file" accept="image/*" style="display:none" (change)="onImageSelected($event, 'edit_desktop')">
               </label>
-              <div class="field">
+
+              <div class="img-label" style="margin-top:12px">📱 Mobile Image</div>
+              @if (editBanner.mobile_image_url) {
+                <img [src]="editBanner.mobile_image_url" class="banner-preview sm" alt="Mobile preview">
+              }
+              <input type="text" class="url-field" [(ngModel)]="editBanner.mobile_image_url" placeholder="Mobile URL">
+              <label class="btn-upload-banner sm">
+                {{ uploading['edit_mobile'] ? 'Uploading...' : '📷 Replace Mobile' }}
+                <input type="file" accept="image/*" style="display:none" (change)="onImageSelected($event, 'edit_mobile')">
+              </label>
+
+              <div class="field" style="margin-top:10px">
                 <label>Title</label>
                 <input type="text" [(ngModel)]="editBanner.title" placeholder="Title">
               </div>
               <div class="field">
                 <label>Link URL</label>
-                <input type="text" [(ngModel)]="editBanner.link_url" placeholder="/category/...">
+                <input type="text" [(ngModel)]="editBanner.link_url" placeholder="/product/...">
               </div>
               <div class="field">
                 <label>Sort Order</label>
@@ -110,14 +145,15 @@
                 </div>
               </div>
               <div class="edit-actions">
-                <button class="btn-action save" (click)="saveEdit(b.id)">Save</button>
+                <button class="btn-action save"   (click)="saveEdit(b.id)">Save</button>
                 <button class="btn-action cancel" (click)="cancelEdit()">Cancel</button>
               </div>
             </div>
+
           } @else {
             <!-- View mode -->
             <div class="banner-body">
-              @if (b.title) { <div class="banner-title">{{ b.title }}</div> }
+              @if (b.title)    { <div class="banner-title">{{ b.title }}</div> }
               @if (b.link_url) { <div class="banner-link">🔗 {{ b.link_url }}</div> }
               <div class="banner-meta">Sort: {{ b.sort_order }}</div>
             </div>
@@ -125,7 +161,7 @@
               <div class="toggle-switch sm" [class.on]="b.is_active" (click)="toggleActive(b)">
                 <div class="toggle-knob"></div>
               </div>
-              <button class="btn-action edit" (click)="startEdit(b)">Edit</button>
+              <button class="btn-action edit"   (click)="startEdit(b)">Edit</button>
               <button class="btn-action delete" (click)="deleteBanner(b.id)">Delete</button>
             </div>
           }
@@ -133,9 +169,7 @@
         </div>
       }
       @if (banners.length === 0) {
-        <div class="empty-banners">
-          <p>No banners yet. Add your first banner above!</p>
-        </div>
+        <div class="empty-banners"><p>No banners yet. Add your first banner above!</p></div>
       }
     </div>
   }

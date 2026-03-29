@@ -23,7 +23,7 @@ export class ProductForm implements OnInit {
   popup: PopupConfig | null = null;
 
   form: any = {
-    name: '', category: 'Books', price: 0, original_price: 0,
+    name: '', category: 'Books', price: null, original_price: null,
     badge: '', offer_tag: '', unit: '', maker_label: 'Author',
     maker_name: '', weight_grams: 0, delivery_price: 199,
     delivery_date: '', description: '', is_active: true,
@@ -34,18 +34,20 @@ export class ProductForm implements OnInit {
   badges      = ['', 'Sale', 'New'];
   makerLabels = ['Author', 'Made by', 'Stitched by', 'Manufactured by', 'Packed by', 'Created by', 'Grown by'];
 
-  sizeOptions:   string[] = [];
-  colorOptions:  { name: string; hex: string }[] = [];
-  designOptions: string[] = [];
+  // ── Variant Families ──────────────────────────────────────────
+  availableFamilies: any[] = [];
+  selectedFamilies: any[] = [];
 
-  newSizeName   = '';
-  newColorName  = '';
-  newColorHex   = '#000000';
-  newDesignName = '';
-
+  // ── Variants ──────────────────────────────────────────────────
   variants: any[] = [];
-  newVariant = { size: '', color: '', color_hex: '', design: '', price: null as number | null, stock: 0, weight_grams: 0, image: '', is_default: false };
 
+  newVariantSelections: { [key: string]: string } = {};
+  newVariantPrice:       number | null = null;
+  newVariantStock:       number = 0;
+  newVariantWeight:      number = 0;
+  newVariantImage:       string = '';
+
+  // ── Images ────────────────────────────────────────────────────
   newImageUrl     = '';
   uploadingImage  = false;
   existingImages: any[]    = [];
@@ -59,11 +61,16 @@ export class ProductForm implements OnInit {
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.params['id'];
-    if (id) { this.isEdit = true; this.productId = +id; this.loadProduct(+id); }
+    this.apiService.getVariantFamilies().subscribe({
+      next: (families: any[]) => { this.availableFamilies = families; }
+    });
+
     this.apiService.getCategories().subscribe({
       next: (cats: any[]) => { if (cats.length) this.categories = cats.map(c => c.name); }
     });
+
+    const id = this.route.snapshot.params['id'];
+    if (id) { this.isEdit = true; this.productId = +id; this.loadProduct(+id); }
   }
 
   loadProduct(id: number) {
@@ -81,15 +88,20 @@ export class ProductForm implements OnInit {
           is_active: p.is_active, images: [],
         };
         this.existingImages = p.images || [];
-        const vars = p.variants || [];
-        this.variants = vars.map((v: any) => ({ ...v }));
-        this.sizeOptions   = [...new Set<string>(vars.filter((v:any) => v.size).map((v:any) => v.size))];
-        this.designOptions = [...new Set<string>(vars.filter((v:any) => v.design).map((v:any) => v.design))];
-        const seen = new Set<string>();
-        this.colorOptions  = [];
-        vars.filter((v:any) => v.color).forEach((v:any) => {
-          if (!seen.has(v.color)) { seen.add(v.color); this.colorOptions.push({ name: v.color, hex: v.color_hex || '#000000' }); }
-        });
+        this.parseDescription(p.description || '');
+
+        const apiFamilies = res.families || [];
+        this.selectedFamilies = apiFamilies.map((f: any) => ({
+          id:          f.id,
+          name:        f.name,
+          description: f.description,
+          sort_order:  f.sort_order,
+          options:     f.options.map((o: any) => o.value),
+          newOption:   '',
+        }));
+
+        this.variants = (p.variants || []).map((v: any) => ({ ...v }));
+
         this.loading = false;
       },
       error: () => {
@@ -99,68 +111,93 @@ export class ProductForm implements OnInit {
     });
   }
 
-  // ── Options ──────────────────────────────────
-  addSizeOption() {
-    const s = this.newSizeName.trim();
-    if (s && !this.sizeOptions.includes(s)) { this.sizeOptions.push(s); this.newSizeName = ''; }
-  }
-  removeSizeOption(s: string) {
-    this.sizeOptions = this.sizeOptions.filter(x => x !== s);
-    this.variants = this.variants.filter(v => v.size !== s);
-  }
-  addColorOption() {
-    const c = this.newColorName.trim();
-    if (c && !this.colorOptions.find(x => x.name === c)) {
-      this.colorOptions.push({ name: c, hex: this.newColorHex });
-      this.newColorName = ''; this.newColorHex = '#000000';
-    }
-  }
-  removeColorOption(name: string) {
-    this.colorOptions = this.colorOptions.filter(x => x.name !== name);
-    this.variants = this.variants.filter(v => v.color !== name);
-  }
-  addDesignOption() {
-    const d = this.newDesignName.trim();
-    if (d && !this.designOptions.includes(d)) { this.designOptions.push(d); this.newDesignName = ''; }
-  }
-  removeDesignOption(d: string) {
-    this.designOptions = this.designOptions.filter(x => x !== d);
-    this.variants = this.variants.filter(v => v.design !== d);
+  // ── Family Management ─────────────────────────────────────────
+
+  get unselectedFamilies(): any[] {
+    const selectedIds = this.selectedFamilies.map(f => f.id);
+    return this.availableFamilies.filter(f => !selectedIds.includes(f.id));
   }
 
-  onNewVariantColorChange() {
-    const found = this.colorOptions.find(c => c.name === this.newVariant.color);
-    this.newVariant.color_hex = found?.hex || '#000000';
+  addFamily(family: any) {
+    if (this.selectedFamilies.find(f => f.id === family.id)) return;
+    this.selectedFamilies.push({
+      id:          family.id,
+      name:        family.name,
+      description: family.description,
+      sort_order:  this.selectedFamilies.length,
+      options:     [],
+      newOption:   '',
+    });
+    this.resetNewVariantSelections();
   }
 
-  // ── Add variant combo ─────────────────────────
+  removeFamily(familyId: number) {
+    const family = this.selectedFamilies.find(f => f.id === familyId);
+    if (!family) return;
+    this.variants = this.variants.filter(v => !v.attributes?.[family.name]);
+    this.selectedFamilies = this.selectedFamilies.filter(f => f.id !== familyId);
+    this.resetNewVariantSelections();
+  }
+
+  // ── Option Management per Family ──────────────────────────────
+
+  addOption(family: any) {
+    const val = (family.newOption || '').trim();
+    if (!val) return;
+    if (family.options.includes(val)) return;
+    family.options.push(val);
+    family.newOption = '';
+  }
+
+  removeOption(family: any, value: string) {
+    family.options = family.options.filter((o: string) => o !== value);
+    this.variants = this.variants.filter(v => v.attributes?.[family.name] !== value);
+  }
+
+  // ── Variant Builder ───────────────────────────────────────────
+
+  resetNewVariantSelections() {
+    this.newVariantSelections = {};
+    this.selectedFamilies.forEach(f => this.newVariantSelections[f.name] = '');
+    this.newVariantPrice  = null;
+    this.newVariantStock  = 0;
+    this.newVariantWeight = 0;
+    this.newVariantImage  = '';
+  }
+
   addVariant() {
-    if (!this.newVariant.size && !this.newVariant.color && !this.newVariant.design) {
-      this.popup = { type: 'warning', title: 'Select an Option', message: 'Please pick at least one option — Size, Color, or Design.' };
+    const hasSelection = this.selectedFamilies.some(f => this.newVariantSelections[f.name]);
+    if (!hasSelection) {
+      this.popup = { type: 'warning', title: 'Select an Option', message: 'Please pick at least one option to add a variant.' };
       return;
     }
-    const isDup = this.variants.some(v =>
-      (v.size||'') === (this.newVariant.size||'') &&
-      (v.color||'') === (this.newVariant.color||'') &&
-      (v.design||'') === (this.newVariant.design||'')
-    );
+
+    const attributes: { [key: string]: string } = {};
+    this.selectedFamilies.forEach(f => {
+      if (this.newVariantSelections[f.name]) {
+        attributes[f.name] = this.newVariantSelections[f.name];
+      }
+    });
+
+    const isDup = this.variants.some(v => {
+      return JSON.stringify(v.attributes) === JSON.stringify(attributes);
+    });
     if (isDup) {
-      this.popup = { type: 'warning', title: 'Duplicate!', message: 'This combination already exists. Try a different one.' };
+      this.popup = { type: 'warning', title: 'Duplicate!', message: 'This combination already exists.' };
       return;
     }
+
     const isFirst = this.variants.length === 0;
     this.variants.push({
-      size:         this.newVariant.size   || null,
-      color:        this.newVariant.color  || null,
-      color_hex:    this.newVariant.color_hex || null,
-      design:       this.newVariant.design || null,
-      price:        this.newVariant.price  ?? this.form.price,
-      stock:        this.newVariant.stock  || 0,
-      weight_grams: this.newVariant.weight_grams || this.form.weight_grams,
-      image:        this.newVariant.image  || null,
+      attributes,
+      price:        this.newVariantPrice  ?? this.form.price,
+      stock:        this.newVariantStock  || 0,
+      weight_grams: this.newVariantWeight || this.form.weight_grams,
+      image:        this.newVariantImage  || null,
       is_default:   isFirst,
     });
-    this.newVariant = { size: '', color: '', color_hex: '', design: '', price: null, stock: 0, weight_grams: 0, image: '', is_default: false };
+
+    this.resetNewVariantSelections();
   }
 
   removeVariant(index: number) {
@@ -173,11 +210,60 @@ export class ProductForm implements OnInit {
     this.variants.forEach((v, i) => v.is_default = i === index);
   }
 
-  variantLabel(v: any): string {
-    return [v.size, v.color, v.design].filter(Boolean).join(' + ');
+  get noOptionsAdded(): boolean {
+    return this.selectedFamilies.every(f => f.options.length === 0);
   }
 
-  // ── Images ───────────────────────────────────
+  // ── Description Sections ──────────────────────────────────────
+  descSections: any[] = [];
+
+  addDescSection(type: 'text' | 'bullets' | 'image') {
+    if (type === 'text')    this.descSections.push({ type: 'text',    label: 'About',    content: '' });
+    if (type === 'bullets') this.descSections.push({ type: 'bullets', label: 'Features', items: [''] });
+    if (type === 'image')   this.descSections.push({ type: 'image',   label: '',         url: '' });
+  }
+
+  removeDescSection(i: number) { this.descSections.splice(i, 1); }
+  addBullet(section: any)      { section.items.push(''); }
+  removeBullet(section: any, i: number) { section.items.splice(i, 1); }
+
+  async onDescImageSelected(event: any, section: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const { cloudName, uploadPreset } = environment.cloudinary;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', uploadPreset);
+    fd.append('folder', 'potikada/descriptions');
+    try {
+      const res  = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: fd });
+      const data = await res.json();
+      section.url = data.secure_url;
+    } catch {
+      this.popup = { type: 'error', title: 'Upload Failed', message: 'Image upload failed.' };
+    }
+  }
+
+  getDescriptionPayload(): string {
+    if (this.descSections.length === 0) return this.form.description || '';
+    return JSON.stringify(this.descSections);
+  }
+
+  parseDescription(raw: string) {
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) { this.descSections = parsed; return; }
+    } catch {}
+    this.descSections = [{ type: 'text', label: 'Description', content: raw }];
+  }
+
+  variantLabel(v: any): string {
+    if (!v.attributes) return 'Default';
+    return Object.values(v.attributes).filter(Boolean).join(' / ');
+  }
+
+  // ── Images ────────────────────────────────────────────────────
   addImageUrl() {
     const url = this.newImageUrl.trim();
     if (url && !this.form.images.includes(url)) { this.form.images = [...this.form.images, url]; this.newImageUrl = ''; }
@@ -222,70 +308,77 @@ export class ProductForm implements OnInit {
     }
   }
 
-  // ── Popup handlers ────────────────────────────
+  // ── Popup ─────────────────────────────────────────────────────
   onPopupConfirmed() {
-    if (this.popup?.type === 'success') {
-      this.router.navigate(['/admin/products']);
-    }
+    if (this.popup?.type === 'success') this.router.navigate(['/admin/products']);
     this.popup = null;
   }
+  onPopupCancelled() { this.popup = null; }
 
-  onPopupCancelled() {
-    this.popup = null;
-  }
-
-  // ── Save ─────────────────────────────────────
+  // ── Save ──────────────────────────────────────────────────────
   save() {
-    if (!this.form.name || !this.form.price || !this.form.description) {
-      this.popup = {
-        type: 'warning',
-        title: 'Missing Fields',
-        message: 'Please fill in Product Name, Price and Description before saving.',
-        confirmLabel: 'OK, Got It'
-      };
+    // Validate name
+    if (!this.form.name?.trim()) {
+      this.popup = { type: 'warning', title: 'Missing Fields', message: 'Please fill in Product Name.', confirmLabel: 'OK' };
       return;
     }
+
+    // Validate price — null, undefined, or empty string means not filled
+    const priceValue = this.form.price;
+    if (priceValue === null || priceValue === undefined || priceValue === '') {
+      this.popup = { type: 'warning', title: 'Missing Fields', message: 'Please fill in a Price.', confirmLabel: 'OK' };
+      return;
+    }
+
+    // Validate description — either sections or fallback text
+    const hasDescription = this.descSections.length > 0 || !!this.form.description?.trim();
+    if (!hasDescription) {
+      this.popup = { type: 'warning', title: 'Missing Fields', message: 'Please add at least one Description section.', confirmLabel: 'OK' };
+      return;
+    }
+
+    // Validate image
     if (this.form.images.length === 0 && this.existingImages.length === 0) {
-      this.popup = {
-        type: 'warning',
-        title: 'No Image',
-        message: 'Please add at least one product image before saving.',
-        confirmLabel: 'OK, Got It'
-      };
+      this.popup = { type: 'warning', title: 'No Image', message: 'Please add at least one product image.', confirmLabel: 'OK' };
       return;
     }
+
     this.saving = true;
+
+    const familiesPayload = this.selectedFamilies.map((f, idx) => ({
+      family_id:  f.id,
+      sort_order: idx,
+      options:    f.options,
+    }));
+
     const payload = {
       ...this.form,
-      badge: this.form.badge || null,
-      offer_tag: this.form.offer_tag || null,
+      description: this.getDescriptionPayload(),
+      badge:      this.form.badge     || null,
+      offer_tag:  this.form.offer_tag || null,
       maker_name: this.form.maker_name || null,
-      variants: this.variants,
+      families:   familiesPayload,
+      variants:   this.variants,
       ...(this.deleteImageIds.length > 0 ? { delete_image_ids: this.deleteImageIds } : {})
     };
+
     const req = this.isEdit && this.productId
       ? this.apiService.updateProduct(this.productId, payload)
       : this.apiService.createProduct(payload);
+
     req.subscribe({
       next: () => {
         this.saving = false;
         this.popup = {
           type: 'success',
           title: this.isEdit ? 'Product Updated!' : 'Product Created!',
-          message: this.isEdit
-            ? 'Your product has been updated successfully.'
-            : 'Your new product has been created and is now live.',
+          message: this.isEdit ? 'Product updated successfully.' : 'Product created and is now live.',
           confirmLabel: 'Go to Products →'
         };
       },
       error: (err) => {
         this.saving = false;
-        this.popup = {
-          type: 'error',
-          title: 'Save Failed',
-          message: err.error?.message || 'Something went wrong. Please try again.',
-          confirmLabel: 'OK, Fix It'
-        };
+        this.popup = { type: 'error', title: 'Save Failed', message: err.error?.message || 'Something went wrong.', confirmLabel: 'OK' };
       }
     });
   }

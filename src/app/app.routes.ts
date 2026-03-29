@@ -116,6 +116,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./components/admin/banners/banners').then(m => m.Banners)
       },
+      {
+        path: 'variant-families',
+        loadComponent: () =>
+          import('./components/admin/variant-families/variant-families').then(m => m.VariantFamilies)
+      },
     ]
   }
 ];

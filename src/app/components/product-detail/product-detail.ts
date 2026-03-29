@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { BottomNav } from '../shared/bottom-nav/bottom-nav';
 import { SharePopup } from '../shared/share-popup/share-popup';
@@ -12,7 +12,7 @@ import { Menu } from '../shared/menu/menu';
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, BottomNav, SharePopup, EarnMoneyPopup, Header, Menu],
+  imports: [CommonModule, NgTemplateOutlet, RouterLink, BottomNav, SharePopup, EarnMoneyPopup, Header, Menu],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css',
 })
@@ -20,19 +20,14 @@ export class ProductDetail implements OnInit {
 
   product: any;
   productImages: string[] = [];
+  families:      any[]    = [];
+  variants:      any[]    = [];
+  defaultVariant: any     = null;
+  selections: { [familyName: string]: string } = {};
 
-  // Flat combo variants from API
-  variants: any[]    = [];
-  sizes:    string[] = [];
-  colors:   any[]    = [];   // [{color, color_hex}]
-  designs:  string[] = [];
-  defaultVariant: any = null;
-
-  selectedSize   = '';
-  selectedColor  = '';
-  selectedDesign = '';
-  selectedVariantPrice: number | null = null;
-  selectedVariantStock: number | null = null;
+  selectedVariantPrice:  number | null = null;
+  selectedVariantStock:  number | null = null;
+  selectedVariantWeight: number | null = null;
 
   deliveryFee = 0;
   loading     = true;
@@ -49,10 +44,12 @@ export class ProductDetail implements OnInit {
   earnPopupOpen  = false;
   menuOpen       = false;
 
+  descSections: any[] = [];
+
   constructor(
-    private route:      ActivatedRoute,
-    private router:     Router,
-    private apiService: Api,
+    private route:       ActivatedRoute,
+    private router:      Router,
+    private apiService:  Api,
     public  cartService: CartService
   ) {}
 
@@ -68,49 +65,48 @@ export class ProductDetail implements OnInit {
 
     this.apiService.getProduct(id).subscribe({
       next: (res: any) => {
-        const p = res.product ?? res;
-        this.product = this.formatProduct(p);
-
-        // Images
-        const images       = p.images?.map((img: any) => img.image_url) ?? [];
+        const p        = res.product ?? res;
+        this.product   = this.formatProduct(p);
+        const images   = p.images?.map((img: any) => img.image_url) ?? [];
         this.productImages = images;
         this.activeImage   = images[0] ?? '';
 
-        // Flat variants + unique option lists
+        this.families       = res.families        ?? [];
         this.variants       = res.variants        ?? [];
-        this.sizes          = res.sizes           ?? [];
-        this.colors         = res.colors          ?? [];
-        this.designs        = res.designs         ?? [];
         this.defaultVariant = res.default_variant ?? null;
 
-        // Apply default variant
-        if (this.defaultVariant) {
-          this.selectedSize             = this.defaultVariant.size   ?? '';
-          this.selectedColor            = this.defaultVariant.color  ?? '';
-          this.selectedDesign           = this.defaultVariant.design ?? '';
-          this.selectedVariantPrice     = this.defaultVariant.price  ?? null;
-          this.selectedVariantStock     = this.defaultVariant.stock  ?? null;
+        // Init selections
+        this.selections = {};
+        this.families.forEach(f => this.selections[f.name] = '');
+
+        if (this.defaultVariant?.attributes) {
+          Object.entries(this.defaultVariant.attributes).forEach(([key, val]) => {
+            this.selections[key] = val as string;
+          });
+          this.selectedVariantPrice  = this.defaultVariant.price        ?? null;
+          this.selectedVariantStock  = this.defaultVariant.stock        ?? null;
+          this.selectedVariantWeight = this.defaultVariant.weight_grams ?? null;
           if (this.defaultVariant.image) this.activeImage = this.defaultVariant.image;
         } else if (this.variants.length > 0) {
           const first = this.variants[0];
-          this.selectedSize             = first.size   ?? '';
-          this.selectedColor            = first.color  ?? '';
-          this.selectedDesign           = first.design ?? '';
-          this.selectedVariantPrice     = first.price  ?? null;
-          this.selectedVariantStock     = first.stock  ?? null;
+          if (first.attributes) {
+            Object.entries(first.attributes).forEach(([key, val]) => {
+              this.selections[key] = val as string;
+            });
+          }
+          this.selectedVariantPrice  = first.price        ?? null;
+          this.selectedVariantStock  = first.stock        ?? null;
+          this.selectedVariantWeight = first.weight_grams ?? null;
+          if (first.image) this.activeImage = first.image;
         }
 
-        // Delivery fee
-        const weight = p.weight_grams ?? 0;
-        if (weight > 0) this.calculateDelivery(weight);
-
+        // Initial delivery calculation
+        this.recalculateDelivery();
+        this.parseDescription(p.description || '');
         this.isLiked = this.cartService.isInWishlist(p.id);
         this.loading = false;
       },
-      error: () => {
-        this.error   = true;
-        this.loading = false;
-      }
+      error: () => { this.error = true; this.loading = false; }
     });
   }
 
@@ -139,59 +135,69 @@ export class ProductDetail implements OnInit {
     };
   }
 
-  calculateDelivery(weightGrams: number) {
-    this.apiService.calculateShipping(weightGrams).subscribe({
-      next:  (res: any) => { this.deliveryFee = res.delivery_fee ?? 0; },
-      error: ()         => { this.deliveryFee = 300; }
-    });
-  }
+  // ── Variant Selection ──────────────────────────────────────────
 
-  // ===== VARIANT SELECTION =====
-  selectSize(size: string) {
-    this.selectedSize = size;
-    this.updateVariantCombo();
-  }
-
-  selectColor(c: any) {
-    this.selectedColor = c.color;
-    this.updateVariantCombo();
-  }
-
-  selectDesign(design: string) {
-    this.selectedDesign = design;
+  selectOption(familyName: string, value: string) {
+    this.selections[familyName] = value;
     this.updateVariantCombo();
   }
 
   updateVariantCombo() {
     const match = this.variants.find((v: any) => {
-      const sizeOk   = !v.size   || !this.selectedSize   || v.size   === this.selectedSize;
-      const colorOk  = !v.color  || !this.selectedColor  || v.color  === this.selectedColor;
-      const designOk = !v.design || !this.selectedDesign || v.design === this.selectedDesign;
-      return sizeOk && colorOk && designOk;
+      if (!v.attributes) return false;
+      return Object.entries(this.selections).every(([key, val]) => {
+        if (!val) return true;
+        return v.attributes[key] === val;
+      });
     });
 
     if (match) {
-      this.selectedVariantPrice = match.price ?? null;
-      this.selectedVariantStock = match.stock ?? 0;
-      if (match.image) this.activeImage = match.image;
+      this.selectedVariantPrice  = match.price        ?? null;
+      this.selectedVariantStock  = match.stock        ?? 0;
+      this.selectedVariantWeight = match.weight_grams ?? null;
+      if (match.image) { this.activeImage = match.image; this.activeImageIndex = -1; }
+    } else {
+      this.selectedVariantPrice  = null;
+      this.selectedVariantStock  = 0;
+      this.selectedVariantWeight = null;
+    }
+
+    // Reset quantity to 1 when variant changes — avoid exceeding new stock
+    this.quantity = 1;
+
+    // Recalculate delivery with new variant weight
+    this.recalculateDelivery();
+  }
+
+  // ── Delivery Calculation ──────────────────────────────────────
+
+  recalculateDelivery() {
+    const unitWeight  = this.selectedVariantWeight ?? this.product?.weight_grams ?? 0;
+    const totalWeight = unitWeight * this.quantity;
+    if (totalWeight > 0) {
+      this.apiService.calculateShipping(totalWeight).subscribe({
+        next:  (res: any) => { this.deliveryFee = res.delivery_fee ?? 0; },
+        error: ()         => { this.deliveryFee = 300; }
+      });
     }
   }
 
-  // All combos for a size out of stock?
-  isSizeOutOfStock(size: string): boolean {
-    const combos = this.variants.filter((v: any) => v.size === size);
-    if (combos.length === 0) return false;
-    return combos.every((v: any) => v.stock === 0);
+  // ── Amazon-style availability check ──────────────────────────
+
+  isOptionUnavailable(familyName: string, value: string): boolean {
+    const testSelections = { ...this.selections, [familyName]: value };
+    const matching = this.variants.filter((v: any) => {
+      if (!v.attributes) return false;
+      return Object.entries(testSelections).every(([key, val]) => {
+        if (!val) return true;
+        return v.attributes[key] === val;
+      });
+    });
+    if (matching.length === 0) return true;
+    return matching.every((v: any) => v.stock === 0);
   }
 
-  // All combos for a color (with current size) out of stock?
-  isColorOutOfStock(color: string): boolean {
-    const combos = this.variants.filter((v: any) =>
-      v.color === color && (!this.selectedSize || v.size === this.selectedSize)
-    );
-    if (combos.length === 0) return false;
-    return combos.every((v: any) => v.stock === 0);
-  }
+  // ── Getters ───────────────────────────────────────────────────
 
   get currentPrice(): number {
     return this.selectedVariantPrice ?? this.product?.price ?? 0;
@@ -199,6 +205,14 @@ export class ProductDetail implements OnInit {
 
   get currentStock(): number {
     return this.selectedVariantStock ?? this.product?.stock ?? 0;
+  }
+
+  get productTotal(): number {
+    return this.currentPrice * this.quantity;
+  }
+
+  get grandTotal(): number {
+    return this.productTotal + this.deliveryFee;
   }
 
   get isOutOfStock(): boolean {
@@ -212,17 +226,31 @@ export class ProductDetail implements OnInit {
     return `✅ ${this.currentStock} in stock`;
   }
 
-  // ===== IMAGE =====
+  // ── Quantity ──────────────────────────────────────────────────
+
+  increaseQty() {
+    if (this.quantity < this.currentStock) {
+      this.quantity++;
+      this.recalculateDelivery();
+    }
+  }
+
+  decreaseQty() {
+    if (this.quantity > 1) {
+      this.quantity--;
+      this.recalculateDelivery();
+    }
+  }
+
+  // ── Image ─────────────────────────────────────────────────────
+
   switchImage(index: number) {
     this.activeImageIndex = index;
     this.activeImage = this.productImages[index];
   }
 
-  // ===== QUANTITY =====
-  increaseQty() { if (this.quantity < this.currentStock) this.quantity++; }
-  decreaseQty() { if (this.quantity > 1) this.quantity--; }
+  // ── Wishlist ──────────────────────────────────────────────────
 
-  // ===== WISHLIST =====
   toggleLike() {
     if (this.product) {
       this.cartService.toggleWishlist(this.product);
@@ -230,30 +258,37 @@ export class ProductDetail implements OnInit {
     }
   }
 
-  // ===== CART =====
+  // ── Cart ──────────────────────────────────────────────────────
+
   addToCart(event?: Event) {
     if (event) event.stopPropagation();
     if (!this.product || this.isOutOfStock) return;
-
+    const variantLabel = Object.values(this.selections).filter(Boolean).join(' / ');
     this.cartService.addToCart(
       { ...this.product, price: this.currentPrice },
-      this.selectedSize,
+      variantLabel,
       this.quantity,
-      this.selectedColor,
-      this.selectedDesign
     );
     this.addedToCart = true;
     setTimeout(() => this.addedToCart = false, 2000);
   }
 
-  buyNow() {
-    this.addToCart();
-    this.router.navigate(['/cart']);
-  }
+  buyNow() { this.addToCart(); this.router.navigate(['/cart']); }
 
   openSharePopup(event?: Event) {
     if (event) event.stopPropagation();
     this.sharePopupOpen = true;
+  }
+
+  // ── Description ───────────────────────────────────────────────
+
+  parseDescription(raw: string) {
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) { this.descSections = parsed; return; }
+    } catch {}
+    this.descSections = [{ type: 'text', label: 'Description', content: raw }];
   }
 
   setTab(tab: 'description' | 'reviews' | 'qa') { this.activeTab = tab; }

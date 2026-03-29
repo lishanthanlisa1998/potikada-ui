@@ -1,27 +1,41 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { SharePopup } from '../shared/share-popup/share-popup';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { CartService, WishlistItem } from '../../services/cart';
 import { Menu } from '../shared/menu/menu';
 import { Header } from '../shared/header/header';
+import { BottomNav } from '../shared/bottom-nav/bottom-nav';
 
 @Component({
   selector: 'app-wishlist',
-  imports: [CommonModule, RouterLink, SharePopup,Menu,Header],
+  imports: [CommonModule, RouterLink, SharePopup,Menu,Header,BottomNav],
   templateUrl: './wishlist.html',
   styleUrl: './wishlist.css',
 })
 export class Wishlist {
 sharePopupOpen = false;
   activeShareLink = '';
+  earnPopupOpen = false;
   selectedSize: { [productId: number]: string } = {};
   menuOpen = false ;
+
+  hideHeader = window.innerWidth > 727;
+
+@HostListener('window:resize')
+onResize() {
+  this.hideHeader = window.innerWidth > 727;
+}
 
   constructor(
     public cartService: CartService,
     private router: Router
   ) {}
+
+   openEarnPopup() {
+    this.earnPopupOpen = true;
+  }
+
 
  getSelectedSize(item: WishlistItem): string {
     return this.selectedSize[item.product.id] || item.product.sizes?.[0] || '';

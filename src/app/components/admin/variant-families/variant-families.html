@@ -1,0 +1,105 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Variant Families</h1>
+      <p class="page-sub">Manage global variant types used across all products</p>
+    </div>
+    <button class="btn-add" (click)="openAdd()">+ Add Family</button>
+  </div>
+
+  <!-- ADD FORM -->
+  @if (showAddForm) {
+    <div class="add-card">
+      <h3 class="add-title">New Variant Family</h3>
+      <div class="add-row">
+        <div class="field">
+          <label>Name *</label>
+          <input [(ngModel)]="newFamily.name" placeholder="e.g. Size, Color, Material" />
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <input [(ngModel)]="newFamily.description" placeholder="e.g. S, M, L, XL or 250g, 500g" />
+        </div>
+        <div class="field field-sm">
+          <label>Sort Order</label>
+          <input type="number" [(ngModel)]="newFamily.sort_order" />
+        </div>
+      </div>
+      <div class="add-actions">
+        <button class="btn-save" (click)="saveNew()" [disabled]="saving">
+          {{ saving ? 'Saving...' : 'Save Family' }}
+        </button>
+        <button class="btn-cancel" (click)="showAddForm = false">Cancel</button>
+      </div>
+    </div>
+  }
+
+  <!-- TABLE -->
+  @if (loading) {
+    <div class="loading">Loading families...</div>
+  } @else if (families.length === 0) {
+    <div class="empty">No variant families yet. Add your first one above.</div>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Sort</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (family of families; track family.id) {
+            <tr [class.inactive]="!family.is_active">
+
+              @if (editingId === family.id) {
+                <!-- EDIT ROW -->
+                <td><input class="inline-input" [(ngModel)]="editData.name" /></td>
+                <td><input class="inline-input" [(ngModel)]="editData.description" /></td>
+                <td><input class="inline-input inline-sm" type="number" [(ngModel)]="editData.sort_order" /></td>
+                <td>
+                  <label class="toggle">
+                    <input type="checkbox" [(ngModel)]="editData.is_active" />
+                    <span class="slider"></span>
+                  </label>
+                </td>
+                <td class="actions">
+                  <button class="btn-icon save" (click)="saveEdit(family)" [disabled]="saving">✓</button>
+                  <button class="btn-icon cancel" (click)="cancelEdit()">✕</button>
+                </td>
+
+              } @else {
+                <!-- VIEW ROW -->
+                <td class="name-cell">{{ family.name }}</td>
+                <td class="desc-cell">{{ family.description || '—' }}</td>
+                <td>{{ family.sort_order }}</td>
+                <td>
+                  <label class="toggle">
+                    <input type="checkbox" [checked]="family.is_active" (change)="toggleActive(family)" />
+                    <span class="slider"></span>
+                  </label>
+                </td>
+                <td class="actions">
+                  <button class="btn-icon edit" (click)="startEdit(family)">✎</button>
+                  <button class="btn-icon delete" (click)="confirmDelete(family)">🗑</button>
+                </td>
+              }
+
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
+
+<app-popup
+  [config]="popup"
+  (confirmed)="onPopupConfirmed()"
+  (cancelled)="popup = null">
+</app-popup>

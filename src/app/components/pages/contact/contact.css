@@ -1,0 +1,489 @@
+/*
+ * contact.css — Potikada Contact Page Component Styles
+ *
+ * Global variables (from styles.css):
+ *   --gold, --gold-light, --gold-pale, --white, --dark, --text, --muted, --border
+ *
+ * Page-specific variables (--page-*) defined in :host below.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── PAGE VARIABLES ─────────────────────────────────────────── */
+:host {
+  --page-font-display:      'Playfair Display', serif;
+  --page-font-body:         'DM Sans', sans-serif;
+  --page-hero-overlay-1:    rgba(201, 168, 76, 0.18);
+  --page-hero-overlay-2:    rgba(201, 168, 76, 0.12);
+  --page-hero-sub:          rgba(255, 255, 255, 0.60);
+  --page-badge-bg:          rgba(201, 168, 76, 0.15);
+  --page-badge-border:      rgba(201, 168, 76, 0.35);
+  --page-card-shadow:       rgba(201, 168, 76, 0.10);
+  --page-card-shadow-hover: rgba(201, 168, 76, 0.22);
+  --page-wa-green:          #25d366;
+  --page-wa-green-hover:    #1ebe5d;
+  --page-wa-dark:           #075e54;
+  --page-input-border:      #e8dfc8;
+  --page-input-focus:       rgba(201, 168, 76, 0.40);
+  --page-promise-dot:       var(--gold);
+  --page-success-bg:        #f0faf4;
+  --page-success-border:    #a8d5b5;
+  --page-success-text:      #1e6b3a;
+  --page-closing-overlay:   rgba(201, 168, 76, 0.10);
+}
+
+/* ── BASE ───────────────────────────────────────────────────── */
+:host {
+  display: block;
+  font-family: var(--page-font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HERO ───────────────────────────────────────────────────── */
+.pk-hero {
+  background: var(--dark);
+  padding: 90px 40px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pk-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%, var(--page-hero-overlay-1), transparent),
+    radial-gradient(ellipse 50% 60% at 80% 30%, var(--page-hero-overlay-2), transparent);
+  pointer-events: none;
+}
+
+.pk-hero-tag {
+  display: inline-block;
+  background: var(--page-badge-bg);
+  border: 1px solid var(--page-badge-border);
+  color: var(--gold-light);
+  font-size: 0.78rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 6px 18px;
+  border-radius: 100px;
+  margin-bottom: 26px;
+}
+
+.pk-hero h1 {
+  font-family: var(--page-font-display);
+  color: var(--white);
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  line-height: 1.15;
+  margin-bottom: 22px;
+  position: relative;
+}
+
+.pk-hero h1 em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.pk-hero-sub {
+  color: var(--page-hero-sub);
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+
+.pk-gold-line {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 28px auto 0;
+}
+
+/* ── CONTACT CARDS ──────────────────────────────────────────── */
+.pk-cards-section {
+  padding: 70px 40px;
+}
+
+.pk-cards-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.pk-contact-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 28px 28px;
+  border-radius: 16px;
+  text-decoration: none;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  box-shadow: 0 4px 20px var(--page-card-shadow);
+  transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+  position: relative;
+  overflow: hidden;
+}
+
+.pk-contact-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--gold-pale), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.22s;
+}
+
+.pk-contact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px var(--page-card-shadow-hover);
+  border-color: var(--gold);
+}
+
+.pk-contact-card:hover::before {
+  opacity: 1;
+}
+
+/* WhatsApp card special styling */
+.pk-card-whatsapp {
+  background: var(--dark);
+  border-color: var(--page-wa-green);
+}
+
+.pk-card-whatsapp::before {
+  background: linear-gradient(135deg, rgba(37,211,102,0.15), transparent 60%);
+}
+
+.pk-card-whatsapp:hover {
+  border-color: var(--page-wa-green-hover);
+  box-shadow: 0 12px 32px rgba(37,211,102,0.20);
+}
+
+.pk-card-whatsapp .pk-card-label { color: rgba(255,255,255,0.60); }
+.pk-card-whatsapp .pk-card-value { color: var(--white); }
+.pk-card-whatsapp .pk-card-hint  { color: var(--page-wa-green); }
+.pk-card-whatsapp .pk-card-arrow { color: var(--page-wa-green); }
+
+.pk-card-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gold-pale);
+  border-radius: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.pk-wa-icon {
+  background: rgba(37, 211, 102, 0.15);
+  color: var(--page-wa-green);
+}
+
+.pk-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.pk-card-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.pk-card-value {
+  font-family: var(--page-font-display);
+  font-size: 1.15rem;
+  color: var(--dark);
+  font-weight: 700;
+}
+
+.pk-card-hint {
+  font-size: 0.82rem;
+  color: var(--gold);
+}
+
+.pk-card-arrow {
+  font-size: 1.2rem;
+  color: var(--gold);
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.2s;
+  position: relative;
+  z-index: 1;
+}
+
+.pk-contact-card:hover .pk-card-arrow {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
+/* ── DIVIDER ────────────────────────────────────────────────── */
+.pk-divider {
+  max-width: 800px;
+  margin: 0 auto;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border), transparent);
+}
+
+/* ── FORM SECTION ───────────────────────────────────────────── */
+.pk-form-section {
+  padding: 80px 40px;
+  background: var(--gold-pale);
+}
+
+.pk-form-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 70px;
+  align-items: start;
+}
+
+/* Left side */
+.pk-form-eyebrow {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.pk-form-left h2 {
+  font-family: var(--page-font-display);
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  color: var(--dark);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.pk-form-left h2 span {
+  color: var(--gold);
+}
+
+.pk-form-left p {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+
+.pk-form-left p strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.pk-form-promises {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pk-promise-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.pk-promise-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--page-promise-dot);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Right side — form */
+.pk-form-right {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 40px 36px;
+  box-shadow: 0 8px 40px var(--page-card-shadow);
+  border: 1px solid var(--border);
+}
+
+.pk-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.pk-field {
+  margin-bottom: 18px;
+}
+
+.pk-field label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.pk-field input,
+.pk-field select,
+.pk-field textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--page-input-border);
+  border-radius: 10px;
+  font-family: var(--page-font-body);
+  font-size: 0.97rem;
+  color: var(--text);
+  background: var(--gold-pale);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  box-sizing:border-box;
+}
+
+.pk-field input:focus,
+.pk-field select:focus,
+.pk-field textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--page-input-focus);
+  background: var(--white);
+}
+
+.pk-field textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.pk-submit-btn {
+  width: 100%;
+  background: var(--dark);
+  color: var(--gold-light);
+  border: none;
+  padding: 15px 32px;
+  border-radius: 10px;
+  font-family: var(--page-font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  margin-top: 4px;
+}
+
+.pk-submit-btn:hover:not(:disabled) {
+  background: var(--text);
+  transform: translateY(-2px);
+}
+
+.pk-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pk-success {
+  margin-top: 16px;
+  background: var(--page-success-bg);
+  border: 1px solid var(--page-success-border);
+  color: var(--page-success-text);
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* ── WARM CLOSING ───────────────────────────────────────────── */
+.pk-closing {
+  background: var(--dark);
+  padding: 80px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pk-closing::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 50% 50%, var(--page-closing-overlay), transparent);
+  pointer-events: none;
+}
+
+.pk-closing-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.pk-closing-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.pk-closing h2 {
+  font-family: var(--page-font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  color: var(--white);
+  margin-bottom: 16px;
+  line-height: 1.25;
+}
+
+.pk-closing h2 span {
+  color: var(--gold-light);
+  font-style: italic;
+}
+
+.pk-closing p {
+  color: rgba(255,255,255,0.60);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+.pk-closing-address {
+  display: inline-block;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.30);
+  color: var(--gold-light);
+  font-size: 0.9rem;
+  padding: 10px 22px;
+  border-radius: 100px;
+  letter-spacing: 0.5px;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .pk-form-inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 700px) {
+  .pk-hero { padding: 60px 24px 50px; }
+
+  .pk-cards-section { padding: 50px 24px; }
+
+  .pk-cards-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .pk-form-section { padding: 60px 24px; }
+
+  .pk-form-right { padding: 28px 22px; }
+
+  .pk-field-row { grid-template-columns: 1fr; }
+
+  .pk-closing { padding: 60px 24px; }
+}

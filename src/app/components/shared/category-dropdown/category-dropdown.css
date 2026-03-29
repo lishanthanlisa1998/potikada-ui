@@ -1,0 +1,111 @@
+/* ── WRAPPER ──────────────────────────────────────── */
+.cat-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+/* ── TRIGGER BUTTON ───────────────────────────────── */
+.cat-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1.5px solid #e8e0d5;
+  background: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0F0A06;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.cat-btn:hover {
+  border-color: #C8892A;
+}
+
+.cat-btn-open {
+  border-color: #C8892A;
+  box-shadow: 0 0 0 3px rgba(200, 137, 42, 0.10);
+}
+
+/* ── BUTTON LABEL ─────────────────────────────────── */
+.cat-btn-label {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── ARROW ICON ───────────────────────────────────── */
+.cat-arrow {
+  flex-shrink: 0;
+  transition: transform 0.22s ease;
+}
+
+.cat-arrow-open {
+  transform: rotate(180deg);
+}
+
+/* ── DROPDOWN PANEL ───────────────────────────────── */
+.cat-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: -7px;
+  min-width: 100%;
+  background: white;
+  border: 1.5px solid #e8e0d5;
+  border-radius: 14px;
+  padding: 6px;
+  z-index: 999;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.10);
+
+  /* Smooth appear animation */
+  animation: catPanelIn 0.18s ease;
+}
+
+@keyframes catPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── OPTION ITEM ──────────────────────────────────── */
+.cat-option {
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0F0A06;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cat-option:hover {
+  background: #faf6ee;
+  color: #C8892A;
+}
+
+/* ── ACTIVE OPTION ────────────────────────────────── */
+.cat-option-active {
+  background: rgba(200, 137, 42, 0.10);
+  color: #C8892A;
+}
+
+.cat-option-active:hover {
+  background: rgba(200, 137, 42, 0.15);
+}

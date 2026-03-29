@@ -2,8 +2,8 @@
 
 <div class="wishlist-page">
 
-  <app-header [showBack]="true"  (menuClicked)="menuOpen = true"></app-header>
-
+  <app-header  *ngIf="!hideHeader"  [showBack]="true"  (menuClicked)="menuOpen = true" [showCart]="false"  [showMenu]="false" [showWishlist]="false"></app-header>
+  <app-header  *ngIf="hideHeader" [showBack]="true"  (menuClicked)="menuOpen = true" ></app-header>
   <!-- Empty wishlist -->
   @if (cartService.wishlist().length === 0) {
     <div class="empty-state">
@@ -139,6 +139,8 @@
   }
 
 </div>
+
+<app-bottom-nav (earnMoneyClicked)="openEarnPopup()" (menuClicked)="menuOpen = true" />
 
 <!-- Share popup -->
 <app-share-popup

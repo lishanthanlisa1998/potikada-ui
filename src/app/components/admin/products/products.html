@@ -43,7 +43,6 @@
       @for (product of filtered; track product.id) {
         <div class="product-card">
 
-          <!-- Image -->
           <div class="card-image">
             <img [src]="getPrimaryImage(product)" [alt]="product.name"
                  onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
@@ -59,7 +58,6 @@
             </div>
           </div>
 
-          <!-- Info -->
           <div class="card-info">
             <div class="card-category">{{ product.category }}</div>
             <div class="card-name">{{ product.name }}</div>
@@ -71,12 +69,9 @@
             </div>
             <div class="card-meta">
               <span>{{ product.images?.length || 0 }} images</span>
-              <span>•</span>
-              <span>{{ product.sizes?.length || 0 }} sizes</span>
             </div>
           </div>
 
-          <!-- Actions -->
           <div class="card-actions">
             <button class="btn-toggle"
                     [class.active]="product.is_active"
@@ -113,9 +108,14 @@
       <div class="modal" (click)="$event.stopPropagation()">
         <div class="modal-icon">🗑️</div>
         <h3>Delete Product?</h3>
-        <p>This action cannot be undone. The product will be permanently deleted.</p>
+        <p>This action cannot be undone. All variants and images will be deleted.</p>
+
+        @if (deleteError) {
+          <div class="delete-error">⚠️ {{ deleteError }}</div>
+        }
+
         <div class="modal-actions">
-          <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+          <button class="btn-cancel" (click)="cancelDelete()" [disabled]="deleteLoading">Cancel</button>
           <button class="btn-confirm-delete"
                   [disabled]="deleteLoading"
                   (click)="deleteProduct()">

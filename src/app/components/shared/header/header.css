@@ -108,18 +108,7 @@
   justify-content: flex-start;
 }
 
-.header-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-}
 
-.header-logo img {
-  height: 32px;
-  width: auto;
-  object-fit: contain;
-}
 
 .desktop-header-actions {
   display: flex;

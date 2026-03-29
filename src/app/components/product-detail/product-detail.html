@@ -28,8 +28,31 @@
 
 <!-- ======== MOBILE ======== -->
 <div class="mobile-layout">
-  <app-header [showBack]="true"  [showCart]="false"  [showMenu]="false" [showMenu]="false"  (menuClicked)="menuOpen = true"></app-header>
+ 
   @if (product) {
+
+    <!-- Sticky price bar at TOP — always visible while scrolling -->
+    <div class="m-sticky-price">
+      <div class="m-sticky-price-left">
+        <div class="m-sticky-price-name">{{ product.name }}</div>
+        <div class="m-sticky-delivery">Rs. {{ currentPrice | number }} + Rs. {{ deliveryFee }} courier fees</div>
+        <div class="m-sticky-price-val">Rs. {{ grandTotal | number }}</div>
+        
+      </div>
+      <div class="m-sticky-actions">
+         
+        <button class="btn-buy" [disabled]="isOutOfStock" (click)="addToCart()">
+          {{ isOutOfStock ? 'Out of Stock' : 'Add to Cart' }}
+        </button>
+
+          <button class="btn-buy" [disabled]="isOutOfStock" (click)="buyNow()">
+        {{ isOutOfStock ? '😔 Unavailable' : 'Buy Now' }}
+      </button>
+      </div>
+    </div>
+
+  
+
     <div class="m-product-image">
       <img [src]="activeImage" [alt]="product.name">
       @if (product.badge) {
@@ -59,6 +82,7 @@
         @if (product.offerTag) { <span class="m-offer-tag">{{ product.offerTag }}</span> }
       </div>
 
+      @if (product.hearts > 0) {
       <div class="m-hearts">
         <div class="m-hearts-icons">
           @for (filled of heartsArray(product.hearts); track $index) {
@@ -67,6 +91,7 @@
         </div>
         <span class="m-reviews">(12 reviews)</span>
       </div>
+      }
 
       <div class="m-meta">
         <div class="m-meta-row"><span class="m-meta-label">Category:</span><span class="m-meta-value">{{ product.category }}</span></div>
@@ -79,50 +104,37 @@
         }
       </div>
 
-      <!-- VARIANTS -->
-      @if (sizes.length > 0) {
-        <div class="variant-section">
-          <div class="variant-label">📏 Size</div>
-          <div class="size-options">
-            @for (size of sizes; track size) {
-              <button class="size-btn" [class.active]="selectedSize === size" [class.out]="isSizeOutOfStock(size)" (click)="selectSize(size)">
-                {{ size }}@if (isSizeOutOfStock(size)) {<span class="out-x">✕</span>}
-              </button>
-            }
+      <!-- VARIANTS MOBILE -->
+      @for (family of families; track family.id) {
+        @if (family.options.length > 0) {
+          <div class="variant-section">
+            <div class="variant-label">
+              {{ family.name }}
+              @if (selections[family.name]) {
+                <span class="selected-val">— {{ selections[family.name] }}</span>
+              }
+            </div>
+            <div class="size-options">
+              @for (opt of family.options; track opt) {
+                <button class="size-btn"
+                  [class.active]="selections[family.name] === opt"
+                  [class.out]="isOptionUnavailable(family.name, opt)"
+                  (click)="selectOption(family.name, opt)">
+                  {{ opt }}
+                  @if (isOptionUnavailable(family.name, opt)) {
+                    <span class="out-x">✕</span>
+                  }
+                </button>
+              }
+            </div>
           </div>
-        </div>
-      }
-
-      @if (colors.length > 0) {
-        <div class="variant-section">
-          <div class="variant-label">🎨 Color @if (selectedColor) {<span class="selected-val">— {{ selectedColor }}</span>}</div>
-          <div class="color-options">
-            @for (c of colors; track c.color) {
-              <button class="color-btn" [class.active]="selectedColor === c.color" [class.out]="isColorOutOfStock(c.color)" (click)="selectColor(c)">
-                <span class="color-dot" [style.background]="c.color_hex"></span>
-                {{ c.color }}
-              </button>
-            }
-          </div>
-        </div>
-      }
-
-      @if (designs.length > 0) {
-        <div class="variant-section">
-          <div class="variant-label">✨ Design @if (selectedDesign) {<span class="selected-val">— {{ selectedDesign }}</span>}</div>
-          <div class="design-options">
-            @for (d of designs; track d) {
-              <button class="design-btn" [class.active]="selectedDesign === d" (click)="selectDesign(d)">{{ d }}</button>
-            }
-          </div>
-        </div>
+        }
       }
 
       @if (stockLabel) {
         <div class="stock-label" [class.out]="isOutOfStock">{{ stockLabel }}</div>
       }
 
-      <!-- Quantity -->
       <div class="m-section-title">Quantity</div>
       <div class="qty-row">
         <div class="qty-controls">
@@ -132,49 +144,56 @@
         </div>
       </div>
 
-      <!-- Delivery + Total -->
+      <!-- PRICE BOX MOBILE -->
       <div class="delivery-total-box">
-        <div class="delivery-row">
-          <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-          <div class="delivery-info">
-            <div class="delivery-title">Standard Delivery</div>
-            <div class="delivery-sub">{{ product.deliveryDate ? 'Guaranteed by ' + product.deliveryDate : 'Delivered in 3–5 days' }}</div>
+        <div class="price-breakdown-row">
+          <span class="pb-label">Product Price</span>
+          <span class="pb-val">Rs. {{ currentPrice | number }}</span>
+        </div>
+        @if (quantity > 1) {
+          <div class="price-breakdown-row">
+            <span class="pb-label">× {{ quantity }} items</span>
+            <span class="pb-val pb-sub">Rs. {{ productTotal | number }}</span>
           </div>
-          <div class="delivery-fee-val">Rs. {{ deliveryFee }}</div>
+        }
+        <div class="price-breakdown-row delivery-row-inner">
+          <span class="pb-label">
+            <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>
+              <span class="pb-courier-title">Courier Charges</span>
+              <span class="pb-courier-sub">{{ product?.deliveryDate ? 'By ' + product.deliveryDate : 'Delivered in 3–7 working days' }}</span>
+            </span>
+          </span>
+          <span class="pb-val">Rs. {{ deliveryFee | number }}</span>
         </div>
         <div class="total-row">
-          <span class="total-label">Total ({{ quantity }} item{{ quantity > 1 ? 's' : '' }})</span>
-          <span class="total-val">Rs. {{ (currentPrice * quantity) + deliveryFee }}</span>
+          <span class="total-label">Total</span>
+          <span class="total-val">Rs. {{ grandTotal | number }}</span>
         </div>
       </div>
-
     </div>
 
+    <!-- TABS MOBILE -->
     <div class="m-tabs-section">
       <div class="tab-headers">
         <button class="tab-btn" [class.active]="activeTab==='description'" (click)="setTab('description')">Description</button>
-        <button class="tab-btn" [class.active]="activeTab==='reviews'" (click)="setTab('reviews')">Reviews (12)</button>
-        <button class="tab-btn" [class.active]="activeTab==='qa'" (click)="setTab('qa')">Q&A (3)</button>
+        <button class="tab-btn" [class.active]="activeTab==='reviews'" (click)="setTab('reviews')">Reviews</button>
+         <!-- <button class="tab-btn" [class.active]="activeTab==='qa'" (click)="setTab('qa')">Q&A</button>-->
       </div>
-      @if (activeTab === 'description') { <div class="tab-content"><p>{{ product.description }}</p></div> }
-      @if (activeTab === 'reviews')     { <div class="tab-content"><p>⭐ Customer reviews coming soon!</p></div> }
-      @if (activeTab === 'qa')          { <div class="tab-content"><p>❓ Questions & Answers coming soon!</p></div> }
+      <div class="d-tab-content">
+      @if (activeTab === 'description') {
+        <div class="tab-content desc-content">
+          <ng-container *ngTemplateOutlet="descTemplate"></ng-container>
+        </div>
+      }
+      @if (activeTab === 'reviews') { <div class="tab-content"><p>⭐ Customer reviews coming soon!</p></div> }
+      @if (activeTab === 'qa')      { <div class="tab-content"><p>❓ Questions & Answers coming soon!</p></div> }
+    </div>
     </div>
 
     <div class="page-bottom-pad"></div>
 
-    <div class="m-actions">
-      <button class="btn-like" [class.liked]="isLiked" (click)="toggleLike()">
-        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </button>
-      <button class="btn-cart" [disabled]="isOutOfStock" (click)="addToCart()">
-        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        {{ isOutOfStock ? 'Out of Stock' : 'Cart' }}
-      </button>
-      <button class="btn-buy" [disabled]="isOutOfStock" (click)="buyNow()">
-        {{ isOutOfStock ? '😔 Unavailable' : 'Buy Now' }}
-      </button>
-    </div>
+    
   }
 
   <app-bottom-nav (earnMoneyClicked)="earnPopupOpen = true" />
@@ -195,7 +214,7 @@
 
         <div class="d-product-layout">
 
-          <!-- Gallery — fixed size -->
+          <!-- Gallery -->
           <div class="d-gallery">
             <div class="d-main-image">
               <img [src]="activeImage" [alt]="product.name">
@@ -227,6 +246,7 @@
               @if (product.offerTag) { <span class="d-offer-tag">{{ product.offerTag }}</span> }
             </div>
 
+            @if (product.hearts > 0) {
             <div class="d-hearts">
               <div class="d-hearts-icons">
                 @for (filled of heartsArray(product.hearts); track $index) {
@@ -235,6 +255,7 @@
               </div>
               <span class="d-reviews">(12 reviews)</span>
             </div>
+            }
 
             <div class="d-meta">
               <div class="d-meta-row"><span class="d-meta-label">Category</span><span class="d-meta-value">{{ product.category }}</span></div>
@@ -247,51 +268,37 @@
               }
             </div>
 
-            <!-- VARIANTS -->
-            @if (sizes.length > 0) {
-              <div class="variant-section">
-                <div class="variant-label">📏 Size</div>
-                <div class="size-options">
-                  @for (size of sizes; track size) {
-                    <button class="size-btn" [class.active]="selectedSize === size" [class.out]="isSizeOutOfStock(size)" (click)="selectSize(size)">
-                      {{ size }}@if (isSizeOutOfStock(size)) {<span class="out-x">✕</span>}
-                    </button>
-                  }
+            <!-- VARIANTS DESKTOP -->
+            @for (family of families; track family.id) {
+              @if (family.options.length > 0) {
+                <div class="variant-section">
+                  <div class="variant-label">
+                    {{ family.name }}
+                    @if (selections[family.name]) {
+                      <span class="selected-val">— {{ selections[family.name] }}</span>
+                    }
+                  </div>
+                  <div class="size-options">
+                    @for (opt of family.options; track opt) {
+                      <button class="size-btn"
+                        [class.active]="selections[family.name] === opt"
+                        [class.out]="isOptionUnavailable(family.name, opt)"
+                        (click)="selectOption(family.name, opt)">
+                        {{ opt }}
+                        @if (isOptionUnavailable(family.name, opt)) {
+                          <span class="out-x">✕</span>
+                        }
+                      </button>
+                    }
+                  </div>
                 </div>
-              </div>
-            }
-
-            @if (colors.length > 0) {
-              <div class="variant-section">
-                <div class="variant-label">🎨 Color @if (selectedColor) {<span class="selected-val">— {{ selectedColor }}</span>}</div>
-                <div class="color-options">
-                  @for (c of colors; track c.color) {
-                    <button class="color-btn" [class.active]="selectedColor === c.color" [class.out]="isColorOutOfStock(c.color)" (click)="selectColor(c)">
-                      <span class="color-dot" [style.background]="c.color_hex"></span>
-                      {{ c.color }}
-                      @if (isColorOutOfStock(c.color)) { <span class="out-x">✕</span> }
-                    </button>
-                  }
-                </div>
-              </div>
-            }
-
-            @if (designs.length > 0) {
-              <div class="variant-section">
-                <div class="variant-label">✨ Design @if (selectedDesign) {<span class="selected-val">— {{ selectedDesign }}</span>}</div>
-                <div class="design-options">
-                  @for (d of designs; track d) {
-                    <button class="design-btn" [class.active]="selectedDesign === d" (click)="selectDesign(d)">{{ d }}</button>
-                  }
-                </div>
-              </div>
+              }
             }
 
             @if (stockLabel) {
               <div class="stock-label" [class.out]="isOutOfStock">{{ stockLabel }}</div>
             }
 
-            <!-- Quantity -->
             <div class="d-section-title">Quantity</div>
             <div class="d-qty-row">
               <div class="d-qty-controls">
@@ -301,19 +308,31 @@
               </div>
             </div>
 
-            <!-- Delivery + Total box -->
+            <!-- PRICE BOX DESKTOP -->
             <div class="delivery-total-box">
-              <div class="delivery-row">
-                <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                <div class="delivery-info">
-                  <div class="delivery-title">Standard Delivery</div>
-                  <div class="delivery-sub">{{ product.deliveryDate ? 'Guaranteed by ' + product.deliveryDate : 'Delivered in 3–5 days' }}</div>
+              <div class="price-breakdown-row">
+                <span class="pb-label">Product Price</span>
+                <span class="pb-val">Rs. {{ currentPrice | number }}</span>
+              </div>
+              @if (quantity > 1) {
+                <div class="price-breakdown-row">
+                  <span class="pb-label">× {{ quantity }} items</span>
+                  <span class="pb-val pb-sub">Rs. {{ productTotal | number }}</span>
                 </div>
-                <div class="delivery-fee-val">Rs. {{ deliveryFee }}</div>
+              }
+              <div class="price-breakdown-row delivery-row-inner">
+                <span class="pb-label">
+                  <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                  <span>
+                    <span class="pb-courier-title">Courier Charges</span>
+                    <span class="pb-courier-sub">{{ product?.deliveryDate ? 'By ' + product.deliveryDate : 'Delivered in 3–7 working days' }}</span>
+                  </span>
+                </span>
+                <span class="pb-val">Rs. {{ deliveryFee | number }}</span>
               </div>
               <div class="total-row">
-                <span class="total-label">Total ({{ quantity }} item{{ quantity > 1 ? 's' : '' }})</span>
-                <span class="total-val">Rs. {{ (currentPrice * quantity) + deliveryFee }}</span>
+                <span class="total-label">Total</span>
+                <span class="total-val">Rs. {{ grandTotal | number }}</span>
               </div>
             </div>
 
@@ -330,26 +349,60 @@
                 {{ isOutOfStock ? '😔 Unavailable' : 'Buy Now →' }}
               </button>
             </div>
-
           </div>
         </div>
 
+        <!-- TABS DESKTOP -->
         <div class="d-tabs-section">
           <div class="d-tab-headers">
             <button class="d-tab-btn" [class.active]="activeTab==='description'" (click)="setTab('description')">Description</button>
-            <button class="d-tab-btn" [class.active]="activeTab==='reviews'" (click)="setTab('reviews')">Reviews (12)</button>
-            <button class="d-tab-btn" [class.active]="activeTab==='qa'" (click)="setTab('qa')">Q&A (3)</button>
+            <button class="d-tab-btn" [class.active]="activeTab==='reviews'" (click)="setTab('reviews')">Reviews</button>
+            <!-- <button class="d-tab-btn" [class.active]="activeTab==='qa'" (click)="setTab('qa')">Q&A</button>-->
           </div>
           <div class="d-tab-content">
-            @if (activeTab === 'description') { <p>{{ product.description }}</p> }
-            @if (activeTab === 'reviews')     { <p>⭐ Customer reviews coming soon!</p> }
-            @if (activeTab === 'qa')          { <p>❓ Questions & Answers coming soon!</p> }
+            @if (activeTab === 'description') {
+              <div class="tab-content desc-content">
+                <ng-container *ngTemplateOutlet="descTemplate"></ng-container>
+              </div>
+            }
+            @if (activeTab === 'reviews') { <p>⭐ Customer reviews coming soon!</p> }
+            @if (activeTab === 'qa')      { <p>❓ Questions & Answers coming soon!</p> }
           </div>
         </div>
       }
     </div>
   </div>
 </div>
+
+<!-- ── Shared description template (used by both mobile + desktop) ── -->
+<ng-template #descTemplate>
+  @if (descSections.length === 0) {
+    <p>{{ product?.description }}</p>
+  }
+  @for (section of descSections; track $index) {
+    @if (section.type === 'text' && section.content) {
+      <div class="desc-block">
+        @if (section.label) { <h4 class="desc-block-title">{{ section.label }}</h4> }
+        <p class="desc-block-text">{{ section.content }}</p>
+      </div>
+    }
+    @if (section.type === 'bullets' && section.items?.length > 0) {
+      <div class="desc-block">
+        @if (section.label) { <h4 class="desc-block-title">{{ section.label }}</h4> }
+        <ul class="desc-bullets">
+          @for (item of section.items; track $index) {
+            @if (item) { <li>{{ item }}</li> }
+          }
+        </ul>
+      </div>
+    }
+    @if (section.type === 'image' && section.url) {
+      <div class="desc-block desc-block-image">
+        <img [src]="section.url" alt="Product detail image">
+      </div>
+    }
+  }
+</ng-template>
 
 <app-share-popup [isOpen]="sharePopupOpen" [shareLink]="product?.shareLink || ''" (closed)="sharePopupOpen = false" />
 <app-earn-money-popup [isOpen]="earnPopupOpen" (closed)="earnPopupOpen = false" />

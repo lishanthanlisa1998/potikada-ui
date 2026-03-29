@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- ══════════════════════════════════════
+       HOME — Product List (path: '')
+  ══════════════════════════════════════ -->
+  <url>
+    <loc>https://www.potikada.lk/</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- ══════════════════════════════════════
+       CART (path: 'cart')
+       NOTE: No SEO value — noindex recommended
+  ══════════════════════════════════════ -->
+  <!-- cart excluded — private user page -->
+
+  <!-- ══════════════════════════════════════
+       CHECKOUT (path: 'checkout')
+       NOTE: Excluded — private user page
+  ══════════════════════════════════════ -->
+  <!-- checkout excluded — private user page -->
+
+  <!-- ══════════════════════════════════════
+       WISHLIST (path: 'wishlist')
+       NOTE: Excluded — private user page
+  ══════════════════════════════════════ -->
+  <!-- wishlist excluded — private user page -->
+
+  <!-- ══════════════════════════════════════
+       INFO PAGES
+  ══════════════════════════════════════ -->
+
+  <!-- About Us (path: 'about') -->
+  <url>
+    <loc>https://www.potikada.lk/about</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Our Mission (path: 'our-mission') -->
+  <url>
+    <loc>https://www.potikada.lk/our-mission</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Contact (path: 'contact') -->
+  <url>
+    <loc>https://www.potikada.lk/contact</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Sell on Potikada (path: 'sell-on-potikada') -->
+  <url>
+    <loc>https://www.potikada.lk/sell-on-potikada</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- FAQ (path: 'faq') -->
+  <url>
+    <loc>https://www.potikada.lk/faq</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ══════════════════════════════════════
+       POLICY PAGES
+  ══════════════════════════════════════ -->
+
+  <!-- Privacy Policy (path: 'privacy-policy') -->
+  <url>
+    <loc>https://www.potikada.lk/privacy-policy</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Terms & Conditions (path: 'terms-conditions') -->
+  <url>
+    <loc>https://www.potikada.lk/terms-conditions</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Shipping Policy (path: 'shipping-policy') -->
+  <url>
+    <loc>https://www.potikada.lk/shipping-policy</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Returns & Refunds (path: 'returns-refunds') -->
+  <url>
+    <loc>https://www.potikada.lk/returns-refunds</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- ══════════════════════════════════════
+       AFFILIATE PUBLIC PAGES
+       (login & register are public)
+  ══════════════════════════════════════ -->
+
+  <!-- Affiliate Login (path: 'affiliate/login') -->
+  <url>
+    <loc>https://www.potikada.lk/affiliate/login</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Affiliate Register (path: 'affiliate/register') -->
+  <url>
+    <loc>https://www.potikada.lk/affiliate/register</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!--
+  ══════════════════════════════════════════════════
+  DYNAMIC PRODUCT PAGES — Add via Laravel later
+  Format: https://www.potikada.lk/product/{id}
+
+  When ready, generate dynamically using:
+  → SitemapController.php (already built)
+  → Route: GET /sitemap.xml in Laravel
+
+  Example:
+  <url>
+    <loc>https://www.potikada.lk/product/1</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  ══════════════════════════════════════════════════
+  -->
+
+  <!--
+  ══════════════════════════════════════════════════
+  EXCLUDED PAGES (no SEO value / private):
+  → /cart
+  → /checkout
+  → /wishlist
+  → /order-success/:id
+  → /affiliate/dashboard
+  → /affiliate/profile
+  → /admin/*  (all admin routes)
+  ══════════════════════════════════════════════════
+  -->
+
+</urlset>

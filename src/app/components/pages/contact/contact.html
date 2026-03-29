@@ -1,1 +1,200 @@
-<p>contact works!</p>
+<!-- HERO -->
+<section class="pk-hero">
+  <div class="pk-hero-tag">💬 We'd Love to Hear From You</div>
+  <h1>Let's <em>Connect</em></h1>
+  <p class="pk-hero-sub">
+    Have a question, want to sell on Potikada, or just want to say hello?
+    Reach us the way that's easiest for you.
+  </p>
+  <div class="pk-gold-line"></div>
+</section>
+
+<!-- CONTACT CARDS -->
+<section class="pk-cards-section">
+  <div class="pk-cards-inner">
+
+    <!-- WhatsApp -->
+    <a
+      href="https://wa.me/94761933305?text=Hello%20Potikada%2C%20I%20would%20like%20to%20enquire%20about..."
+      target="_blank"
+      rel="noopener noreferrer"
+      class="pk-contact-card pk-card-whatsapp"
+    >
+      <div class="pk-card-icon pk-wa-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.558 4.121 1.532 5.853L.057 23.57a.75.75 0 00.912.912l5.717-1.475A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.718 9.718 0 01-4.976-1.368l-.356-.212-3.695.953.974-3.576-.232-.368A9.718 9.718 0 012.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/>
+        </svg>
+      </div>
+      <div class="pk-card-body">
+        <span class="pk-card-label">WhatsApp Us</span>
+        <span class="pk-card-value">076 193 3305</span>
+        <span class="pk-card-hint">Tap to open WhatsApp →</span>
+      </div>
+      <div class="pk-card-arrow">↗</div>
+    </a>
+
+    <!-- Phone -->
+    <a href="tel:+94761933305" class="pk-contact-card pk-card-phone">
+      <div class="pk-card-icon">📞</div>
+      <div class="pk-card-body">
+        <span class="pk-card-label">Call Us</span>
+        <span class="pk-card-value">076 193 3305</span>
+        <span class="pk-card-hint">Mon–Sat, 8am – 8pm</span>
+      </div>
+      <div class="pk-card-arrow">↗</div>
+    </a>
+
+    <!-- Email -->
+    <a href="mailto:info@potikada.lk" class="pk-contact-card pk-card-email">
+      <div class="pk-card-icon">✉️</div>
+      <div class="pk-card-body">
+        <span class="pk-card-label">Email Us</span>
+        <span class="pk-card-value">info&#64;potikada.lk</span>
+        <span class="pk-card-hint">We reply within 24 hours</span>
+      </div>
+      <div class="pk-card-arrow">↗</div>
+    </a>
+
+    <!-- Address -->
+    <a
+      href="https://maps.google.com/?q=29+Hijirapura+Road+Hatton+Sri+Lanka"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="pk-contact-card pk-card-address"
+    >
+      <div class="pk-card-icon">📍</div>
+      <div class="pk-card-body">
+        <span class="pk-card-label">Visit Us</span>
+        <span class="pk-card-value">No. 29, Hijirapura Road</span>
+        <span class="pk-card-hint">Hatton, Sri Lanka → Open in Maps</span>
+      </div>
+      <div class="pk-card-arrow">↗</div>
+    </a>
+
+  </div>
+</section>
+
+<div class="pk-divider"></div>
+
+<!-- EMAIL FORM -->
+<section class="pk-form-section">
+  <div class="pk-form-inner">
+
+    <div class="pk-form-left">
+      <div class="pk-form-eyebrow">📬 Send a Message</div>
+      <h2>We're Here<br><span>For You</span></h2>
+      <p>
+        Whether you want to <strong>sell your homemade products</strong> on Potikada,
+        ask about an order, or just say hello — we read every message and
+        reply personally.
+      </p>
+      <div class="pk-form-promises">
+        <div class="pk-promise-item">
+          <span class="pk-promise-dot"></span>
+          Personal reply — not a bot
+        </div>
+        <div class="pk-promise-item">
+          <span class="pk-promise-dot"></span>
+          Response within 24 hours
+        </div>
+        <div class="pk-promise-item">
+          <span class="pk-promise-dot"></span>
+          We speak Sinhala, Tamil &amp; English
+        </div>
+      </div>
+    </div>
+
+    <div class="pk-form-right">
+      <form class="pk-form" (ngSubmit)="onSubmit()" #contactForm="ngForm">
+
+        <div class="pk-field-row">
+          <div class="pk-field">
+            <label for="name">Your Name</label>
+            <input
+              id="name"
+              type="text"
+              [(ngModel)]="formData.name"
+              name="name"
+              placeholder="e.g. Kumari Perera"
+              required
+            />
+          </div>
+          <div class="pk-field">
+            <label for="phone">Phone Number</label>
+            <input
+              id="phone"
+              type="tel"
+              [(ngModel)]="formData.phone"
+              name="phone"
+              placeholder="e.g. 076 123 4567"
+            />
+          </div>
+        </div>
+
+        <div class="pk-field">
+          <label for="email">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            [(ngModel)]="formData.email"
+            name="email"
+            placeholder="your&#64;email.com"
+            required
+          />
+        </div>
+
+        <div class="pk-field">
+          <label for="subject">What's this about?</label>
+          <select id="subject" [(ngModel)]="formData.subject" name="subject">
+            <option value="">Select a topic...</option>
+            <option value="sell">I want to sell on Potikada</option>
+            <option value="order">Question about my order</option>
+            <option value="payment">Payment issue</option>
+            <option value="delivery">Delivery question</option>
+            <option value="refund">Return or Refund</option>
+            <option value="other">Something else</option>
+          </select>
+        </div>
+
+        <div class="pk-field">
+          <label for="message">Your Message</label>
+          <textarea
+            id="message"
+            [(ngModel)]="formData.message"
+            name="message"
+            rows="4"
+            placeholder="Tell us how we can help you..."
+            required
+          ></textarea>
+        </div>
+
+        <button type="submit" class="pk-submit-btn" [disabled]="sending">
+          <span *ngIf="!sending">Send Message ✨</span>
+          <span *ngIf="sending">Sending...</span>
+        </button>
+
+        <div class="pk-success" *ngIf="sent">
+          ✅ Thank you! We'll get back to you within 24 hours.
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<!-- WARM CLOSING -->
+<section class="pk-closing">
+  <div class="pk-closing-inner">
+    <div class="pk-closing-icon">🏡</div>
+    <h2>We Are Your <span>Neighbourhood Shop</span></h2>
+    <p>
+      Potikada started in Hatton to help local people. Whether you're a buyer or a seller,
+      you're family here. Come visit us or drop a message — the door is always open.
+    </p>
+    <div class="pk-closing-address">
+      📍 No. 29, Hijirapura Road, Hatton, Sri Lanka
+    </div>
+  </div>
+</section>

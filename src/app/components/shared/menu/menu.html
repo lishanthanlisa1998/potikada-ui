@@ -6,7 +6,9 @@
 
   <!-- Header -->
   <div class="menu-header">
-    <div class="menu-logo">potikada</div>
+    <a class="header-logo" routerLink="/">
+    <img src="assets/potikadalogo.png" alt="Potikada" />
+    </a>
     <button class="menu-close" (click)="close()">
       <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
@@ -45,11 +47,7 @@
       <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
 
-    <a class="menu-item" (click)="navigate('/faq')">
-      <div class="menu-item-icon">❓</div>
-      <span>FAQ</span>
-      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
+    
 
     <a class="menu-item" (click)="navigate('/shipping-policy')">
       <div class="menu-item-icon">🚚</div>
@@ -75,14 +73,8 @@
       <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
 
-    <div class="menu-divider"></div>
-    <div class="menu-group-label">Community</div>
 
-    <a class="menu-item" (click)="navigate('/sell-on-potikada')">
-      <div class="menu-item-icon">🛍️</div>
-      <span>Sell on Potikada</span>
-      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
+    
 
     <a class="menu-item" (click)="navigate('/our-mission')">
       <div class="menu-item-icon">🌟</div>
@@ -90,18 +82,17 @@
       <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
 
-    <a class="menu-item" (click)="navigate('/affiliate/register')">
-      <div class="menu-item-icon">💰</div>
-      <span>Become an Affiliate</span>
-      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
+   
 
   </nav>
 
-  <!-- Footer -->
   <div class="menu-footer">
-    <div class="menu-footer-logo">potikada</div>
-    <div class="menu-footer-sub">එකම කඩේ · ஒரே கடை · One Shop</div>
+  <div class="menu-footer-sub">
+    Developed by 
+    <a href="https://lewings.com/lewingsdigital" target="_blank">Lewings Pvt Ltd</a>
   </div>
+</div>
+  
 
 </div>
+

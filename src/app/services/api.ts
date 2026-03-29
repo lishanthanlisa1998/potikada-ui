@@ -148,7 +148,6 @@ export class Api {
     return this.http.get(`${this.baseUrl}/admin/products`, { headers: this.getAdminHeaders() });
   }
 
-  // Single product with variants — used in edit form
   getAdminProduct(id: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/admin/products/${id}`, { headers: this.getAdminHeaders() });
   }
@@ -226,6 +225,29 @@ export class Api {
 
   deleteBanner(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/admin/banners/${id}`, { headers: this.getAdminHeaders() });
+  }
+
+  // ===== ADMIN VARIANT FAMILIES =====
+  getAdminVariantFamilies(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/admin/variant-families`, { headers: this.getAdminHeaders() });
+  }
+
+  createVariantFamily(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/admin/variant-families`, data, { headers: this.getAdminHeaders() });
+  }
+
+  updateVariantFamily(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/admin/variant-families/${id}`, data, { headers: this.getAdminHeaders() });
+  }
+
+  deleteVariantFamily(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/admin/variant-families/${id}`, { headers: this.getAdminHeaders() });
+  }
+
+  // ===== PUBLIC VARIANT FAMILIES =====
+  // Used by product-form to load all available families
+  getVariantFamilies(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/variant-families`);
   }
 
   // ===== PUBLIC =====
