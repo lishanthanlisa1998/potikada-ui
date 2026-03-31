@@ -16,7 +16,8 @@
 
       <div class="status-icon">{{ getStatusIcon() }}</div>
 
-      @if (payment?.status === 'completed' || order?.order_status === 'confirmed') {
+      @if (this.payment){
+        @if (payment?.status === 'completed' || order?.order_status === 'confirmed') {
         <h1 class="success-title">Order Confirmed!</h1>
         <p class="success-sub">Thank you for your purchase. We'll deliver it to you soon! 🎉</p>
       } @else if (payment?.status === 'pending' || !payment) {
@@ -26,6 +27,14 @@
         <h1 class="success-title">Payment Issue</h1>
         <p class="success-sub">There was an issue with your payment. Please contact us.</p>
       }
+
+      }@else{
+        <h1 class="success-title">Order Received with Love ❤️</h1>
+        <p class="success-sub">We’ve received your order. No advance payment needed — pay when it arrives 🚚</p>
+
+      }
+
+      
 
       <!-- Order details -->
       <div class="order-details">

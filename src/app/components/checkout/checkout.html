@@ -1,8 +1,35 @@
-
 <app-menu [open]="menuOpen" (closed)="menuOpen = false"></app-menu>
 <div class="checkout-page">
 <app-header [showBack]="true" (menuClicked)="menuOpen = true"></app-header>
-  
+
+  <!-- Validation Error Popup -->
+  @if (validationError) {
+    <div class="popup-overlay" (click)="validationError = ''">
+      <div class="popup-box" (click)="$event.stopPropagation()">
+        <button class="popup-close" (click)="validationError = ''">×</button>
+        <div class="popup-icon">⚠️</div>
+        <h3 class="popup-title">Missing Information</h3>
+        <p class="popup-msg">{{ validationError }}</p>
+        <button class="popup-ok" (click)="validationError = ''">OK, Got It</button>
+      </div>
+    </div>
+  }
+
+  <!-- Save Details Popup -->
+  @if (showSavePopup) {
+    <div class="popup-overlay" (click)="onSaveChoice(false)">
+      <div class="popup-box" (click)="$event.stopPropagation()">
+        <button class="popup-close" (click)="onSaveChoice(false)">×</button>
+        <div class="popup-icon">💾</div>
+        <h3 class="popup-title">Save Your Details?</h3>
+        <p class="popup-msg">Save your name, email, phone and address for faster checkout next time.</p>
+        <div class="popup-btns">
+          <button class="popup-btn-no"  (click)="onSaveChoice(false)">No Thanks</button>
+          <button class="popup-btn-yes" (click)="onSaveChoice(true)">Yes, Save</button>
+        </div>
+      </div>
+    </div>
+  }
 
   <div class="checkout-layout">
 
@@ -13,57 +40,13 @@
         <div class="error-banner">⚠️ {{ error }}</div>
       }
 
-      <!-- Contact details -->
-      <div class="form-section">
-        <h3 class="form-section-title">Contact Details</h3>
-        <div class="form-row">
-          <div class="field">
-            <label>First Name <span class="req">*</span></label>
-            <input type="text" [(ngModel)]="form.first_name" placeholder="Lisa">
-          </div>
-          <div class="field">
-            <label>Last Name <span class="req">*</span></label>
-            <input type="text" [(ngModel)]="form.last_name" placeholder="Perera">
-          </div>
-        </div>
-        <div class="field">
-          <label>Email <span class="req">*</span></label>
-          <input type="email" [(ngModel)]="form.email" placeholder="you@email.com">
-        </div>
-        <div class="field">
-          <label>Phone <span class="req">*</span></label>
-          <input type="tel" [(ngModel)]="form.phone" placeholder="07X XXX XXXX">
-        </div>
-      </div>
-
-      <!-- Delivery details -->
-      <div class="form-section">
-        <h3 class="form-section-title">Delivery Address</h3>
-        <div class="field">
-          <label>Address <span class="req">*</span></label>
-          <input type="text" [(ngModel)]="form.address"
-                 placeholder="No. 12, Main Street, Colombo 03">
-        </div>
-        <div class="field">
-          <label>City <span class="req">*</span></label>
-          <input type="text" [(ngModel)]="form.city" placeholder="Colombo">
-        </div>
-        <div class="field">
-          <label>District <span class="req">*</span></label>
-          <input type="text" [(ngModel)]="form.district" placeholder="Colombo District">
-        </div>
-       
-      </div>
-
-      <!-- Payment method -->
+      <!-- 1. PAYMENT METHOD — TOP -->
       <div class="form-section">
         <h3 class="form-section-title">Payment Method</h3>
-
+        
         <div class="payment-options">
-
-          <div class="payment-option"
-               [class.selected]="paymentMethod === 'card'"
-               (click)="paymentMethod = 'card'">
+          <!--
+          <div class="payment-option" [class.selected]="paymentMethod === 'card'" (click)="paymentMethod = 'card'">
             <div class="payment-radio">
               @if (paymentMethod === 'card') { <div class="radio-dot"></div> }
             </div>
@@ -74,10 +57,8 @@
             </div>
             <div class="payment-badge">Secure</div>
           </div>
-
-          <div class="payment-option"
-               [class.selected]="paymentMethod === 'cod'"
-               (click)="paymentMethod = 'cod'">
+          -->
+          <div class="payment-option" [class.selected]="paymentMethod === 'cod'" (click)="paymentMethod = 'cod'">
             <div class="payment-radio">
               @if (paymentMethod === 'cod') { <div class="radio-dot"></div> }
             </div>
@@ -87,13 +68,72 @@
               <div class="payment-desc">Pay when your order arrives</div>
             </div>
           </div>
-
         </div>
-
+        <!--
         @if (paymentMethod === 'card') {
           <div class="payhere-note">
             <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Payments are secured by PayHere. We never store your card details.
+          </div>
+        }
+          -->
+      </div>
+
+      <!-- 2. Contact Details -->
+      <div class="form-section">
+        <h3 class="form-section-title">Contact Details</h3>
+        <div class="form-row">
+          <div class="field">
+            <label>First Name <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.first_name" placeholder="Lisa"
+                   [class.field-error]="touched && !form.first_name">
+          </div>
+          <div class="field">
+            <label>Last Name <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.last_name" placeholder="Perera"
+                   [class.field-error]="touched && !form.last_name">
+          </div>
+        </div>
+        <div class="field">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" [(ngModel)]="form.email" placeholder="you@email.com"
+                 [class.field-error]="touched && !form.email">
+        </div>
+        <div class="field">
+          <label>Phone <span class="req">*</span></label>
+          <input type="tel" [(ngModel)]="form.phone" placeholder="07X XXX XXXX"
+                 [class.field-error]="touched && !form.phone">
+        </div>
+      </div>
+
+      <!-- 3. Delivery Address -->
+      <div class="form-section">
+        <h3 class="form-section-title">Delivery Address</h3>
+        <div class="field">
+          <label>Address <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="form.address"
+                 placeholder="No. 12, Main Street"
+                 [class.field-error]="touched && !form.address">
+        </div>
+        <div class="field">
+          <label>City <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="form.city" placeholder="Colombo"
+                 [class.field-error]="touched && !form.city">
+        </div>
+        <div class="field">
+          <label>District <span class="req">*</span></label>
+          <select [(ngModel)]="form.district"
+                  [class.field-error]="touched && !form.district">
+            <option value="">— Select District —</option>
+            @for (d of districts; track d) {
+              <option [value]="d">{{ d }}</option>
+            }
+          </select>
+        </div>
+        @if (hasSavedData) {
+          <div class="saved-notice">
+            <span>✅ Details auto-filled from last order</span>
+            <button class="btn-clear-saved" (click)="clearSavedData()">Clear</button>
           </div>
         }
       </div>
@@ -102,16 +142,13 @@
 
     <!-- Right — Summary -->
     <div class="order-summary">
-
       <h3 class="summary-title">Order Summary</h3>
-
       <div class="summary-items">
         @for (item of cartItems; track item.product.id) {
           <div class="summary-item">
             <div class="summary-item-img">
               <img [src]="item.product.images?.[0]?.image_url || item.product.image"
-                   [alt]="item.product.name"
-                   onerror="this.src='assets/placeholder.png'">
+                   [alt]="item.product.name" onerror="this.src='assets/placeholder.png'">
               <span class="item-qty">{{ item.quantity }}</span>
             </div>
             <div class="summary-item-info">
@@ -119,39 +156,25 @@
               <div class="summary-item-size">{{ item.size }}</div>
             </div>
             <div class="summary-item-price">
-              Rs. {{ item.product.price * item.quantity | number }}
+              Rs. {{ item.product.price * item.quantity | number:'1.0-0' }}
             </div>
           </div>
         }
       </div>
-
       <div class="summary-totals">
-        <div class="summary-row">
-          <span>Subtotal</span>
-          <span>Rs. {{ cartSubtotal | number }}</span>
-        </div>
-        <div class="summary-row">
-          <span>Delivery</span>
-          <span>Rs. {{ cartDelivery | number }}</span>
-        </div>
-        <div class="summary-row total">
-          <span>Total</span>
-          <span>Rs. {{ cartTotal | number }}</span>
-        </div>
+        <div class="summary-row"><span>Subtotal</span><span>Rs. {{ cartSubtotal | number:'1.0-0' }}</span></div>
+        <div class="summary-row"><span>Delivery</span><span>Rs. {{ cartDelivery | number:'1.0-0' }}</span></div>
+        <div class="summary-row total"><span>Total</span><span>Rs. {{ cartTotal | number:'1.0-0' }}</span></div>
       </div>
-
-      <button class="btn-place-order"
-              [disabled]="loading"
-              (click)="placeOrder()">
+      <button class="btn-place-order" [disabled]="loading" (click)="placeOrder()">
         @if (loading) {
           <span class="spinner"></span> Processing...
         } @else if (paymentMethod === 'card') {
-          Pay Rs. {{ cartTotal | number }} →
+          Pay Rs. {{ cartTotal | number:'1.0-0' }} →
         } @else {
           Place Order (COD) →
         }
       </button>
-
       <div class="summary-links">
         <a routerLink="/shipping-policy">Shipping Policy</a>
         <span>·</span>
@@ -159,7 +182,6 @@
         <span>·</span>
         <a routerLink="/privacy-policy">Privacy</a>
       </div>
-
     </div>
   </div>
 </div>

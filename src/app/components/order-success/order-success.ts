@@ -32,6 +32,7 @@ export class OrderSuccess implements OnInit {
 
     this.apiService.checkPaymentStatus(this.orderId).subscribe({
       next: (res) => {
+        console.log("res",res);
         this.order   = res;
         this.payment = res.payment;
         this.loading = false;

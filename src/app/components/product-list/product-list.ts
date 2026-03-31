@@ -152,7 +152,7 @@ export class ProductListComponent implements OnInit {
 
   addToCart(event: Event, product: any) {
     event.stopPropagation();
-    if (product) this.cartService.addToCart(product, '', 1);
+    if (product) this.cartService.addToCart(product, product.default_variant.weight_grams, 1);
   }
 
   isLiked(id: number): boolean { return this.likedIds.has(id); }

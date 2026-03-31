@@ -1,9 +1,8 @@
-
 <app-menu [open]="menuOpen" (closed)="menuOpen = false"></app-menu>
 <div class="cart-page">
 
- <app-header  *ngIf="!hideHeader"  [showBack]="true"  (menuClicked)="menuOpen = true" [showCart]="false"  [showMenu]="false" [showWishlist]="false"></app-header>
-  <app-header  *ngIf="hideHeader" [showBack]="true"  (menuClicked)="menuOpen = true" ></app-header>
+  <app-header *ngIf="!hideHeader" [showBack]="true" (menuClicked)="menuOpen = true" [showCart]="false" [showMenu]="false" [showWishlist]="false"></app-header>
+  <app-header *ngIf="hideHeader"  [showBack]="true" (menuClicked)="menuOpen = true"></app-header>
 
   <!-- Empty cart -->
   @if (cartService.cart().length === 0) {
@@ -24,11 +23,14 @@
         <h2 class="section-title">Order Items</h2>
 
         @for (item of cartService.cart(); track item.product.id + item.size) {
-          <div class="cart-item">
+          <div class="cart-item" [class.unchecked]="!item.checked">
 
             <!-- Checkbox + Image -->
             <div class="item-left">
-              <input type="checkbox" class="item-check" checked>
+              <input type="checkbox"
+                     class="item-check"
+                     [checked]="item.checked"
+                     (change)="toggleCheck(item)">
               <div class="item-image">
                 <img [src]="item.product.image" [alt]="item.product.name">
                 @if (item.product.badge) {
@@ -45,10 +47,12 @@
             <div class="item-info">
               <div class="item-category">{{ item.product.category }}</div>
               <div class="item-name">{{ item.product.name }}</div>
-              <div class="item-size">Size: {{ item.size }}</div>
+              @if (item.size) {
+                <div class="item-size">{{ item.size }}</div>
+              }
 
               <div class="item-bottom">
-                <div class="item-price">Rs. {{ item.product.price * item.quantity | number }}</div>
+                <div class="item-price">Rs. {{ (item.product.price * item.quantity) | number:'1.0-0' }}</div>
                 <div class="item-controls">
                   <button class="qty-btn" (click)="decrease(item)">−</button>
                   <span class="qty-val">{{ item.quantity }}</span>
@@ -58,7 +62,7 @@
 
               @if ((item.product.originalPrice ?? 0) > item.product.price) {
                 <div class="item-saving">
-                  You save Rs. {{ ((item.product.originalPrice ?? 0) - item.product.price) * item.quantity | number }}
+                  You save Rs. {{ (((item.product.originalPrice ?? 0) - item.product.price) * item.quantity) | number:'1.0-0' }}
                 </div>
               }
             </div>
@@ -80,43 +84,20 @@
 
           <div class="summary-row">
             <span class="summary-label">Subtotal</span>
-            <span class="summary-value">Rs. {{ cartService.cartSubtotal() | number }}</span>
+            <span class="summary-value">Rs. {{ cartService.cartSubtotal() | number:'1.0-0' }}</span>
           </div>
 
           <div class="summary-row">
             <span class="summary-label">Delivery Charges</span>
-            <span class="summary-value">Rs. {{ cartService.cartDelivery() | number }}</span>
+            <span class="summary-value">Rs. {{ cartService.cartDelivery() | number:'1.0-0' }}</span>
           </div>
-
-          @if (cartService.cartSubtotal() > 2000) {
-            <div class="summary-row discount">
-              <span class="summary-label">Free Delivery Discount</span>
-              <span class="summary-value green">− Rs. {{ cartService.cartDelivery() | number }}</span>
-            </div>
-          }
 
           <div class="summary-divider"></div>
 
           <div class="summary-row total">
             <span class="summary-label">Total Amount</span>
-            <span class="summary-value total-val">
-              Rs. {{
-                cartService.cartSubtotal() > 2000
-                  ? (cartService.cartSubtotal() | number)
-                  : (cartService.cartTotal() | number)
-              }}
-            </span>
+            <span class="summary-value total-val">Rs. {{ cartService.cartTotal() | number:'1.0-0' }}</span>
           </div>
-
-          @if (cartService.cartSubtotal() > 2000) {
-            <div class="free-delivery-banner">
-              🎉 You got free delivery!
-            </div>
-          } @else {
-            <div class="delivery-tip">
-              Add Rs. {{ 2000 - cartService.cartSubtotal() | number }} more for free delivery!
-            </div>
-          }
 
           <button class="btn-checkout" (click)="checkout()">
             Proceed to Checkout →
@@ -127,14 +108,9 @@
           </a>
 
         </div>
-
-       
-
       </div>
     </div>
   }
-
-   
 
 </div>
 
