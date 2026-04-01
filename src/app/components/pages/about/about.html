@@ -1,103 +1,151 @@
-<!-- HERO -->
-<app-header [showBack]="true" [showMenu] = "false"></app-header>
+<app-header [showBack]="true" [showMenu]="false"></app-header>
+
+<!-- ── LANGUAGE OVERLAY ──────────────────────────────── -->
+@if (showOverlay()) {
+  <div class="lang-overlay">
+    <div class="lang-modal">
+      <div class="lang-modal-icon">🌐</div>
+      <h2>Choose Your Language</h2>
+      <p>Select your preferred language to continue</p>
+
+      <div class="lang-options">
+        <div class="lang-opt" [class.selected]="selectedLang() === 'en'" (click)="pickLang('en')">
+          
+          <div class="lo-info">
+            <div class="lo-name">English</div>
+          </div>
+          <div class="lo-check">@if (selectedLang() === 'en') { ✓ }</div>
+        </div>
+
+        <div class="lang-opt" [class.selected]="selectedLang() === 'ta'" (click)="pickLang('ta')">
+          
+          <div class="lo-info">
+            <div class="lo-native">தமிழ்</div>
+          </div>
+          <div class="lo-check">@if (selectedLang() === 'ta') { ✓ }</div>
+        </div>
+
+        <div class="lang-opt" [class.selected]="selectedLang() === 'si'" (click)="pickLang('si')">
+         
+          <div class="lo-info">
+            <div class="lo-native">සිංහල</div>
+          </div>
+          <div class="lo-check">@if (selectedLang() === 'si') { ✓ }</div>
+        </div>
+      </div>
+
+      <button class="lang-confirm-btn" [disabled]="!selectedLang()" (click)="confirmLang()">
+        Continue →
+      </button>
+    </div>
+  </div>
+}
+
+<!-- ── LANGUAGE SWITCHER (top-left) ─────────────────── -->
+<div class="lang-switcher" (clickOutside)="closeDropdown()">
+  <button class="ls-btn" (click)="toggleDropdown()">
+    <span>{{ content().lsFlag }}</span>
+    <span>{{ content().lsLabel }}</span>
+    <span class="ls-arrow">▾</span>
+  </button>
+  @if (dropdownOpen()) {
+    <div class="ls-dropdown">
+      <div class="ls-item" [class.active]="activeLang() === 'en'" (click)="switchLang('en')">
+        English 
+      </div>
+      <div class="ls-item" [class.active]="activeLang() === 'ta'" (click)="switchLang('ta')">
+        தமிழ் 
+      </div>
+      <div class="ls-item" [class.active]="activeLang() === 'si'" (click)="switchLang('si')">
+        සිංහල 
+      </div>
+    </div>
+  }
+</div>
+
+<!-- ── HERO ──────────────────────────────────────────── -->
 <section class="pk-hero">
-  <div class="pk-hero-tag">📍 Sri Lanka</div>
-  <h1>We Exist For The<br><em>Everyday Entrepreneur</em></h1>
-  <p class="pk-hero-sub">
-    Potikada is not just a shop — it's a helping hand for every local maker,
-    home cook, and small seller who deserves to be seen.
-  </p>
+  <div class="pk-hero-tag">{{ content().tag }}</div>
+  <h1>{{ content().heroH1 }}<br><em>{{ content().heroEm }}</em></h1>
+  <p class="pk-hero-sub">{{ content().heroSub }}</p>
   <div class="pk-gold-line"></div>
 </section>
 
-<!-- STORY -->
+<!-- ── STORY ─────────────────────────────────────────── -->
 <section class="pk-story">
   <div class="pk-story-visual">
     <div class="pk-story-card">
       <div class="pk-icon-wrap">🏡</div>
-      <h3>Handmade with love ❤️ | shipped from the heart 📦</h3>
-      <p class="white-color-text">Every product on Potikada carries the effort, love, and dreams of a local person in our community.</p>
-     
+      <h3>{{ content().cardH }}</h3>
+      <p class="white-color-text">{{ content().cardP }}</p>
     </div>
-    <div class="pk-float-tag">🌿 100% Local</div>
+    <div class="pk-float-tag">{{ content().floatTag }}</div>
   </div>
 
   <div class="pk-story-text">
-    <h2>A Story Born From<br><span>Our Streets</span></h2>
-    <p>
-      In the lanes of Srilanga, there are <strong>talented people with big dreams</strong> —
-      a grandmother making the best homemade pickle, a young mother weaving beautiful crafts,
-      a local farmer with the freshest produce.
-    </p>
-    <p>But they had no easy way to reach customers. No platform, no support, no voice.</p>
-    <p>
-      <strong>Potikada was created to change that.</strong> We believe that the smallest seller
-      deserves the same opportunity as any big brand. When you shop here, you're not just
-      buying a product — you're changing someone's life.
-    </p>
+    <h2>{{ content().storyH }}<br><span>{{ content().storySpan }}</span></h2>
+    <p>{{ content().p1 }}</p>
+    <p>{{ content().p2 }}</p>
+    <p>{{ content().p3 }}</p>
   </div>
 </section>
 
 <div class="pk-divider"></div>
 
-<!-- VALUES -->
+<!-- ── VALUES ────────────────────────────────────────── -->
 <section class="pk-values">
   <div class="pk-values-inner">
     <div class="pk-values-header">
-      <h2>What We <span>Stand For</span></h2>
-      <p>Three promises we make to every local entrepreneur and every customer who trusts us.</p>
+      <h2>{{ content().valH }} <span>{{ content().valSpan }}</span></h2>
+      <p>{{ content().valSub }}</p>
     </div>
     <div class="pk-values-grid">
       <div class="pk-value-card">
         <div class="v-icon">🤲</div>
-        <h3>We Support the Small</h3>
-        <p>We give priority to homemade, handcrafted, and locally produced items — the real heart of our community.</p>
+        <h3>{{ content().v1h }}</h3>
+        <p>{{ content().v1p }}</p>
       </div>
       <div class="pk-value-card">
         <div class="v-icon">✨</div>
-        <h3>Quality You Can Trust</h3>
-        <p>Every seller on Potikada is from our community. We know them personally and stand behind their products.</p>
+        <h3>{{ content().v2h }}</h3>
+        <p>{{ content().v2p }}</p>
       </div>
       <div class="pk-value-card">
         <div class="v-icon">🌱</div>
-        <h3>Growing Together</h3>
-        <p>When a local seller grows, the whole community grows. We celebrate every order and every milestone together.</p>
+        <h3>{{ content().v3h }}</h3>
+        <p>{{ content().v3p }}</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- QUOTE -->
+<!-- ── QUOTE ─────────────────────────────────────────── -->
 <section class="pk-quote">
-  <blockquote>
-    "Behind every product on Potikada is a
-    <span>real person, a real dream</span>,
-    and a real story from the heart of Hatton."
-  </blockquote>
-  <p class="pk-quote-attr">— The Potikada Team</p>
+  <blockquote>{{ content().quote }}</blockquote>
+  <p class="pk-quote-attr">{{ content().quoteAttr }}</p>
 </section>
 
-<!-- COMMUNITY STATS -->
+<!-- ── STATS ─────────────────────────────────────────── -->
 <section class="pk-stats">
   <div class="pk-stats-grid">
     <div class="pk-stat">
       <span class="pk-stat-icon">🏘️</span>
-      <p>Rooted in<br><strong>Srilangan Community</strong></p>
+      <p>{{ content().s1a }}<br><strong>{{ content().s1b }}</strong></p>
     </div>
     <div class="pk-stat">
       <span class="pk-stat-icon">🛍️</span>
-      <p>Supporting<br><strong>Local Entrepreneurs</strong></p>
+      <p>{{ content().s2a }}<br><strong>{{ content().s2b }}</strong></p>
     </div>
     <div class="pk-stat">
       <span class="pk-stat-icon">❤️</span>
-      <p>Every Order<br><strong>Makes a Difference</strong></p>
+      <p>{{ content().s3a }}<br><strong>{{ content().s3b }}</strong></p>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
+<!-- ── CTA ───────────────────────────────────────────── -->
 <section class="pk-cta">
-  <h2>Want to Sell on <span>Potikada?</span></h2>
-  <p>Are you a local maker or small business in Sri langa? We'd love to have you. Let's grow together.</p>
-  <a  class="pk-cta-btn" (click)="navigate('/contact')">Get In Touch →</a>
+  <h2>{{ content().ctaH }} <span>{{ content().ctaSpan }}</span></h2>
+  <p>{{ content().ctaP }}</p>
+  <a class="pk-cta-btn" (click)="navigate('/contact')">{{ content().ctaBtn }}</a>
 </section>
