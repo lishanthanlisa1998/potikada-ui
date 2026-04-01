@@ -54,6 +54,7 @@
   line-height: 1.75;
 }
 
+
 .pk-gold-line {
   width: 60px;
   height: 2px;
@@ -291,7 +292,7 @@
 
 .pk-quote-attr {
   margin-top: 28px;
-  color: var(--page-quote-attr);
+  color: var(--page-hero-sub);
   font-size: 0.88rem;
   letter-spacing: 2px;
   text-transform: uppercase;

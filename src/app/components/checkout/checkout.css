@@ -57,6 +57,7 @@
   font-size: 14px; color: #0F0A06;
   background: #FAF6EE; outline: none;
   transition: border 0.2s;
+  box-sizing: border-box;
 }
 
 .field input:focus,

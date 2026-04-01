@@ -63,6 +63,7 @@ export const routes: Routes = [
   { path: 'terms-conditions', loadComponent: () => import('./components/pages/terms-conditions/terms-conditions').then(m => m.TermsConditions) },
   { path: 'sell-on-potikada', loadComponent: () => import('./components/pages/sell-on-potikada/sell-on-potikada').then(m => m.SellOnPotikada) },
   { path: 'our-mission',      loadComponent: () => import('./components/pages/our-mission/our-mission').then(m => m.OurMission) },
+  { path: 'order-tracking',      loadComponent: () => import('./components/pages/order-tracking/order-tracking').then(m => m.OrderTracking) },
   // ── Admin ──
   {
     path: 'admin/login',

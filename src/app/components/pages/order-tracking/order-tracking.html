@@ -1,0 +1,98 @@
+<app-header [showBack]="true" [showMenu] = "false"></app-header>
+<div class="track-page">
+
+  
+
+  <div class="track-container">
+    <div class="track-title">Track Your Order</div>
+    <div class="track-sub">Enter your Order ID and email to check your order status</div>
+
+    <!-- Search Form -->
+    <div class="track-form">
+      <div class="track-field">
+        <label>Order ID</label>
+        <input type="text" [(ngModel)]="orderId" placeholder="e.g. 13"
+               (keyup.enter)="trackOrder()">
+      </div>
+      <div class="track-field">
+        <label>Email Address</label>
+        <input type="email" [(ngModel)]="email" placeholder="you@email.com"
+               (keyup.enter)="trackOrder()">
+      </div>
+      <button class="btn-track" [disabled]="loading" (click)="trackOrder()">
+        @if (loading) { <span class="spinner"></span> } @else { 🔍 }
+        Track Order
+      </button>
+    </div>
+
+    <!-- Error -->
+    @if (error) {
+      <div class="track-error">😕 {{ error }}</div>
+    }
+
+    <!-- Result -->
+    @if (order) {
+      <div class="track-result">
+
+        <!-- Order summary -->
+        <div class="order-header">
+          <div class="order-id-badge">#{{ order.id }}</div>
+          <div class="order-meta">
+            <div class="order-date">Placed on {{ order.created_at }}</div>
+            <div class="order-total">Rs. {{ order.total | number:'1.0-0' }}</div>
+          </div>
+          <div class="order-status-badge" [class]="order.status">
+            {{ getStatusLabel(order.status) }}
+          </div>
+        </div>
+
+        <!-- Items -->
+        <div class="order-items">
+          @for (item of order.items; track $index) {
+            <div class="order-item">
+              <span class="item-name">{{ item.name }}</span>
+              <span class="item-qty">× {{ item.quantity }}</span>
+              <span class="item-price">Rs. {{ item.price | number:'1.0-0' }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline">
+          @for (step of steps; track step.key) {
+            <div class="timeline-step" [class.done]="step.done" [class.active]="isActiveStep(step)">
+              <div class="step-icon-wrap">
+                <div class="step-icon">{{ step.icon }}</div>
+                <div class="step-line"></div>
+              </div>
+              <div class="step-info">
+                <div class="step-label">{{ step.label }}</div>
+                @if (step.time) {
+                  <div class="step-time">{{ step.time }}</div>
+                } @else if (!step.done) {
+                  <div class="step-pending">Pending</div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Tracking number -->
+        @if (order.tracking_number) {
+          <div class="tracking-box">
+            <div class="tracking-label">Tracking Number</div>
+            <div class="tracking-number">{{ order.tracking_number }}</div>
+            <div class="tracking-courier">{{ order.courier }}</div>
+          </div>
+        }
+
+        <!-- Help -->
+        <div class="track-help">
+          Need help? Contact us on
+          <a href="https://wa.me/94761933305" target="_blank">WhatsApp</a>
+        </div>
+
+      </div>
+    }
+  </div>
+</div>

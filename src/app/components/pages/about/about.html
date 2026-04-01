@@ -1,6 +1,7 @@
 <!-- HERO -->
+<app-header [showBack]="true" [showMenu] = "false"></app-header>
 <section class="pk-hero">
-  <div class="pk-hero-tag">📍 Hatton, Sri Lanka</div>
+  <div class="pk-hero-tag">📍 Sri Lanka</div>
   <h1>We Exist For The<br><em>Everyday Entrepreneur</em></h1>
   <p class="pk-hero-sub">
     Potikada is not just a shop — it's a helping hand for every local maker,
@@ -14,9 +15,9 @@
   <div class="pk-story-visual">
     <div class="pk-story-card">
       <div class="pk-icon-wrap">🏡</div>
-      <h3>Made With Heart,<br>Sold With Pride</h3>
-      <p>Every product on Potikada carries the effort, love, and dreams of a local person in our community.</p>
-      <span class="pk-gold-badge">Hatton's Own</span>
+      <h3>Handmade with love ❤️ | shipped from the heart 📦</h3>
+      <p class="white-color-text">Every product on Potikada carries the effort, love, and dreams of a local person in our community.</p>
+     
     </div>
     <div class="pk-float-tag">🌿 100% Local</div>
   </div>
@@ -24,7 +25,7 @@
   <div class="pk-story-text">
     <h2>A Story Born From<br><span>Our Streets</span></h2>
     <p>
-      In the lanes of Hatton, there are <strong>talented people with big dreams</strong> —
+      In the lanes of Srilanga, there are <strong>talented people with big dreams</strong> —
       a grandmother making the best homemade pickle, a young mother weaving beautiful crafts,
       a local farmer with the freshest produce.
     </p>
@@ -81,7 +82,7 @@
   <div class="pk-stats-grid">
     <div class="pk-stat">
       <span class="pk-stat-icon">🏘️</span>
-      <p>Rooted in<br><strong>Hatton Community</strong></p>
+      <p>Rooted in<br><strong>Srilangan Community</strong></p>
     </div>
     <div class="pk-stat">
       <span class="pk-stat-icon">🛍️</span>
@@ -97,6 +98,6 @@
 <!-- CTA -->
 <section class="pk-cta">
   <h2>Want to Sell on <span>Potikada?</span></h2>
-  <p>Are you a local maker or small business in Hatton? We'd love to have you. Let's grow together.</p>
-  <a routerLink="/contact" class="pk-cta-btn">Get In Touch →</a>
+  <p>Are you a local maker or small business in Sri langa? We'd love to have you. Let's grow together.</p>
+  <a  class="pk-cta-btn" (click)="navigate('/contact')">Get In Touch →</a>
 </section>

@@ -277,4 +277,9 @@ export class Api {
   checkPaymentStatus(orderId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/payment/status?order_id=${orderId}`);
   }
+  trackOrder(orderId: string, email: string) {
+  return this.http.get(this.baseUrl + '/orders/track', {
+    params: { order_id: orderId, email }
+  });
+}
 }

@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Header } from '../../shared/header/header';
 
 @Component({
   selector: 'app-contact',
-  imports: [FormsModule, CommonModule, RouterModule],
+  imports: [FormsModule, CommonModule, RouterModule,Header],
   templateUrl: './contact.html',
   styleUrl: './contact.css',
 })

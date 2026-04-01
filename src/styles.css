@@ -14,6 +14,7 @@
   --radius: 16px;
   --bottom-nav-h: 68px;
   --liked-badge:#FF4757;
+  --page-hero-sub  :white;
 
   --gold: #c9a84c;
   --gold-light: #f0d080;
@@ -55,4 +56,8 @@ body{
   .hide-on-desktop {
     display: none;
   }
+}
+
+.white-color-text{
+   color: var(--page-hero-sub) !important;
 }
