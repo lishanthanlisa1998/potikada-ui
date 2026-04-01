@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Api } from '../../services/api';
+import { Header } from '../shared/header/header';
 
 @Component({
   selector: 'app-order-success',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink,Header],
   templateUrl: './order-success.html',
   styleUrl: './order-success.css',
 })

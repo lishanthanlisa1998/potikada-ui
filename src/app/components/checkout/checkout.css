@@ -126,7 +126,16 @@
   display: flex; align-items: center; justify-content: center;
 }
 .summary-item-info { flex: 1; }
-.summary-item-name { font-size: 13px; font-weight: 700; color: #0F0A06; }
+.summary-item-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0F0A06;
+  /* Add these: */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
 .summary-item-size { font-size: 11px; color: #9999AA; margin-top: 2px; }
 .summary-item-price { font-size: 13px; font-weight: 800; color: #0F0A06; flex-shrink: 0; }
 
