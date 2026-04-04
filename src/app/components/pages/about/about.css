@@ -554,17 +554,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1rem;
 }
 
 .launch-modal {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
+
+  max-height: 90vh;
+  width: 100%;
+  overflow-y: auto;
 }
 
 .launch-logo {
   width: 90%;
+  max-width: 420px;
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
 }
 
 .launch-close-btn {
@@ -576,22 +585,19 @@
   font-size: 1rem;
   cursor: pointer;
   font-weight: 600;
-
-  /* ☀️ warm sunlight glow */
   box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4),
               0 0 20px rgba(255, 190, 80, 0.5);
-
   transition: all 0.3s ease;
+
+  flex-shrink: 0;
 }
 
-/* 🌅 soft sunrise hover */
 .launch-close-btn:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 6px 18px rgba(255, 140, 0, 0.6),
               0 0 30px rgba(255, 200, 100, 0.7);
 }
 
-/* ☀️ press feel */
 .launch-close-btn:active {
   transform: scale(0.96);
   box-shadow: 0 3px 8px rgba(255, 140, 0, 0.4);
