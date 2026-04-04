@@ -10,6 +10,7 @@ export interface CartItem {
   design:   string;
   weight:   number;
   checked:  boolean;
+  variantId  : string;
 }
 
 export interface WishlistItem {
@@ -50,33 +51,59 @@ export class CartService {
 
   constructor(private api: Api) {}
 
-  addToCart(product: any, size: string, quantity = 1, color = '', design = '') {
-    const weight = product.weight_grams || product.weight || 0;
+addToCart(product: any, size: any = '', quantity = 1, color: any = '', design: any = '') {
+  console.log('Adding product:', product);
 
-    // Match by product id + size (size contains full variant label e.g. "S / red")
-    const existing = this.cartItems().find(i =>
-      i.product.id === product.id && i.size === size
+  const normalizedSize = String(size ?? '').trim();
+  const normalizedColor = String(color ?? '').trim();
+  const normalizedDesign = String(design ?? '').trim();
+
+  const variantId = product.default_variant?.id ?? null;
+
+  const itemWeight =
+    product.default_variant?.weight_grams ??
+    product.weight_grams ??
+    product.weight ??
+    0;
+
+  const existing = this.cartItems().find(i =>
+    i.product.id === product.id &&
+    (i.variantId ?? null) === variantId &&
+    (i.size ?? '') === normalizedSize &&
+    (i.color ?? '') === normalizedColor &&
+    (i.design ?? '') === normalizedDesign
+  );
+
+  if (existing) {
+    this.cartItems.update(items =>
+      items.map(i =>
+        i.product.id === product.id &&
+        (i.variantId ?? null) === variantId &&
+        (i.size ?? '') === normalizedSize &&
+        (i.color ?? '') === normalizedColor &&
+        (i.design ?? '') === normalizedDesign
+          ? { ...i, quantity: i.quantity + quantity }
+          : i
+      )
     );
-
-    if (existing) {
-      // Same product + same variant → just increase quantity
-      this.cartItems.update(items =>
-        items.map(i =>
-          i.product.id === product.id && i.size === size
-            ? { ...i, quantity: i.quantity + quantity }
-            : i
-        )
-      );
-    } else {
-      // New item
-      this.cartItems.update(items => [
-        ...items,
-        { product, size, quantity, color, design, weight, checked: true }
-      ]);
-    }
-
-    this.recalculateDelivery();
+  } else {
+    this.cartItems.update(items => [
+      ...items,
+      {
+        product,
+        variantId,
+        size: normalizedSize,
+        quantity,
+        color: normalizedColor,
+        design: normalizedDesign,
+        weight: itemWeight,
+        checked: true
+      }
+    ]);
   }
+
+  this.recalculateDelivery();
+}
 
   // Toggle checked state of an item
   toggleChecked(productId: number, size: string, color = '', design = '') {

@@ -1,5 +1,13 @@
-<app-header [showBack]="true" [showMenu]="false"></app-header>
+<app-header [showBack]="false" [showMenu]="false" [showCart]="false"  [showWishlist]="false"  ></app-header>
 
+@if (showLaunchPopup()) {
+  <div class="launch-overlay">
+    <div class="launch-modal">
+      <img src="assets/launchpost.webp" alt="Potikada" class="launch-logo" />
+      <button class="launch-close-btn" (click)="closeLaunchPopup()">✕ Close</button>
+    </div>
+  </div>
+}
 <!-- ── LANGUAGE OVERLAY ──────────────────────────────── -->
 @if (showOverlay()) {
   <div class="lang-overlay">
@@ -147,5 +155,5 @@
 <section class="pk-cta">
   <h2>{{ content().ctaH }} <span>{{ content().ctaSpan }}</span></h2>
   <p>{{ content().ctaP }}</p>
-  <a class="pk-cta-btn" (click)="navigate('/contact')">{{ content().ctaBtn }}</a>
+  <a class="pk-cta-btn" href="https://wa.me/94706874395?text=Hi%20Potikada!%20I'm%20interested%20in%20selling%20my%20products." target="_blank">{{ content().ctaBtn }}</a>
 </section>

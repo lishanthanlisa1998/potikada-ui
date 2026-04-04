@@ -65,7 +65,7 @@ const TRANSLATIONS: Record<Lang, PageContent> = {
     s2a: 'Supporting', s2b: 'Local Entrepreneurs',
     s3a: 'Every Order', s3b: 'Makes a Difference',
     ctaH: 'Want to Sell on', ctaSpan: 'Potikada?',
-    ctaP: "Are you a local maker or small business in Sri Lanka? We'd love to have you. Let's grow together.",
+    ctaP: "Are you a local maker or small business in hatton? We'd love to have you. Let's grow together.",
     ctaBtn: 'Get In Touch →',
     lsLabel: 'EN', lsFlag: '🇬🇧',
   },
@@ -98,7 +98,7 @@ v2p: 'எங்கள் விற்பனையாளர்கள் அனை
     s2a: 'ஆதரிக்கிறோம்', s2b: 'உள்ளூர் தொழில்முனைவோரை',
     s3a: 'ஒவ்வொரு ஆர்டரும்', s3b: 'மாற்றத்தை உருவாக்கும்',
     ctaH: 'உங்கள் தயாரிப்புகளை விற்க விரும்புகிறீர்களா', ctaSpan: 'பொட்டிக்கடையில்?',
-    ctaP: 'நீங்கள் இலங்கையில் ஒரு உள்ளூர் தயாரிப்பாளரா? நாங்கள் உங்களை வரவேற்கிறோம். ஒன்றாக வளர்வோம்.',
+    ctaP: 'நீங்கள் ஹட்டனில் ஒரு உள்ளூர் தயாரிப்பாளரா? நாங்கள் உங்களை வரவேற்கிறோம். ஒன்றாக வளர்வோம்.',
     ctaBtn: 'தொடர்பு கொள்ளுங்கள் →',
     lsLabel: 'தமிழ்', lsFlag: '🇱🇰',
   },
@@ -129,7 +129,7 @@ v2p: 'எங்கள் விற்பனையாளர்கள் அனை
     s2a: 'සහය ලබා දීම', s2b: 'දේශීය ව්‍යවසායකයන්ට',
     s3a: 'සෑම ඇණවුමක්ම', s3b: 'වෙනසක් ඇති කරයි',
     ctaH: 'විකිණීමට කැමතිද', ctaSpan: 'පොතිකඩාවේ?',
-    ctaP: 'ශ්‍රී ලංකාවේ දේශීය නිෂ්පාදකයෙකු හෝ කුඩා ව්‍යාපාරයක් ද? අපි ඔබව ආදරයෙන් පිළිගනිමු.',
+    ctaP: 'හැටන් ප්‍රදේශයේ දේශීය නිෂ්පාදකයෙකු හෝ කුඩා ව්‍යාපාරයක්ද? ඔබගේ නිර්මාණ ලෝකයට ගෙන යාමට අපි සූදානම් — ආදරයෙන් ඔබව පිළිගනිමු.',
     ctaBtn: 'සම්බන්ධ වන්න →',
     lsLabel: 'සිංහල', lsFlag: '🇱🇰',
   },
@@ -146,10 +146,16 @@ export class About implements OnInit {
   showOverlay = signal(false);
   dropdownOpen = signal(false);
   selectedLang = signal<Lang | null>(null);
-  activeLang = signal<Lang>('en');
+  activeLang = signal<Lang>('ta');
 
   // Derived content
   content = computed(() => TRANSLATIONS[this.activeLang()]);
+
+  showLaunchPopup = signal(true);
+
+closeLaunchPopup() {
+  this.showLaunchPopup.set(false);
+}
 
   constructor(private router: Router) {}
 

@@ -544,3 +544,55 @@
 .ls-item:hover { background: var(--gold-pale); }
 .ls-item.active { color: var(--gold); font-weight: 700; }
 .ls-native { margin-left: auto; font-size: 11px; color: var(--muted); }
+
+
+.launch-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.launch-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.launch-logo {
+  width: 90%;
+}
+
+.launch-close-btn {
+  background: linear-gradient(135deg, #ff8c00, #f6b73c, #ffd36b);
+  color: #5a3b00;
+  border: none;
+  border-radius: 30px;
+  padding: 0.65rem 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+
+  /* ☀️ warm sunlight glow */
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4),
+              0 0 20px rgba(255, 190, 80, 0.5);
+
+  transition: all 0.3s ease;
+}
+
+/* 🌅 soft sunrise hover */
+.launch-close-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 18px rgba(255, 140, 0, 0.6),
+              0 0 30px rgba(255, 200, 100, 0.7);
+}
+
+/* ☀️ press feel */
+.launch-close-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 3px 8px rgba(255, 140, 0, 0.4);
+}
