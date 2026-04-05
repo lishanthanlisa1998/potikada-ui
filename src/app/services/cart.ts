@@ -52,7 +52,6 @@ export class CartService {
   constructor(private api: Api) {}
 
 addToCart(product: any, size: any = '', quantity = 1, color: any = '', design: any = '') {
-  console.log('Adding product:', product);
 
   const normalizedSize = String(size ?? '').trim();
   const normalizedColor = String(color ?? '').trim();
