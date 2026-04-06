@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://potikada-api-production.up.railway.app/api',
+  apiUrl: 'http://127.0.0.1:8000/api',
   cloudinary: {
     cloudName:    'dd57xykdy',
     uploadPreset: 'potikada',

@@ -45,6 +45,7 @@ export class ProductDetail implements OnInit {
   menuOpen       = false;
 
   descSections: any[] = [];
+  relatedProducts: any[] = [];
 
   constructor(
     private route:       ActivatedRoute,
@@ -105,9 +106,33 @@ export class ProductDetail implements OnInit {
         this.parseDescription(p.description || '');
         this.isLiked = this.cartService.isInWishlist(p.id);
         this.loading = false;
+        // Load related products
+        if (this.product.category) {
+          this.loadRelatedProducts(this.product.category, this.product.id);
+          
+        }
+
       },
       error: () => { this.error = true; this.loading = false; }
     });
+  }
+
+  loadRelatedProducts(category: string, currentId: number) {
+    this.apiService.getProducts(category).subscribe({
+      next: (products: any[]) => {
+        this.relatedProducts = products
+          .filter((p: any) => p.id !== currentId)
+          .slice(0, 6);
+
+          console.log("this.relatedProducts",this.relatedProducts)
+      },
+      error: () => { this.relatedProducts = []; }
+    });
+  }
+
+  goToProduct(id: number) {
+    this.router.navigate(['/product', id]);
+    window.scrollTo(0, 0);
   }
 
   formatProduct(p: any): any {

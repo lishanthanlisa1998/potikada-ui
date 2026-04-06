@@ -32,6 +32,8 @@ export class Checkout implements OnInit {
   touched         = false;
   showSavePopup   = false;  // ask to save details
   hasSavedData    = false;  // already has saved data
+  sameAsPhone    = false;
+  showErrorPopup = false;
 
   districts = [
     'Ampara','Anuradhapura','Badulla','Batticaloa','Colombo',
@@ -50,6 +52,7 @@ export class Checkout implements OnInit {
     city:           '',
     district:       '',
     affiliate_code: '',
+    whatsappNo:''
   };
 
   constructor(
@@ -102,7 +105,7 @@ export class Checkout implements OnInit {
     if (!this.form.address.trim())    { this.validationError = 'Please enter your delivery address.'; return; }
     if (!this.form.city.trim())       { this.validationError = 'Please enter your city.'; return; }
     if (!this.form.district)          { this.validationError = 'Please select your district.'; return; }
-
+    if (!this.form.whatsappNo)          { this.validationError = 'Please select your whatsapp Number.'; return; }
     // If no saved data yet — ask to save
     if (!this.hasSavedData) {
       this.showSavePopup = true;
@@ -131,6 +134,19 @@ export class Checkout implements OnInit {
     localStorage.removeItem(STORAGE_KEY);
     this.hasSavedData = false;
   }
+  onPhoneChange() {
+  if (this.sameAsPhone) {
+    this.form.whatsappNo = this.form.phone;
+  }
+}
+
+onSameAsPhone() {
+  if (this.sameAsPhone) {
+    this.form.whatsappNo = this.form.phone;
+  } else {
+    this.form.whatsappNo = '';
+  }
+}
 
   // Actually place the order
   submitOrder() {
@@ -161,8 +177,9 @@ export class Checkout implements OnInit {
         }
       },
       error: (err) => {
-        this.loading = false;
-        this.error   = err.error?.message || 'Something went wrong. Please try again.';
+       this.loading       = false;
+        this.error         = err.error?.message || 'Something went wrong. Please try again later.';
+        this.showErrorPopup = true;
       }
     });
   }

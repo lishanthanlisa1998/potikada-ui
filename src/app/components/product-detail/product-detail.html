@@ -191,6 +191,28 @@
     </div>
     </div>
 
+    <!-- RELATED PRODUCTS -->
+  @if (relatedProducts.length > 0) {
+    <div class="related-section">
+      <div class="related-title">You might also like</div>
+      <div class="related-scroll">
+        @for (p of relatedProducts; track p.id) {
+          <div class="related-card" (click)="goToProduct(p.id)">
+            <div class="related-img">
+              <img [src]="p.image || 'assets/placeholder.png'" [alt]="p.name"
+                  onerror="this.src='assets/placeholder.png'">
+              @if (p.badge) {
+                <span class="related-badge">{{ p.badge }}</span>
+              }
+            </div>
+            <div class="related-name">{{ p.name }}</div>
+            <div class="related-price">Rs. {{ (p.price ?? p.original_price) | number:'1.0-0' }}</div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
     <div class="page-bottom-pad"></div>
 
     
@@ -369,6 +391,26 @@
             @if (activeTab === 'qa')      { <p>❓ Questions & Answers coming soon!</p> }
           </div>
         </div>
+        @if (relatedProducts.length > 0) {
+        <div class="related-section d-related-section">
+          <div class="related-title">You might also like</div>
+          <div class="related-grid">
+            @for (p of relatedProducts; track p.id) {
+              <div class="related-card" (click)="goToProduct(p.id)">
+                <div class="related-img">
+                  <img [src]="p.image || 'assets/placeholder.png'" [alt]="p.name"
+                      onerror="this.src='assets/placeholder.png'">
+                  @if (p.badge) {
+                    <span class="related-badge">{{ p.badge }}</span>
+                  }
+                </div>
+                <div class="related-name">{{ p.name }}</div>
+                <div class="related-price">Rs. {{ (p.price ?? p.original_price) | number:'1.0-0' }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      }
       }
     </div>
   </div>

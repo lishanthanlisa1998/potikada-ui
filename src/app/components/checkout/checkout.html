@@ -1,6 +1,18 @@
 <app-menu [open]="menuOpen" (closed)="menuOpen = false"></app-menu>
+
+<!-- ===== FULL PAGE LOADER ===== -->
+@if (loading) {
+  <div class="fullpage-loader">
+    <div class="loader-box">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Placing your order...</div>
+      <div class="loader-sub">Please don't close this page</div>
+    </div>
+  </div>
+}
+
 <div class="checkout-page">
-<app-header [showBack]="true" (menuClicked)="menuOpen = true"></app-header>
+  <app-header [showBack]="true" (menuClicked)="menuOpen = true"></app-header>
 
   <!-- Validation Error Popup -->
   @if (validationError) {
@@ -31,33 +43,29 @@
     </div>
   }
 
+  <!-- Error Popup -->
+  @if (showErrorPopup) {
+    <div class="popup-overlay" (click)="showErrorPopup = false">
+      <div class="popup-box" (click)="$event.stopPropagation()">
+        <button class="popup-close" (click)="showErrorPopup = false">×</button>
+        <div class="popup-icon">😔</div>
+        <h3 class="popup-title">Something Went Wrong</h3>
+        <p class="popup-msg">{{ error }}</p>
+        <p class="popup-sub">Please try again in a moment.</p>
+        <button class="popup-ok" (click)="showErrorPopup = false">Try Again</button>
+      </div>
+    </div>
+  }
+
   <div class="checkout-layout">
 
     <!-- Left — Form -->
     <div class="checkout-form">
 
-      @if (error) {
-        <div class="error-banner">⚠️ {{ error }}</div>
-      }
-
-      <!-- 1. PAYMENT METHOD — TOP -->
+      <!-- 1. PAYMENT METHOD -->
       <div class="form-section">
         <h3 class="form-section-title">Payment Method</h3>
-        
         <div class="payment-options">
-          <!--
-          <div class="payment-option" [class.selected]="paymentMethod === 'card'" (click)="paymentMethod = 'card'">
-            <div class="payment-radio">
-              @if (paymentMethod === 'card') { <div class="radio-dot"></div> }
-            </div>
-            <div class="payment-icon">💳</div>
-            <div class="payment-info">
-              <div class="payment-name">Pay Online</div>
-              <div class="payment-desc">Visa, Mastercard, Bank Transfer, eZCash</div>
-            </div>
-            <div class="payment-badge">Secure</div>
-          </div>
-          -->
           <div class="payment-option" [class.selected]="paymentMethod === 'cod'" (click)="paymentMethod = 'cod'">
             <div class="payment-radio">
               @if (paymentMethod === 'cod') { <div class="radio-dot"></div> }
@@ -69,14 +77,6 @@
             </div>
           </div>
         </div>
-        <!--
-        @if (paymentMethod === 'card') {
-          <div class="payhere-note">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Payments are secured by PayHere. We never store your card details.
-          </div>
-        }
-          -->
       </div>
 
       <!-- 2. Contact Details -->
@@ -102,7 +102,26 @@
         <div class="field">
           <label>Phone <span class="req">*</span></label>
           <input type="tel" [(ngModel)]="form.phone" placeholder="07X XXX XXXX"
+                 (ngModelChange)="onPhoneChange()"
                  [class.field-error]="touched && !form.phone">
+        </div>
+
+        <!-- WhatsApp with same as phone checkbox -->
+        <div class="field">
+          <div class="field-label-row">
+            <label>WhatsApp Number <span class="req">*</span></label>
+           
+          </div>
+          <input type="tel" [(ngModel)]="form.whatsappNo" placeholder="07X XXX XXXX"
+                 [disabled]="sameAsPhone"
+                 [class.field-error]="touched && !form.whatsappNo"
+                 [class.field-disabled]="sameAsPhone">
+
+           <label class="same-as-phone">
+              
+              <span>Same as phone</span>
+              <input type="checkbox" [(ngModel)]="sameAsPhone" (change)="onSameAsPhone()">
+            </label>
         </div>
       </div>
 
