@@ -1,0 +1,88 @@
+<div class="reviews-page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Reviews</h1>
+      <p class="page-sub">{{ pending.length }} pending approval</p>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-btn" [class.active]="activeFilter === 'pending'"   (click)="setFilter('pending')">Pending</button>
+      <button class="filter-btn" [class.active]="activeFilter === 'approved'"  (click)="setFilter('approved')">Approved</button>
+      <button class="filter-btn" [class.active]="activeFilter === 'all'"       (click)="setFilter('all')">All</button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-rows">
+      @for (i of [1,2,3]; track i) {
+        <div class="skeleton-row"></div>
+      }
+    </div>
+  }
+
+  @if (!loading && filtered.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">⭐</div>
+      <h3>No reviews here</h3>
+      <p>{{ activeFilter === 'pending' ? 'All reviews approved!' : 'No reviews yet.' }}</p>
+    </div>
+  }
+
+  @if (!loading && filtered.length > 0) {
+    <div class="reviews-list">
+      @for (review of filtered; track review.id) {
+        <div class="review-card" [class.approved]="review.is_approved">
+
+          <div class="review-top">
+            <div class="review-stars">
+              @for (s of [1,2,3,4,5]; track s) {
+                <span [class.filled]="s <= review.rating">★</span>
+              }
+              <span class="rating-num">{{ review.rating }}.0</span>
+            </div>
+            <div class="review-status" [class.approved]="review.is_approved">
+              {{ review.is_approved ? '✅ Approved' : '⏳ Pending' }}
+            </div>
+          </div>
+
+          <div class="review-product">📦 {{ review.product_name }}</div>
+          <div class="review-customer">👤 {{ review.customer_name }} · Order #{{ review.order_id }} · {{ review.created_at }}</div>
+
+          @if (review.comment) {
+            <div class="review-comment">"{{ review.comment }}"</div>
+          } @else {
+            <div class="review-no-comment">No comment</div>
+          }
+
+          <div class="review-actions">
+            @if (!review.is_approved) {
+              <button class="btn-approve" [disabled]="processing === review.id" (click)="approve(review)">
+                {{ processing === review.id ? '...' : '✅ Approve' }}
+              </button>
+            }
+            <button class="btn-delete" [disabled]="processing === review.id" (click)="confirmDelete(review)">
+              {{ processing === review.id ? '...' : '🗑️ Delete' }}
+            </button>
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Delete confirm modal -->
+  @if (deleteReview) {
+    <div class="modal-overlay" (click)="deleteReview = null">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-icon">🗑️</div>
+        <h3>Delete Review?</h3>
+        <p>This review will be permanently deleted.</p>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="deleteReview = null">Cancel</button>
+          <button class="btn-confirm-delete" (click)="deleteConfirmed()">Yes, Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>
