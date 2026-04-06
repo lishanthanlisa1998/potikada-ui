@@ -64,8 +64,8 @@
     </div>
 
     <div class="m-sub-images">
-      @for (img of product.images; track $index) {
-        <div class="m-sub-img" [class.active]="activeImageIndex === $index" (click)="switchImage($index)">
+      @for (img of allImages; track $index) {
+        <div class="m-sub-img" [class.active]="activeImage === img" (click)="switchToImage(img, $index)">
           <img [src]="img" [alt]="product.name">
         </div>
       }
@@ -186,7 +186,30 @@
           <ng-container *ngTemplateOutlet="descTemplate"></ng-container>
         </div>
       }
-      @if (activeTab === 'reviews') { <div class="tab-content"><p>⭐ Customer reviews coming soon!</p></div> }
+      @if (activeTab === 'reviews') {
+  <div class="tab-content reviews-tab">
+    @if (reviews.length === 0) {
+      <div class="no-reviews">
+        <p>No reviews yet. Be the first to review!</p>
+      </div>
+    }
+    @for (review of reviews; track review.id) {
+      <div class="review-item">
+        <div class="review-header">
+          <div class="review-stars">
+            @for (s of [1,2,3,4,5]; track s) {
+              <span [class.filled]="s <= review.rating">★</span>
+            }
+          </div>
+          <div class="review-name">{{ review.customer_name }}</div>
+          <div class="review-date">{{ review.created_at }}</div>
+        </div>
+        @if (review.comment) {
+          <div class="review-comment">{{ review.comment }}</div>
+        }     </div>
+    }
+  </div>
+}
       @if (activeTab === 'qa')      { <div class="tab-content"><p>❓ Questions & Answers coming soon!</p></div> }
     </div>
     </div>
@@ -245,8 +268,8 @@
               }
             </div>
             <div class="d-sub-images">
-              @for (img of product.images; track $index) {
-                <div class="d-sub-img" [class.active]="activeImageIndex === $index" (click)="switchImage($index)">
+              @for (img of allImages; track $index) {
+                <div class="d-sub-img" [class.active]="activeImage === img" (click)="switchToImage(img, $index)">
                   <img [src]="img" [alt]="product.name">
                 </div>
               }
@@ -387,7 +410,30 @@
                 <ng-container *ngTemplateOutlet="descTemplate"></ng-container>
               </div>
             }
-            @if (activeTab === 'reviews') { <p>⭐ Customer reviews coming soon!</p> }
+                  @if (activeTab === 'reviews') {
+  <div class="tab-content reviews-tab">
+    @if (reviews.length === 0) {
+      <div class="no-reviews">
+        <p>No reviews yet. Be the first to review!</p>
+      </div>
+    }
+    @for (review of reviews; track review.id) {
+      <div class="review-item">
+        <div class="review-header">
+          <div class="review-stars">
+            @for (s of [1,2,3,4,5]; track s) {
+              <span [class.filled]="s <= review.rating">★</span>
+            }
+          </div>
+          <div class="review-name">{{ review.customer_name }}</div>
+          <div class="review-date">{{ review.created_at }}</div>
+        </div>
+        @if (review.comment) {
+          <div class="review-comment">{{ review.comment }}</div>
+        }     </div>
+    }
+  </div>
+}
             @if (activeTab === 'qa')      { <p>❓ Questions & Answers coming soon!</p> }
           </div>
         </div>

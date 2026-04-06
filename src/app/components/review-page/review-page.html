@@ -1,0 +1,93 @@
+<div class="review-page">
+
+  <div class="review-header">
+    <a class="back-link" routerLink="/">← Back to Shop</a>
+    <div class="review-logo">potikada</div>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="review-container">
+      <div class="loading-box">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+      </div>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error && !loading) {
+    <div class="review-container">
+      <div class="error-box">
+        <div class="error-icon">😕</div>
+        <h2>{{ error }}</h2>
+        <a routerLink="/" class="btn-home">Go to Shop</a>
+      </div>
+    </div>
+  }
+
+  <!-- Success -->
+  @if (submitted && !loading) {
+    <div class="review-container">
+      <div class="success-box">
+        <div class="success-icon">🎉</div>
+        <h2>Thank you for your review!</h2>
+        <p>Your feedback helps other Sri Lankan shoppers discover great local products.</p>
+        <a routerLink="/" class="btn-home">Continue Shopping →</a>
+      </div>
+    </div>
+  }
+
+  <!-- Review Form -->
+  @if (orderData && !submitted && !loading && !error) {
+    <div class="review-container">
+      <h1 class="review-title">How was your order?</h1>
+      <p class="review-sub">Hi {{ orderData.customer_name }}, we'd love to hear your feedback!</p>
+
+      @for (product of orderData.products; track product.id) {
+        <div class="product-review-card">
+
+          <!-- Product -->
+          <div class="product-row">
+            @if (product.image) {
+              <img class="product-img" [src]="product.image" [alt]="product.name">
+            }
+            <div class="product-name">{{ product.name }}</div>
+          </div>
+
+          <!-- Stars -->
+          <div class="stars-label">Your Rating <span class="req">*</span></div>
+          <div class="stars-row">
+            @for (star of [1,2,3,4,5]; track star) {
+              <button class="star-btn"
+                      [class.active]="getProductRating(product.id) >= star"
+                      (click)="setRating(product.id, star)">
+                ★
+              </button>
+            }
+            @if (getProductRating(product.id) > 0) {
+              <span class="rating-label">{{ getRatingLabel(getProductRating(product.id)) }}</span>
+            }
+          </div>
+
+          <!-- Comment -->
+          <div class="comment-label">Your Review <span class="optional">(optional)</span></div>
+          <textarea class="comment-box"
+                    [(ngModel)]="getReview(product.id).comment"
+                    placeholder="Tell us what you liked or didn't like..."
+                    rows="3">
+          </textarea>
+
+          <!-- Submit -->
+          <button class="btn-submit"
+                  [disabled]="submitting || getProductRating(product.id) === 0"
+                  (click)="submitReview(product.id)">
+            @if (submitting) { <span class="btn-spinner"></span> Submitting... }
+            @else { Submit Review }
+          </button>
+
+        </div>
+      }
+    </div>
+  }
+</div>

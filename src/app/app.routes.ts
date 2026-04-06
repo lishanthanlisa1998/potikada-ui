@@ -60,6 +60,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./components/affiliate/affiliate-profile/affiliate-profile').then(m => m.AffiliateProfile)
   },
+  { path: 'review', loadComponent: () => import('./components/review-page/review-page').then(m => m.ReviewPage) },
   // ── Info Pages ──
   { path: 'about',            loadComponent: () => import('./components/pages/about/about').then(m => m.About) },
   { path: 'contact',          loadComponent: () => import('./components/pages/contact/contact').then(m => m.Contact) },

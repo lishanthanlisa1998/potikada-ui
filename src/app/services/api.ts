@@ -282,4 +282,10 @@ export class Api {
     params: { order_id: orderId, email }
   });
 }
+
+getReview(token: string)   { return this.http.get(this.baseUrl + '/review', { params: { token } }); }
+submitReview(data: any)    { return this.http.post(this.baseUrl + '/review', data); }
+getAdminReviews()          { return this.http.get(this.baseUrl + '/admin/reviews', { headers: this.getAdminHeaders() }); }
+approveReview(id: number)  { return this.http.post(this.baseUrl + '/admin/reviews/' + id + '/approve', {}, { headers: this.getAdminHeaders() }); }
+deleteReview(id: number)   { return this.http.delete(this.baseUrl + '/admin/reviews/' + id, { headers: this.getAdminHeaders() }); }
 }

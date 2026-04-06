@@ -43,9 +43,19 @@ export class ProductDetail implements OnInit {
   sharePopupOpen = false;
   earnPopupOpen  = false;
   menuOpen       = false;
+  reviews: any[] = [];
 
   descSections: any[] = [];
   relatedProducts: any[] = [];
+
+  // All images = product images + unique variant images
+  get allImages(): string[] {
+    const productImgs = this.productImages ?? [];
+    const variantImgs = this.variants
+      .map((v: any) => v.image)
+      .filter((img: any) => img && !productImgs.includes(img));
+    return [...productImgs, ...variantImgs];
+  }
 
   constructor(
     private route:       ActivatedRoute,
@@ -67,7 +77,10 @@ export class ProductDetail implements OnInit {
     this.apiService.getProduct(id).subscribe({
       next: (res: any) => {
         const p        = res.product ?? res;
+        console.log("res.product  ",res.product );
+        this.reviews = res.reviews ?? []
         this.product   = this.formatProduct(p);
+
         const images   = p.images?.map((img: any) => img.image_url) ?? [];
         this.productImages = images;
         this.activeImage   = images[0] ?? '';
@@ -272,6 +285,11 @@ export class ProductDetail implements OnInit {
   switchImage(index: number) {
     this.activeImageIndex = index;
     this.activeImage = this.productImages[index];
+  }
+
+  switchToImage(img: string, index: number) {
+    this.activeImage = img;
+    this.activeImageIndex = index;
   }
 
   // ── Wishlist ──────────────────────────────────────────────────

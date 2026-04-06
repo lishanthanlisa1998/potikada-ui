@@ -344,7 +344,9 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 /* ===== DESKTOP RELATED ===== */
 @media (min-width: 768px) {
   .related-section {
-    padding: 32px 0 16px;
+    padding: 32px 28px 16px;
+    margin-right: 48px;
+    margin-left: 48px;
     background: transparent;
   }
 
@@ -373,4 +375,26 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 
   .related-name { font-size: 13px; }
   .related-price { font-size: 14px; }
+}.reviews-tab { display: flex; flex-direction: column; gap: 14px; }
+
+.review-item {
+  padding: 14px;
+  background: #FAF6EE;
+  border-radius: 10px;
+  border: 1px solid rgba(200,137,42,0.15);
 }
+
+.review-header {
+  display: flex; align-items: center;
+  gap: 10px; margin-bottom: 6px; flex-wrap: wrap;
+}
+
+.review-stars span { color: #ddd; font-size: 16px; }
+.review-stars span.filled { color: #F5A623; }
+
+.review-name { font-size: 13px; font-weight: 800; color: #0F0A06; }
+.review-date { font-size: 11px; color: #aaa; margin-left: auto; }
+
+.review-comment { font-size: 13px; color: #555; line-height: 1.6; }
+
+.no-reviews { text-align: center; padding: 32px; color: #aaa; font-size: 14px; }

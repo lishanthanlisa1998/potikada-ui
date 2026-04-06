@@ -1,0 +1,112 @@
+* { margin:0; padding:0; box-sizing:border-box; }
+
+.review-page {
+  min-height: 100vh;
+  background: #FAF6EE;
+  font-family: 'Nunito', sans-serif;
+}
+
+.review-header {
+  background: #0F0A06; padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.back-link  { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; font-weight: 600; }
+.back-link:hover { color: white; }
+.review-logo { color: #C8892A; font-size: 20px; font-weight: 900; }
+
+.review-container {
+  max-width: 540px; margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+.review-title { font-size: 24px; font-weight: 900; color: #0F0A06; margin-bottom: 6px; }
+.review-sub   { font-size: 14px; color: #888; margin-bottom: 24px; }
+
+/* Product card */
+.product-review-card {
+  background: white; border-radius: 16px;
+  padding: 24px; margin-bottom: 16px;
+  border: 1.5px solid rgba(200,137,42,0.15);
+}
+
+.product-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+}
+.product-img  { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; }
+.product-name { font-size: 16px; font-weight: 800; color: #0F0A06; }
+
+/* Stars */
+.stars-label  { font-size: 11px; font-weight: 800; color: #0F0A06; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.req          { color: #E74C3C; }
+.optional     { font-weight: 400; color: #aaa; text-transform: none; letter-spacing: 0; }
+
+.stars-row { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+
+.star-btn {
+  font-size: 32px; background: none; border: none;
+  cursor: pointer; color: #ddd; transition: all 0.15s;
+  line-height: 1; padding: 0;
+}
+.star-btn.active { color: #F5A623; }
+.star-btn:hover  { transform: scale(1.2); }
+
+.rating-label {
+  font-size: 13px; font-weight: 800;
+  color: #C8892A; margin-left: 6px;
+}
+
+/* Comment */
+.comment-label { font-size: 11px; font-weight: 800; color: #0F0A06; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+
+.comment-box {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  border-radius: 10px; font-family: 'Nunito', sans-serif;
+  font-size: 14px; color: #0F0A06;
+  background: #FAF6EE; outline: none;
+  resize: vertical; transition: border 0.2s;
+  margin-bottom: 16px;
+}
+.comment-box:focus { border-color: #C8892A; background: white; }
+
+/* Submit */
+.btn-submit {
+  width: 100%; background: #0F0A06; color: #C8892A;
+  border: none; border-radius: 12px; padding: 14px;
+  font-size: 15px; font-weight: 800;
+  cursor: pointer; font-family: 'Nunito', sans-serif;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background 0.2s;
+}
+.btn-submit:hover:not(:disabled) { background: #1a1a1a; }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(200,137,42,0.3);
+  border-top-color: #C8892A; border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* States */
+.loading-box, .error-box, .success-box {
+  text-align: center; padding: 60px 20px;
+  background: white; border-radius: 16px;
+}
+.loading-box .spinner {
+  width: 40px; height: 40px; margin: 0 auto 16px;
+  border: 3px solid #f0ece6;
+  border-top-color: #C8892A; border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+.error-icon, .success-icon { font-size: 48px; margin-bottom: 14px; }
+.error-box h2, .success-box h2 { font-size: 20px; font-weight: 900; color: #0F0A06; margin-bottom: 8px; }
+.error-box p,  .success-box p  { font-size: 14px; color: #888; line-height: 1.6; margin-bottom: 24px; }
+
+.btn-home {
+  display: inline-block;
+  background: #C8892A; color: white;
+  padding: 12px 28px; border-radius: 12px;
+  text-decoration: none; font-weight: 800; font-size: 14px;
+}
