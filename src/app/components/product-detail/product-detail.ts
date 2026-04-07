@@ -80,7 +80,6 @@ export class ProductDetail implements OnInit {
     this.apiService.getProduct(id).subscribe({
       next: (res: any) => {
         const p        = res.product ?? res;
-        console.log("res.product  ",res.product );
         this.reviews = res.reviews ?? []
         this.product   = this.formatProduct(p);
 
@@ -135,17 +134,18 @@ export class ProductDetail implements OnInit {
   }
 
   loadRelatedProducts(category: string, currentId: number) {
-    this.apiService.getProducts(category).subscribe({
-      next: (products: any[]) => {
-        this.relatedProducts = products
-          .filter((p: any) => p.id !== currentId)
-          .slice(0, 6);
+  this.apiService.getProducts(category, 1, 10).subscribe({
+    next: (res: any) => {
+      const products = res.data ?? res;
+      this.relatedProducts = products
+        .filter((p: any) => p.id !== currentId)
+        .slice(0, 6);
+    },
+    error: () => { this.relatedProducts = []; }
+  });
+}
 
-          console.log("this.relatedProducts",this.relatedProducts)
-      },
-      error: () => { this.relatedProducts = []; }
-    });
-  }
+
 
   goToProduct(id: number) {
     this.router.navigate(['/product', id]);
