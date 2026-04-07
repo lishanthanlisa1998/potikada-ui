@@ -8,6 +8,7 @@ import { Api } from '../../services/api';
 import { CartService } from '../../services/cart';
 import { Header } from '../shared/header/header';
 import { Menu } from '../shared/menu/menu';
+import { SeoService } from '../../services/seo/seo-service';
 
 @Component({
   selector: 'app-product-detail',
@@ -61,11 +62,13 @@ export class ProductDetail implements OnInit {
     private route:       ActivatedRoute,
     private router:      Router,
     private apiService:  Api,
-    public  cartService: CartService
+    public  cartService: CartService,
+    private seo: SeoService
   ) {}
 
   ngOnInit() {
     this.route.params.subscribe(params => this.loadProduct(+params['id']));
+    
     const ref = this.route.snapshot.queryParams['ref'];
     if (ref) localStorage.setItem('ref_code', ref);
   }
@@ -120,6 +123,7 @@ export class ProductDetail implements OnInit {
         this.isLiked = this.cartService.isInWishlist(p.id);
         this.loading = false;
         // Load related products
+        this.seo.setProduct(this.product, this.currentPrice);
         if (this.product.category) {
           this.loadRelatedProducts(this.product.category, this.product.id);
           

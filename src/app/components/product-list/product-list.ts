@@ -12,6 +12,7 @@ import { Menu } from '../shared/menu/menu';
 import { Header } from '../shared/header/header';
 import { CategoryDropdown } from '../shared/category-dropdown/category-dropdown';
 import { TopBanner } from '../shared/top-banner/top-banner';
+import { SeoService } from '../../services/seo/seo-service';
 
 @Component({
   selector: 'app-product-list',
@@ -46,13 +47,17 @@ export class ProductListComponent implements OnInit {
     private router:         Router,
     private productService: ProductService,
     private apiService:     Api,
-    public  cartService:    CartService
+    public  cartService:    CartService,
+    private seo: SeoService
   ) {}
 
   ngOnInit() {
     this.loadBanners();
     this.loadProducts();
     this.loadCategories();
+    this.seo.setPage('Shop Sri Lankan Artisan Products', 
+    'Browse handmade products from local Sri Lankan makers on Potikada.');
+
   }
 
   loadCategories() {
