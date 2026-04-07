@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService } from '../../services/product';
@@ -17,15 +17,20 @@ import { SeoService } from '../../services/seo/seo-service';
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, BottomNav, SharePopup, EarnMoneyPopup, Menu, Header, CategoryDropdown,TopBanner],
+  imports: [CommonModule, FormsModule, BottomNav, SharePopup, EarnMoneyPopup, Menu, Header, CategoryDropdown, TopBanner],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css'
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
 
   filteredProducts: any[] = [];
   allProducts:      any[] = [];
   loading           = true;
+  loadingMore       = false;
+  hasMore           = true;
+  page              = 1;
+  perPage           = 12;
+
   categories:       string[] = [];
   searchQuery       = '';
   selectedCategory  = 'all';
@@ -43,6 +48,11 @@ export class ProductListComponent implements OnInit {
   slides: any[]   = [];
   slideIndex      = 0;
 
+  recentlyViewedIds: number[] = [];
+  hasPersonalized   = false;
+
+  private searchTimer: any;
+
   constructor(
     private router:         Router,
     private productService: ProductService,
@@ -53,11 +63,82 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit() {
     this.loadBanners();
-    this.loadProducts();
     this.loadCategories();
-    this.seo.setPage('Shop Sri Lankan Artisan Products', 
-    'Browse handmade products from local Sri Lankan makers on Potikada.');
+    this.seo.setPage('Shop Sri Lankan Artisan Products',
+      'Browse handmade products from local Sri Lankan makers on Potikada.');
 
+    try {
+      this.recentlyViewedIds = JSON.parse(
+        localStorage.getItem('recently_viewed') || '[]'
+      ).slice(0, 3);
+    } catch { this.recentlyViewedIds = []; }
+
+    this.loadProducts(true);
+  }
+
+  // ── Infinite scroll listener ────────────────────────────────
+  @HostListener('window:scroll')
+  onScroll() {
+    if (this.loadingMore || !this.hasMore || this.loading) return;
+    const scrollY    = window.scrollY || window.pageYOffset;
+    const windowH    = window.innerHeight;
+    const docH       = document.documentElement.scrollHeight;
+    // Load more when 300px from bottom
+    if (scrollY + windowH >= docH - 300) {
+      this.loadMore();
+    }
+  }
+
+  loadProducts(reset = false) {
+    if (reset) {
+      this.page            = 1;
+      this.allProducts     = [];
+      this.filteredProducts = [];
+      this.hasMore         = true;
+      this.loading         = true;
+    }
+
+    this.apiService.getProducts(this.selectedCategory, this.page, this.perPage, this.searchQuery).subscribe({
+      next: (res: any) => {
+        const products = res.data ?? res;
+        this.hasMore   = res.has_more ?? false;
+
+        if (reset) {
+          this.allProducts = this.personalizeProducts(products);
+        } else {
+          this.allProducts = [...this.allProducts, ...products];
+        }
+
+        this.filteredProducts = this.allProducts;
+        this.loading          = false;
+        this.loadingMore      = false;
+      },
+      error: () => {
+        if (reset) {
+          this.allProducts      = this.productService.getAll();
+          this.filteredProducts = this.allProducts;
+        }
+        this.loading     = false;
+        this.loadingMore = false;
+      }
+    });
+  }
+
+  loadMore() {
+    if (this.loadingMore || !this.hasMore) return;
+    this.loadingMore = true;
+    this.page++;
+    this.loadProducts(false);
+  }
+
+  personalizeProducts(products: any[]): any[] {
+    if (this.recentlyViewedIds.length === 0) return products;
+    this.hasPersonalized = true;
+    const recent = this.recentlyViewedIds
+      .map(id => products.find((p: any) => p.id === id))
+      .filter(Boolean);
+    const others = products.filter((p: any) => !this.recentlyViewedIds.includes(p.id));
+    return [...recent, ...others];
   }
 
   loadCategories() {
@@ -92,42 +173,26 @@ export class ProductListComponent implements OnInit {
     }
   }
 
-  loadProducts() {
-    this.loading = true;
-    this.apiService.getProducts('all').subscribe({
-      next: (products: any) => {
-        this.allProducts      = products;
-        this.filteredProducts = products;
-        this.loading          = false;
-      },
-      error: (err: any) => {
-        this.allProducts      = this.productService.getAll();
-        this.filteredProducts = this.allProducts;
-        this.loading          = false;
+  // Debounce search — wait 400ms before calling API
+  onSearchChange() {
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => {
+      if (this.searchQuery.trim()) {
+        localStorage.setItem('last_search', this.searchQuery);
       }
-    });
+      this.loadProducts(true);
+    }, 400);
   }
 
-  applyFilters() {
-    let result = [...this.allProducts];
-    if (this.selectedCategory && this.selectedCategory !== 'all') {
-      result = result.filter((p: any) => p.category === this.selectedCategory);
-    }
-    if (this.searchQuery.trim()) {
-      const q = this.searchQuery.toLowerCase();
-      result = result.filter((p: any) =>
-        p.name.toLowerCase().includes(q) ||
-        p.category?.toLowerCase().includes(q) ||
-        p.maker_name?.toLowerCase().includes(q)
-      );
-    }
-    this.filteredProducts = result;
+  onCategoryChange(cat: any) {
+    this.selectedCategory = cat;
+    this.loadProducts(true);
   }
 
-  onSearchChange()          { this.applyFilters(); }
-  onCategoryChange(cat: any) { this.selectedCategory = cat; this.applyFilters(); }
-
-  clearSearch() { this.searchQuery = ''; this.applyFilters(); }
+  clearSearch() {
+    this.searchQuery = '';
+    this.loadProducts(true);
+  }
 
   formatSold(count: any): string {
     const n = parseInt(count) || 0;
@@ -161,8 +226,15 @@ export class ProductListComponent implements OnInit {
   }
 
   isLiked(id: number): boolean { return this.likedIds.has(id); }
-  goToProduct(id: number)      { this.router.navigate(['/product', id]); }
-  openEarnPopup()              { this.earnPopupOpen = true; }
+
+  goToProduct(id: number) {
+    const recent: number[] = JSON.parse(localStorage.getItem('recently_viewed') || '[]');
+    const updated = [id, ...recent.filter(i => i !== id)].slice(0, 3);
+    localStorage.setItem('recently_viewed', JSON.stringify(updated));
+    this.router.navigate(['/product', id]);
+  }
+
+  openEarnPopup() { this.earnPopupOpen = true; }
 
   openSharePopup(event: Event, link: string) {
     event.stopPropagation();
@@ -185,5 +257,6 @@ export class ProductListComponent implements OnInit {
   ngOnDestroy() {
     clearInterval(this.sliderInterval);
     clearInterval(this.bannerInterval);
+    clearTimeout(this.searchTimer);
   }
 }

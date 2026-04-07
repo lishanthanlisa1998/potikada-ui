@@ -55,16 +55,18 @@ export class Api {
   }
 
   // ===== PRODUCTS =====
-  getProducts(category?: string): Observable<any> {
-    const url = category && category !== 'all'
-      ? `${this.baseUrl}/products?category=${category}`
-      : `${this.baseUrl}/products`;
-    return this.http.get(url, { headers: this.getHeaders() });
-  }
+
 
   getProduct(id: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/products/${id}`);
   }
+
+  getProducts(category = 'all', page = 1, perPage = 12, search = ''): Observable<any> {
+  let params: any = { page, per_page: perPage };
+  if (category && category !== 'all') params.category = category;
+  if (search) params.search = search;
+  return this.http.get(`${this.baseUrl}/products`, { params });
+}
 
   // ===== ORDERS =====
   placeOrder(data: any): Observable<any> {
