@@ -15,6 +15,8 @@ import { BottomNav } from '../shared/bottom-nav/bottom-nav';
 export class Cart {
   menuOpen      = false;
   earnPopupOpen = false;
+  weightWarning = false;
+  stockWarning  = false;
   hideHeader    = window.innerWidth > 726;
 
   @HostListener('window:resize')
@@ -23,9 +25,7 @@ export class Cart {
   constructor(
     public cartService: CartService,
     private router: Router
-  ) {
-    console.log("lisa");
-  }
+  ) {}
 
   openEarnPopup() { this.earnPopupOpen = true; }
 
@@ -34,11 +34,17 @@ export class Cart {
   }
 
   increase(item: CartItem) {
-    this.cartService.updateQuantity(item.product.id, item.size, item.quantity + 1, item.color, item.design);
+    const result = this.cartService.updateQuantity(
+      item.product.id, item.size, item.quantity + 1, item.color, item.design
+    );
+    if (result === 'weight') this.weightWarning = true;
+    if (result === 'stock')  this.stockWarning  = true;
   }
 
   decrease(item: CartItem) {
-    this.cartService.updateQuantity(item.product.id, item.size, item.quantity - 1, item.color, item.design);
+    this.cartService.updateQuantity(
+      item.product.id, item.size, item.quantity - 1, item.color, item.design
+    );
   }
 
   remove(item: CartItem) {

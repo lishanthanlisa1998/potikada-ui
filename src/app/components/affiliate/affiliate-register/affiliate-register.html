@@ -1,3 +1,14 @@
+<!-- ===== FULL PAGE LOADER ===== -->
+@if (loading) {
+  <div class="fullpage-loader">
+    <div class="loader-box">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Creating your account...</div>
+      <div class="loader-sub">Please don't close this page</div>
+    </div>
+  </div>
+}
+
 
 <!-- Step 1 — Name + Email + Send OTP -->
 @if (step === 1) {
@@ -56,12 +67,7 @@
       <p>Join our affiliate program and start earning 7% commission on every sale!</p>
     </div>
 
-    @if (error) {
-      <div class="form-error">⚠️ {{ error }}</div>
-    }
-    @if (success) {
-      <div class="form-success">✅ {{ success }}</div>
-    }
+
 
     <!-- Personal Info -->
     <div class="form-card animate-1">
@@ -85,7 +91,11 @@
         </div>
         <div class="field">
           <label>WhatsApp Number</label>
-          <input type="tel" [(ngModel)]="whatsapp" placeholder="07X XXX XXXX (optional)">
+          <div class="same-as-phone">
+            <input type="checkbox" id="samePhone" [(ngModel)]="sameAsPhone" (change)="onSameAsPhone()">
+            <label for="samePhone">Same as phone number</label>
+          </div>
+          <input type="tel" [(ngModel)]="whatsapp" placeholder="07X XXX XXXX (optional)" [disabled]="sameAsPhone">
         </div>
       </div>
 
@@ -178,7 +188,7 @@
       </div>
 
       <button class="btn-submit" (click)="submit()" [disabled]="loading">
-        {{ loading ? 'Registering...' : 'Create Account →' }}
+        Create Account →
       </button>
     </div>
 
@@ -191,3 +201,8 @@
 </div>
 
 }
+<app-popup
+  [config]="popup"
+  (confirmed)="popup = null"
+  (cancelled)="popup = null">
+</app-popup>

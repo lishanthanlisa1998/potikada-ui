@@ -3,11 +3,12 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../services/auth';
+import { Popup, PopupConfig } from '../../shared/popup/popup';
 import { Api } from '../../../services/api';
 
 @Component({
   selector: 'app-affiliate-register',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, Popup],
   templateUrl: './affiliate-register.html',
   styleUrl: './affiliate-register.css',
 })
@@ -24,11 +25,13 @@ fullName        = '';
   confirmPassword = '';
   agreeTerms      = false;
 
+  sameAsPhone         = false;
   showPassword        = false;
   showConfirmPassword = false;
   loading             = false;
   error               = '';
   success             = '';
+  popup: PopupConfig | null = null;
 
   step       = 1; // 1=email, 2=otp, 3=full form
   otpCode    = '';
@@ -44,7 +47,7 @@ fullName        = '';
 
   sendOtp() {
   if (!this.fullName || !this.email) {
-    this.error = 'Please enter your name and email first.';
+    this.popup = { type: 'warning', title: 'Missing Info', message: 'Please enter your name and email first.' };
     return;
   }
   this.otpLoading = true;
@@ -59,14 +62,14 @@ fullName        = '';
     },
     error: (err: any) => {
       this.otpLoading = false;
-      this.error      = err.error?.message || 'Failed to send OTP.';
+      this.popup = { type: 'error', title: 'Failed', message: err.error?.message || 'Failed to send OTP.' };
     }
   });
 }
 
 verifyOtp() {
   if (!this.otpCode) {
-    this.error = 'Please enter the OTP.';
+    this.popup = { type: 'warning', title: 'Missing OTP', message: 'Please enter the OTP.' };
     return;
   }
   this.otpLoading = true;
@@ -81,32 +84,33 @@ verifyOtp() {
     },
     error: (err: any) => {
       this.otpLoading = false;
-      this.error      = err.error?.message || 'Invalid OTP.';
+      this.popup = { type: 'error', title: 'Invalid OTP', message: err.error?.message || 'Invalid OTP.' };
     }
   });
 }
 
   validate(): boolean {
-    if (!this.fullName)      { this.error = 'Full name is required.';           return false; }
-    if (!this.email)         { this.error = 'Email is required.';               return false; }
-    if (!this.phone)         { this.error = 'Phone number is required.';        return false; }
-    if (!this.nicNumber)     { this.error = 'NIC number is required.';          return false; }
-    if (!this.accountName)   { this.error = 'Account holder name is required.'; return false; }
-    if (!this.bankName)      { this.error = 'Please select your bank.';         return false; }
-    if (!this.accountNumber) { this.error = 'Account number is required.';      return false; }
+    if (!this.fullName)      { this.popup = { type: 'warning', title: 'Missing Information', message: 'Full name is required.' }; return false; }
+    if (!this.email)         { this.popup = { type: 'warning', title: 'Missing Information', message: 'Email is required.' }; return false; }
+    if (!this.phone)         { this.popup = { type: 'warning', title: 'Missing Information', message: 'Phone number is required.' }; return false; }
+    if (!this.nicNumber)     { this.popup = { type: 'warning', title: 'Missing Information', message: 'NIC number is required.' }; return false; }
+    if (!this.accountName)   { this.popup = { type: 'warning', title: 'Missing Information', message: 'Account holder name is required.' }; return false; }
+    if (!this.bankName)      { this.popup = { type: 'warning', title: 'Missing Information', message: 'Please select your bank.' }; return false; }
+    if (!this.accountNumber) { this.popup = { type: 'warning', title: 'Missing Information', message: 'Account number is required.' }; return false; }
     if (!this.password || this.password.length < 8) {
-      this.error = 'Password must be at least 8 characters.'; return false;
+      this.popup = { type: 'warning', title: 'Missing Information', message: 'Password must be at least 8 characters.' }; return false;
     }
     if (this.password !== this.confirmPassword) {
-      this.error = 'Passwords do not match.'; return false;
+      this.popup = { type: 'warning', title: 'Missing Information', message: 'Passwords do not match.' }; return false;
     }
     if (!this.agreeTerms) {
-      this.error = 'Please agree to the Terms and Conditions.'; return false;
+      this.popup = { type: 'warning', title: 'Missing Information', message: 'Please agree to the Terms and Conditions.' }; return false;
     }
     return true;
   }
 
   submit() {
+    console.log("lisa")
     this.error   = '';
     this.success = '';
 
@@ -134,9 +138,14 @@ verifyOtp() {
       },
       error: (err: any) => {
         this.loading = false;
-        this.error   = err.error?.message || 'Registration failed. Please try again.';
+        this.popup = { type: 'error', title: 'Registration Failed', message: err.error?.message || 'Registration failed. Please try again.' };
       }
     });
+  }
+
+  onSameAsPhone() {
+    if (this.sameAsPhone) this.whatsapp = this.phone;
+    else this.whatsapp = '';
   }
 
   goToLogin() {

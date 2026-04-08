@@ -126,3 +126,7 @@
   pointer-events: none;
 }
 
+.popup-box {
+  max-width: 340px;
+  width: 90%;
+}

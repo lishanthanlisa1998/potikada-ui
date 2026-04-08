@@ -398,3 +398,89 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 .review-comment { font-size: 13px; color: #555; line-height: 1.6; }
 
 .no-reviews { text-align: center; padding: 32px; color: #aaa; font-size: 14px; }
+/* ── Cart Added Toast ──────────────────────────────────────── */
+.cart-added-toast {
+  position: fixed;
+  top: 16px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 260px;
+  max-width: 340px;
+  animation: slideDown 0.3s ease;
+  border-left: 4px solid #27AE60;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.toast-img img {
+  width: 48px; height: 48px;
+  object-fit: cover; border-radius: 10px;
+}
+.toast-info { flex: 1; }
+.toast-name {
+  font-size: 13px; font-weight: 700;
+  color: #0F0A06;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 160px;
+}
+.toast-variant { font-size: 11px; color: #888; }
+.toast-price   { font-size: 12px; font-weight: 700; color: #C8892A; }
+.toast-check   { font-size: 20px; }
+
+/* ── Sticky mini image on scroll (mobile only) ─────────────── */
+@media (max-width: 768px) {
+  .m-sticky-mini-img {
+    position: fixed;
+    top: 80px; right: 12px;
+    z-index: 100;
+    width: 50%; height: auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    border: 2px solid #fff;
+    animation: popIn 0.2s ease;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .m-sticky-mini-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* ── Warning Popups ────────────────────────────────────────── */
+.popup-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.popup-box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 24px;
+  max-width: 320px; width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.popup-icon  { font-size: 40px; margin-bottom: 12px; }
+.popup-title { font-size: 17px; font-weight: 800; color: #0F0A06; margin: 0 0 8px; }
+.popup-msg   { font-size: 14px; color: #555; line-height: 1.5; margin: 0 0 20px; }
+.popup-ok {
+  background: #0F0A06; color: #fff;
+  border: none; border-radius: 12px;
+  padding: 12px 32px; font-size: 14px;
+  font-weight: 700; cursor: pointer; width: 100%;
+}
+.popup-ok:hover { background: #C8892A; }

@@ -25,10 +25,49 @@
     <button class="btn-back" (click)="goBack()">← Go Back</button>
   </div>
 }
+  <!-- == CART ADDED POPUP == -->
+  @if (cartAddedPopup) {
+    <div class="cart-added-toast">
+      <div class="toast-img">
+        <img [src]="activeImage" [alt]="product?.name">
+      </div>
+      <div class="toast-info">
+        <div class="toast-name">{{ product?.name }}</div>
+        <div class="toast-variant">{{ quantity > 1 ? quantity + ' items' : '1 item' }} added</div>
+        <div class="toast-price">Rs. {{ currentPrice * 1 | number }}</div>
+      </div>
+      <div class="toast-check">✅</div>
+    </div>
+  }
 
+  <!-- == WEIGHT WARNING POPUP == -->
+  @if (weightWarning) {
+    <div class="popup-overlay" (click)="weightWarning = false">
+      <div class="popup-box" (click)="$event.stopPropagation()">
+        <div class="popup-icon">⚖️</div>
+        <h3 class="popup-title">Weight Limit Reached</h3>
+        <p class="popup-msg">Maximum cart weight is 25kg. Please place a separate order for additional items.</p>
+        <button class="popup-ok" (click)="weightWarning = false">OK, Got It</button>
+      </div>
+    </div>
+  }
+
+  <!-- == STOCK WARNING POPUP == -->
+  @if (stockWarning) {
+    <div class="popup-overlay" (click)="stockWarning = false">
+      <div class="popup-box" (click)="$event.stopPropagation()">
+        <div class="popup-icon">📦</div>
+        <h3 class="popup-title">Stock Limit Reached</h3>
+        <p class="popup-msg">Only {{ currentStock }} items available in stock.</p>
+        <button class="popup-ok" (click)="stockWarning = false">OK</button>
+      </div>
+    </div>
+  }
 <!-- ======== MOBILE ======== -->
 <div class="mobile-layout">
  
+
+
   @if (product) {
 
     <!-- Sticky price bar at TOP — always visible while scrolling -->
@@ -52,6 +91,13 @@
     </div>
 
   
+
+    <!-- Sticky mini image — shows top-right when user scrolls -->
+    @if (isScrolled) {
+      <div class="m-sticky-mini-img">
+        <img [src]="activeImage" [alt]="product.name">
+      </div>
+    }
 
     <div class="m-product-image">
       <img [src]="activeImage" [alt]="product.name">

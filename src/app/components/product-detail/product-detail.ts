@@ -1,5 +1,5 @@
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { BottomNav } from '../shared/bottom-nav/bottom-nav';
 import { SharePopup } from '../shared/share-popup/share-popup';
 import { EarnMoneyPopup } from '../shared/earn-money-popup/earn-money-popup';
@@ -41,15 +41,22 @@ export class ProductDetail implements OnInit {
   addedToCart      = false;
   activeTab: 'description' | 'reviews' | 'qa' = 'description';
 
-  sharePopupOpen = false;
-  earnPopupOpen  = false;
-  menuOpen       = false;
-  reviews: any[] = [];
+  sharePopupOpen  = false;
+  earnPopupOpen   = false;
+  menuOpen        = false;
+  reviews: any[]  = [];
 
-  descSections: any[] = [];
+  descSections: any[]    = [];
   relatedProducts: any[] = [];
 
-  // All images = product images + unique variant images
+  // Popups
+  cartAddedPopup  = false;
+  weightWarning   = false;
+  stockWarning    = false;
+
+  // Sticky image on mobile scroll
+  isScrolled      = false;
+
   get allImages(): string[] {
     const productImgs = this.productImages ?? [];
     const variantImgs = this.variants
@@ -68,9 +75,14 @@ export class ProductDetail implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(params => this.loadProduct(+params['id']));
-    
     const ref = this.route.snapshot.queryParams['ref'];
     if (ref) localStorage.setItem('ref_code', ref);
+  }
+
+  // ── Sticky image on scroll (mobile only) ─────────────────────
+  @HostListener('window:scroll')
+  onScroll() {
+    this.isScrolled = window.scrollY > 200;
   }
 
   loadProduct(id: number) {
@@ -80,7 +92,7 @@ export class ProductDetail implements OnInit {
     this.apiService.getProduct(id).subscribe({
       next: (res: any) => {
         const p        = res.product ?? res;
-        this.reviews = res.reviews ?? []
+        this.reviews   = res.reviews ?? [];
         this.product   = this.formatProduct(p);
 
         const images   = p.images?.map((img: any) => img.image_url) ?? [];
@@ -91,7 +103,6 @@ export class ProductDetail implements OnInit {
         this.variants       = res.variants        ?? [];
         this.defaultVariant = res.default_variant ?? null;
 
-        // Init selections
         this.selections = {};
         this.families.forEach(f => this.selections[f.name] = '');
 
@@ -116,36 +127,30 @@ export class ProductDetail implements OnInit {
           if (first.image) this.activeImage = first.image;
         }
 
-        // Initial delivery calculation
         this.recalculateDelivery();
         this.parseDescription(p.description || '');
         this.isLiked = this.cartService.isInWishlist(p.id);
         this.loading = false;
-        // Load related products
         this.seo.setProduct(this.product, this.currentPrice);
         if (this.product.category) {
           this.loadRelatedProducts(this.product.category, this.product.id);
-          
         }
-
       },
       error: () => { this.error = true; this.loading = false; }
     });
   }
 
   loadRelatedProducts(category: string, currentId: number) {
-  this.apiService.getProducts(category, 1, 10).subscribe({
-    next: (res: any) => {
-      const products = res.data ?? res;
-      this.relatedProducts = products
-        .filter((p: any) => p.id !== currentId)
-        .slice(0, 6);
-    },
-    error: () => { this.relatedProducts = []; }
-  });
-}
-
-
+    this.apiService.getProducts(category, 1, 10).subscribe({
+      next: (res: any) => {
+        const products = res.data ?? res;
+        this.relatedProducts = products
+          .filter((p: any) => p.id !== currentId)
+          .slice(0, 6);
+      },
+      error: () => { this.relatedProducts = []; }
+    });
+  }
 
   goToProduct(id: number) {
     this.router.navigate(['/product', id]);
@@ -177,8 +182,6 @@ export class ProductDetail implements OnInit {
     };
   }
 
-  // ── Variant Selection ──────────────────────────────────────────
-
   selectOption(familyName: string, value: string) {
     this.selections[familyName] = value;
     this.updateVariantCombo();
@@ -204,14 +207,9 @@ export class ProductDetail implements OnInit {
       this.selectedVariantWeight = null;
     }
 
-    // Reset quantity to 1 when variant changes — avoid exceeding new stock
     this.quantity = 1;
-
-    // Recalculate delivery with new variant weight
     this.recalculateDelivery();
   }
-
-  // ── Delivery Calculation ──────────────────────────────────────
 
   recalculateDelivery() {
     const unitWeight  = this.selectedVariantWeight ?? this.product?.weight_grams ?? 0;
@@ -223,8 +221,6 @@ export class ProductDetail implements OnInit {
       });
     }
   }
-
-  // ── Amazon-style availability check ──────────────────────────
 
   isOptionUnavailable(familyName: string, value: string): boolean {
     const testSelections = { ...this.selections, [familyName]: value };
@@ -239,27 +235,11 @@ export class ProductDetail implements OnInit {
     return matching.every((v: any) => v.stock === 0);
   }
 
-  // ── Getters ───────────────────────────────────────────────────
-
-  get currentPrice(): number {
-    return this.selectedVariantPrice ?? this.product?.price ?? 0;
-  }
-
-  get currentStock(): number {
-    return this.selectedVariantStock ?? this.product?.stock ?? 0;
-  }
-
-  get productTotal(): number {
-    return this.currentPrice * this.quantity;
-  }
-
-  get grandTotal(): number {
-    return this.productTotal + this.deliveryFee;
-  }
-
-  get isOutOfStock(): boolean {
-    return this.variants.length > 0 && this.currentStock === 0;
-  }
+  get currentPrice(): number { return this.selectedVariantPrice ?? this.product?.price ?? 0; }
+  get currentStock(): number { return this.selectedVariantStock ?? this.product?.stock ?? 9999; }
+  get productTotal(): number { return this.currentPrice * this.quantity; }
+  get grandTotal():   number { return this.productTotal + this.deliveryFee; }
+  get isOutOfStock(): boolean { return this.variants.length > 0 && this.currentStock === 0; }
 
   get stockLabel(): string {
     if (this.variants.length === 0) return '';
@@ -271,10 +251,22 @@ export class ProductDetail implements OnInit {
   // ── Quantity ──────────────────────────────────────────────────
 
   increaseQty() {
-    if (this.quantity < this.currentStock) {
-      this.quantity++;
-      this.recalculateDelivery();
+    // Stock check
+    if (this.variants.length > 0 && this.quantity >= this.currentStock) {
+      this.stockWarning = true;
+      return;
     }
+
+    // Weight check — 25kg max
+    const unitWeight = this.selectedVariantWeight ?? this.product?.weight_grams ?? 0;
+    const newWeight  = unitWeight * (this.quantity + 1);
+    if (newWeight > 25000) {
+      this.weightWarning = true;
+      return;
+    }
+
+    this.quantity++;
+    this.recalculateDelivery();
   }
 
   decreaseQty() {
@@ -292,11 +284,9 @@ export class ProductDetail implements OnInit {
   }
 
   switchToImage(img: string, index: number) {
-    this.activeImage = img;
+    this.activeImage      = img;
     this.activeImageIndex = index;
   }
-
-  // ── Wishlist ──────────────────────────────────────────────────
 
   toggleLike() {
     if (this.product) {
@@ -307,27 +297,47 @@ export class ProductDetail implements OnInit {
 
   // ── Cart ──────────────────────────────────────────────────────
 
-  addToCart(event?: Event) {
-    if (event) event.stopPropagation();
-    if (!this.product || this.isOutOfStock) return;
-    const variantLabel = Object.values(this.selections).filter(Boolean).join(' / ');
-    this.cartService.addToCart(
-      { ...this.product, price: this.currentPrice },
-      variantLabel,
-      this.quantity,
-    );
-    this.addedToCart = true;
-    setTimeout(() => this.addedToCart = false, 2000);
-  }
+addToCart(event?: Event) {
+  if (event) event.stopPropagation();
+  if (!this.product || this.isOutOfStock) return;
 
+  const variantLabel = Object.values(this.selections).filter(Boolean).join(' / ');
+  
+  // Find the currently selected variant
+  const selectedVariant = this.variants.find((v: any) => {
+    if (!v.attributes) return false;
+    return Object.entries(this.selections).every(([key, val]) => {
+      if (!val) return true;
+      return v.attributes[key] === val;
+    });
+  });
+
+  const result = this.cartService.addToCart(
+    {
+      ...this.product,
+      price: this.currentPrice,
+      stock: this.currentStock,
+      image: selectedVariant?.image || this.activeImage || this.product.image,
+      default_variant: selectedVariant ?? this.product.default_variant,
+    },
+    variantLabel,
+    this.quantity,
+  );
+
+  if (result === 'stock')  { this.stockWarning  = true; return; }
+  if (result === 'weight') { this.weightWarning = true; return; }
+
+  this.cartAddedPopup = true;
+  setTimeout(() => { this.cartAddedPopup = false; }, 2500);
+  this.quantity = 1;
+  this.recalculateDelivery();
+}
   buyNow() { this.addToCart(); this.router.navigate(['/cart']); }
 
   openSharePopup(event?: Event) {
     if (event) event.stopPropagation();
     this.sharePopupOpen = true;
   }
-
-  // ── Description ───────────────────────────────────────────────
 
   parseDescription(raw: string) {
     if (!raw) return;

@@ -11,13 +11,12 @@ import { CartService } from '../../services/cart';
 import { Menu } from '../shared/menu/menu';
 import { Header } from '../shared/header/header';
 import { CategoryDropdown } from '../shared/category-dropdown/category-dropdown';
-import { TopBanner } from '../shared/top-banner/top-banner';
 import { SeoService } from '../../services/seo/seo-service';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, BottomNav, SharePopup, EarnMoneyPopup, Menu, Header, CategoryDropdown, TopBanner],
+  imports: [CommonModule, FormsModule, BottomNav, SharePopup, EarnMoneyPopup, Menu, Header, CategoryDropdown],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css'
 })
