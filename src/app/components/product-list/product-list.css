@@ -59,18 +59,41 @@
   z-index: 105;
 }
 
+/* Slider உயரத்தை உறுதிப்படுத்தவும் */
 .banner-slider {
   position: relative;
   width: 100%;
-  height: 130px;
   overflow: hidden;
+  /* Desktop Aspect Ratio (1920/640 = 3) */
+  aspect-ratio: 1920 / 640; 
+  background: #f0f0f0; /* படம் லோட் ஆகும் முன் காலியாக தெரியாமல் இருக்க */
 }
 
-.banner-slide {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.5s;
+/* Mobile சாதனங்களுக்கு (Media Query) */
+@media (max-width: 768px) {
+  .banner-slider {
+    /* Mobile Aspect Ratio (750/320 = 2.34) */
+    aspect-ratio: 750 / 320;
+  }
+}
+
+/* படங்கள் முழுமையாகத் தெரிய */
+.banner-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* இது மிக முக்கியம்: படத்தை கச்சிதமாக பொருத்தும் */
+  display: block;
+}
+
+/* உங்கள் Placeholder உயரத்தையும் மாற்றவும் */
+.banner-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  height: 100%; /* Slider-இன் உயரத்தைப் பெற்றுக்கொள்ளும் */
+  background: linear-gradient(135deg, #0F0A06 0%, #2D1A08 100%);
+  text-decoration: none;
 }
 
 .banner-slide.active   { opacity: 1; }
