@@ -1,19 +1,12 @@
-<app-header [showBack]="true" [showMenu] = "false"></app-header>
+<app-header [showBack]="true" [showMenu]="false"></app-header>
+
 <div class="track-page">
-
-  
-
   <div class="track-container">
-    <div class="track-title">Track Your Order</div>
-    <div class="track-sub">Enter your Order ID and email to check your order status</div>
+    <div class="track-title">Track Your Orders</div>
+    <div class="track-sub">Enter your email to see all your orders</div>
 
     <!-- Search Form -->
     <div class="track-form">
-      <div class="track-field">
-        <label>Order ID</label>
-        <input type="text" [(ngModel)]="orderId" placeholder="e.g. 13"
-               (keyup.enter)="trackOrder()">
-      </div>
       <div class="track-field">
         <label>Email Address</label>
         <input type="email" [(ngModel)]="email" placeholder="you@email.com"
@@ -21,7 +14,7 @@
       </div>
       <button class="btn-track" [disabled]="loading" (click)="trackOrder()">
         @if (loading) { <span class="spinner"></span> } @else { 🔍 }
-        Track Order
+        Find My Orders
       </button>
     </div>
 
@@ -30,69 +23,130 @@
       <div class="track-error">😕 {{ error }}</div>
     }
 
-    <!-- Result -->
-    @if (order) {
-      <div class="track-result">
+    <!-- Orders List -->
+    @if (orders.length > 0) {
+      <div class="orders-count">{{ orders.length }} order{{ orders.length > 1 ? 's' : '' }} found</div>
 
-        <!-- Order summary -->
-        <div class="order-header">
-          <div class="order-id-badge">#{{ order.id }}</div>
-          <div class="order-meta">
-            <div class="order-date">Placed on {{ order.created_at }}</div>
-            <div class="order-total">Rs. {{ order.total | number:'1.0-0' }}</div>
-          </div>
-          <div class="order-status-badge" [class]="order.status">
-            {{ getStatusLabel(order.status) }}
-          </div>
-        </div>
+      @for (order of orders; track order.id) {
+        <div class="order-card" [class.expanded]="expandedId === order.id">
 
-        <!-- Items -->
-        <div class="order-items">
-          @for (item of order.items; track $index) {
-            <div class="order-item">
-              <span class="item-name">{{ item.name }}</span>
-              <span class="item-qty">× {{ item.quantity }}</span>
-              <span class="item-price">Rs. {{ item.price | number:'1.0-0' }}</span>
-            </div>
-          }
-        </div>
-
-        <!-- Timeline -->
-        <div class="timeline">
-          @for (step of steps; track step.key) {
-            <div class="timeline-step" [class.done]="step.done" [class.active]="isActiveStep(step)">
-              <div class="step-icon-wrap">
-                <div class="step-icon">{{ step.icon }}</div>
-                <div class="step-line"></div>
+          <!-- Order Header — always visible, click to expand -->
+          <div class="order-card-header" (click)="toggleExpand(order.id)">
+            <div class="order-card-left">
+              <div class="order-id-badge">#{{ order.id }}</div>
+              <div class="order-card-info">
+                <div class="order-card-date">{{ order.created_at }}</div>
+                <div class="order-card-items">
+                  {{ order.items.length }} item{{ order.items.length > 1 ? 's' : '' }}
+                </div>
               </div>
-              <div class="step-info">
-                <div class="step-label">{{ step.label }}</div>
-                @if (step.time) {
-                  <div class="step-time">{{ step.time }}</div>
-                } @else if (!step.done) {
-                  <div class="step-pending">Pending</div>
+            </div>
+            <div class="order-card-right">
+              <div class="order-total-label">Rs. {{ order.total | number:'1.0-0' }}</div>
+              <div class="order-status-badge" [class]="order.status">
+                {{ getStatusLabel(order.status) }}
+              </div>
+              <div class="expand-icon">{{ expandedId === order.id ? '▲' : '▼' }}</div>
+            </div>
+          </div>
+
+          <!-- Expanded Details -->
+          @if (expandedId === order.id) {
+            <div class="order-card-body">
+
+              <!-- Payment & Delivery Info -->
+              <div class="order-info-row">
+                <div class="order-info-item">
+                  <span class="info-label">Payment</span>
+                  <span class="info-value">{{ getPaymentLabel(order.payment_method) }}</span>
+                </div>
+                <div class="order-info-item">
+                  <span class="info-label">Status</span>
+                  <span class="info-value" [class.paid]="order.payment_status === 'paid'">
+                    {{ getPaymentStatusLabel(order.payment_status) }}
+                  </span>
+                </div>
+                <div class="order-info-item">
+                  <span class="info-label">Courier</span>
+                  <span class="info-value">{{ getCourierLabel(order.delivery_method) }}</span>
+                </div>
+              </div>
+
+              <!-- Items -->
+              <div class="order-items-section">
+                <div class="section-label">Items Ordered</div>
+                @for (item of order.items; track $index) {
+                  <div class="order-item-row">
+                    <span class="item-name">{{ item.name }}</span>
+                    @if (item.size) { <span class="item-size">{{ item.size }}</span> }
+                    <span class="item-qty">× {{ item.quantity }}</span>
+                    <span class="item-price">Rs. {{ item.subtotal | number:'1.0-0' }}</span>
+                  </div>
+                }
+                <div class="order-totals">
+                  <div class="order-total-row">
+                    <span>Subtotal</span>
+                    <span>Rs. {{ order.subtotal | number:'1.0-0' }}</span>
+                  </div>
+                  <div class="order-total-row">
+                    <span>Delivery</span>
+                    <span>Rs. {{ order.delivery_fee | number:'1.0-0' }}</span>
+                  </div>
+                  <div class="order-total-row total">
+                    <span>Total</span>
+                    <span>Rs. {{ order.total | number:'1.0-0' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Delivery Address -->
+              <div class="order-address">
+                <div class="section-label">Delivery Address</div>
+                <div class="address-text">{{ order.address }}</div>
+              </div>
+
+              <!-- Timeline -->
+              <div class="section-label">Order Timeline</div>
+              <div class="timeline">
+                @for (step of order.steps; track step.key) {
+                  <div class="timeline-step" [class.done]="step.done"
+                       [class.active]="isActiveStep(step, order.steps)">
+                    <div class="step-icon-wrap">
+                      <div class="step-icon">{{ step.icon }}</div>
+                      <div class="step-line"></div>
+                    </div>
+                    <div class="step-info">
+                      <div class="step-label">{{ step.label }}</div>
+                      @if (step.time) {
+                        <div class="step-time">{{ step.time }}</div>
+                      } @else if (!step.done) {
+                        <div class="step-pending">Pending</div>
+                      }
+                    </div>
+                  </div>
                 }
               </div>
+
+              <!-- Tracking number -->
+              @if (order.tracking_number) {
+                <div class="tracking-box">
+                  <div class="tracking-label">Tracking Number</div>
+                  <div class="tracking-number">{{ order.tracking_number }}</div>
+                  <div class="tracking-courier">{{ getCourierLabel(order.delivery_method) }}</div>
+                </div>
+              }
+
             </div>
           }
         </div>
+      }
 
-        <!-- Tracking number -->
-        @if (order.tracking_number) {
-          <div class="tracking-box">
-            <div class="tracking-label">Tracking Number</div>
-            <div class="tracking-number">{{ order.tracking_number }}</div>
-            <div class="tracking-courier">{{ order.courier }}</div>
-          </div>
-        }
-
-        <!-- Help -->
-        <div class="track-help">
-          Need help? Contact us on
-          <a href="https://wa.me/94707977700" target="_blank">WhatsApp</a>
-        </div>
-
+      <!-- Help -->
+      <div class="track-help">
+        Need help? Contact us on
+        <a href="https://wa.me/94707977700" target="_blank">WhatsApp</a>
       </div>
     }
+
   </div>
 </div>
