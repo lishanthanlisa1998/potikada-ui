@@ -1,29 +1,29 @@
-<!-- Weight Warning Popup -->
-@if (weightWarning) {
-  <div class="popup-overlay" (click)="weightWarning = false">
-    <div class="popup-box" (click)="$event.stopPropagation()">
-      <div class="popup-icon">⚖️</div>
-      <h3 class="popup-title">Weight Limit Reached</h3>
-      <p class="popup-msg">Maximum cart weight is 25kg. Please place a separate order for additional items.</p>
-      <button class="popup-ok" (click)="weightWarning = false">OK, Got It</button>
-    </div>
-  </div>
-}
-
-<!-- Stock Warning Popup -->
-@if (stockWarning) {
-  <div class="popup-overlay" (click)="stockWarning = false">
-    <div class="popup-box" (click)="$event.stopPropagation()">
-      <div class="popup-icon">📦</div>
-      <h3 class="popup-title">Stock Limit Reached</h3>
-      <p class="popup-msg">No more stock available for this item.</p>
-      <button class="popup-ok" (click)="stockWarning = false">OK</button>
-    </div>
-  </div>
-}
-
 <app-menu [open]="menuOpen" (closed)="menuOpen = false"></app-menu>
 <div class="cart-page">
+
+  <!-- Weight Warning Popup -->
+  @if (weightWarning) {
+    <div class="popup-overlay" (click)="weightWarning = false">
+      <div class="popup-box" (click)="$event.stopPropagation()">
+        <div class="popup-icon">⚖️</div>
+        <h3 class="popup-title">Weight Limit Reached</h3>
+        <p class="popup-msg">Maximum cart weight is 25kg. Please place a separate order for additional items.</p>
+        <button class="popup-ok" (click)="weightWarning = false">OK, Got It</button>
+      </div>
+    </div>
+  }
+
+  <!-- Stock Warning Popup -->
+  @if (stockWarning) {
+    <div class="popup-overlay" (click)="stockWarning = false">
+      <div class="popup-box" (click)="$event.stopPropagation()">
+        <div class="popup-icon">📦</div>
+        <h3 class="popup-title">Stock Limit Reached</h3>
+        <p class="popup-msg">No more stock available for this item.</p>
+        <button class="popup-ok" (click)="stockWarning = false">OK</button>
+      </div>
+    </div>
+  }
 
   <app-header *ngIf="!hideHeader" [showBack]="true" (menuClicked)="menuOpen = true" [showCart]="false" [showMenu]="false" [showWishlist]="false"></app-header>
   <app-header *ngIf="hideHeader"  [showBack]="true" (menuClicked)="menuOpen = true"></app-header>
