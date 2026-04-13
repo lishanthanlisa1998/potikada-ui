@@ -87,8 +87,8 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #0F0A06;
-  padding: 10px 16px;
+  background: white;
+  padding: 4px 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -484,3 +484,180 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
   font-weight: 700; cursor: pointer; width: 100%;
 }
 .popup-ok:hover { background: #C8892A; }
+/* ── Cart Added Toast ──────────────────────────────────────── */
+.cart-added-toast {
+  position: fixed;
+  top: 16px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 260px;
+  max-width: 340px;
+  animation: slideDown 0.3s ease;
+  border-left: 4px solid #27AE60;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.toast-img img {
+  width: 48px; height: 48px;
+  object-fit: cover; border-radius: 10px;
+}
+.toast-info { flex: 1; }
+.toast-name {
+  font-size: 13px; font-weight: 700;
+  color: #0F0A06;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 160px;
+}
+.toast-variant { font-size: 11px; color: #888; }
+.toast-price   { font-size: 12px; font-weight: 700; color: #C8892A; }
+.toast-check   { font-size: 20px; }
+
+/* ── Sticky mini image on scroll (mobile only) ─────────────── */
+@media (max-width: 768px) {
+  .m-sticky-mini-img {
+    position: fixed;
+    top: 60px; right: 12px;
+    z-index: 100;
+    width: 50%; height: auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    border: 2px solid #fff;
+    animation: popIn 0.2s ease;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .m-sticky-mini-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* ── Warning Popups ────────────────────────────────────────── */
+.popup-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.popup-box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 24px;
+  max-width: 320px; width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.popup-icon  { font-size: 40px; margin-bottom: 12px; }
+.popup-title { font-size: 17px; font-weight: 800; color: #0F0A06; margin: 0 0 8px; }
+.popup-msg   { font-size: 14px; color: #555; line-height: 1.5; margin: 0 0 20px; }
+.popup-ok {
+  background: #0F0A06; color: #fff;
+  border: none; border-radius: 12px;
+  padding: 12px 32px; font-size: 14px;
+  font-weight: 700; cursor: pointer; width: 100%;
+}
+.popup-ok:hover { background: #C8892A; }
+
+/* ── COD Badge in sticky bar ──────────────────────────────── */
+.m-sticky-cod-badge {
+  font-size: 10px; font-weight: 700;
+  color: #27AE60;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 2px;
+}
+
+/* ── COD notice in price box ──────────────────────────────── */
+.cod-notice {
+  font-size: 11px; font-weight: 700;
+  color: #27AE60;
+  background: rgba(39,174,96,0.08);
+  padding: 8px 14px;
+  text-align: center;
+  border-top: 1px solid rgba(39,174,96,0.15);
+}
+
+/* ── Courier Selector in Price Box ───────────────────────── */
+.courier-selector-title {
+  font-size: 11px; font-weight: 800;
+  color: #888; text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 14px 4px;
+}
+.courier-select-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(200,137,42,0.08);
+  transition: background 0.15s;
+}
+.courier-select-row:hover { background: rgba(200,137,42,0.04); }
+.courier-select-row.selected { background: rgba(200,137,42,0.07); }
+.cs-radio {
+  width: 16px; height: 16px; flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.2s;
+}
+.courier-select-row.selected .cs-radio { border-color: #C8892A; }
+.cs-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%; background: #C8892A;
+}
+.cs-info {
+  flex: 1; display: flex; flex-direction: column; gap: 1px;
+}
+.cs-name { font-size: 12px; font-weight: 800; color: #0F0A06; }
+.cs-days { font-size: 10px; color: #aaa; font-weight: 600; }
+.cs-price { font-size: 13px; font-weight: 900; color: #C8892A; flex-shrink: 0; }
+
+/* ── Price Box Action Buttons ─────────────────────────────── */
+.pb-actions {
+  display: flex; gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(200,137,42,0.1);
+}
+.pb-btn-cart {
+  flex: 1; height: 40px;
+  background: #f5f0ea; color: #0F0A06;
+  border: none; border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px; font-weight: 800;
+  cursor: pointer; display: flex;
+  align-items: center; justify-content: center; gap: 5px;
+  transition: background 0.2s;
+}
+.pb-btn-cart svg {
+  width: 13px; height: 13px;
+  stroke: #0F0A06; fill: none; stroke-width: 2;
+}
+.pb-btn-cart:hover:not(:disabled) { background: #e8e0d5; }
+.pb-btn-cart:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.pb-btn-buy {
+  flex: 1.2; height: 40px;
+  background: #C8892A; color: white;
+  border: none; border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px; font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 3px 12px rgba(200,137,42,0.3);
+}
+.pb-btn-buy:hover:not(:disabled) { background: #a8721f; }
+.pb-btn-buy:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+

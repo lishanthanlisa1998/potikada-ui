@@ -9,63 +9,56 @@ import { BottomNav } from '../shared/bottom-nav/bottom-nav';
 
 @Component({
   selector: 'app-wishlist',
-  imports: [CommonModule, RouterLink, SharePopup,Menu,Header,BottomNav],
+  imports: [CommonModule, RouterLink, SharePopup, Menu, Header, BottomNav],
   templateUrl: './wishlist.html',
   styleUrl: './wishlist.css',
 })
 export class Wishlist {
-sharePopupOpen = false;
+  sharePopupOpen  = false;
   activeShareLink = '';
-  earnPopupOpen = false;
-  selectedSize: { [productId: number]: string } = {};
-  menuOpen = false ;
+  earnPopupOpen   = false;
+  menuOpen        = false;
+  hideHeader      = window.innerWidth > 727;
 
-  hideHeader = window.innerWidth > 727;
-
-@HostListener('window:resize')
-onResize() {
-  this.hideHeader = window.innerWidth > 727;
-}
+  @HostListener('window:resize')
+  onResize() { this.hideHeader = window.innerWidth > 727; }
 
   constructor(
     public cartService: CartService,
     private router: Router
   ) {}
 
-   openEarnPopup() {
-    this.earnPopupOpen = true;
+  ngOnInit(){
+    console.log(this.cartService.wishlist());
   }
 
+  openEarnPopup() { this.earnPopupOpen = true; }
 
- getSelectedSize(item: WishlistItem): string {
-    return this.selectedSize[item.product.id] || item.product.sizes?.[0] || '';
-  }
-
+  // Go to product page — user selects variant there
   moveToCart(item: WishlistItem) {
-    const size = this.getSelectedSize(item);
-    this.cartService.moveToCart(item.product, size);
+    this.router.navigate(['/product', item.product.id]);
   }
 
   remove(item: WishlistItem) {
     this.cartService.removeFromWishlist(item.product.id);
   }
 
-  openShare(event: Event, link: string) {
+  openShare(event: Event, productId: number) {
     event.stopPropagation();
-    this.activeShareLink = link;
+    const affiliate = localStorage.getItem('affiliate_user');
+    if (affiliate) {
+      const user = JSON.parse(affiliate);
+      this.activeShareLink = `https://potikada.lk/product/${productId}?ref=${user.affiliate_code}`;
+    } else {
+      this.activeShareLink = `https://potikada.lk/product/${productId}`;
+    }
     this.sharePopupOpen = true;
   }
 
-  goToProduct(id: number) {
-    this.router.navigate(['/product', id]);
-  }
-
-  goBack() {
-    this.router.navigate(['/']);
-  }
+  goToProduct(id: number) { this.router.navigate(['/product', id]); }
+  goBack()                 { this.router.navigate(['/']); }
 
   heartsArray(n: number): boolean[] {
     return Array.from({ length: 5 }, (_, i) => i < n);
   }
-  
 }

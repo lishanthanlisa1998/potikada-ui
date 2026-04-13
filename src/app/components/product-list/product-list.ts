@@ -211,20 +211,17 @@ export class ProductListComponent implements OnInit, OnDestroy {
     return 'empty';
   }
 
-  toggleLike(event: Event, product: any) {
-    event.stopPropagation();
-    this.cartService.toggleWishlist(product);
-    this.likedIds.has(product.id)
-      ? this.likedIds.delete(product.id)
-      : this.likedIds.add(product.id);
-  }
+toggleLike(event: Event, product: any) {
+  event.stopPropagation();
+  this.cartService.toggleWishlist(product);
+}
 
   addToCart(event: Event, product: any) {
     event.stopPropagation();
     if (product) this.cartService.addToCart(product);
   }
 
-  isLiked(id: number): boolean { return this.likedIds.has(id); }
+  isLiked(id: number): boolean {  return this.cartService.isInWishlist(id); }
 
   goToProduct(id: number) {
     const recent: number[] = JSON.parse(localStorage.getItem('recently_viewed') || '[]');

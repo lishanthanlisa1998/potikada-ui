@@ -79,7 +79,40 @@
         </div>
       </div>
 
-      <!-- 2. Contact Details -->
+      <!-- 2. COURIER METHOD -->
+      <div class="form-section">
+        <h3 class="form-section-title">Delivery Method</h3>
+        <div class="courier-options">
+
+          <div class="courier-option" [class.selected]="courierMethod === 'koombiyo'" (click)="selectCourier('koombiyo')">
+            <div class="courier-radio">
+              @if (courierMethod === 'koombiyo') { <div class="radio-dot"></div> }
+            </div>
+            <div class="courier-icon">🚀</div>
+            <div class="courier-info">
+              <div class="courier-name">Koombiyo Express</div>
+              <div class="courier-desc">1–2 days · Fast & reliable</div>
+            </div>
+            <div class="courier-price">Rs. {{ koombiyoFee | number }}</div>
+          </div>
+
+          <div class="courier-option" [class.selected]="courierMethod === 'slpost'" (click)="selectCourier('slpost')">
+            <div class="courier-radio">
+              @if (courierMethod === 'slpost') { <div class="radio-dot"></div> }
+            </div>
+            <div class="courier-icon">📮</div>
+            <div class="courier-info">
+              <div class="courier-name">Sri Lanka Post</div>
+              <div class="courier-desc">3–7 days · Standard delivery</div>
+            </div>
+            <div class="courier-price">Rs. {{ slPostFee | number }}</div>
+          </div>
+
+        </div>
+        <div class="cod-available-notice">💵 Cash on Delivery available for both options</div>
+      </div>
+
+      <!-- 3. Contact Details -->
       <div class="form-section">
         <h3 class="form-section-title">Contact Details</h3>
         <div class="form-row">
@@ -182,7 +215,10 @@
       </div>
       <div class="summary-totals">
         <div class="summary-row"><span>Subtotal</span><span>Rs. {{ cartSubtotal | number:'1.0-0' }}</span></div>
-        <div class="summary-row"><span>Delivery</span><span>Rs. {{ cartDelivery | number:'1.0-0' }}</span></div>
+        <div class="summary-row">
+          <span>{{ courierMethod === 'koombiyo' ? '🚀 Koombiyo' : '📮 SL Post' }}</span>
+          <span>Rs. {{ cartDelivery | number:'1.0-0' }}</span>
+        </div>
         <div class="summary-row total"><span>Total</span><span>Rs. {{ cartTotal | number:'1.0-0' }}</span></div>
       </div>
       <button class="btn-place-order" [disabled]="loading" (click)="placeOrder()">

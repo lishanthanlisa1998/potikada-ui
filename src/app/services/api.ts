@@ -265,6 +265,13 @@ export class Api {
     return this.http.get(`${this.baseUrl}/shipping/calculate?weight=${weightGrams}`);
   }
 
+  calculateKoombiyo(weightGrams: number): number {
+    const kg = weightGrams / 1000;
+    if (kg <= 1) return 380;
+    const extra = Math.ceil(kg - 1);
+    return 380 + (extra * 50);
+  }
+
   getShippingTiers(): Observable<any> {
     return this.http.get(`${this.baseUrl}/shipping/tiers`);
   }

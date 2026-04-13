@@ -15,7 +15,7 @@ export interface CartItem {
 }
 
 export interface WishlistItem {
-  product: Product;
+  product: any;
 }
 
 const MAX_WEIGHT_GRAMS = 25000; // 25kg
@@ -61,7 +61,9 @@ export class CartService {
     const variantId  = product.default_variant?.id ?? null;
     const itemWeight = product.default_variant?.weight_grams ?? product.weight_grams ?? product.weight ?? 0;
    
-    const itemStock = product.stock ?? product.default_variant?.stock ?? 9999;
+    const itemStock = (product.stock !== undefined && product.stock !== null) 
+  ? product.stock 
+  : (product.default_variant?.stock ?? 9999);
 
     const existing = this.cartItems().find(i =>
       i.product.id === product.id &&
@@ -196,10 +198,10 @@ export class CartService {
   }
 
   wishlist_      = this.wishlistItems.asReadonly();
-  addToWishlist(product: Product)       { if (!this.isInWishlist(product.id)) this.wishlistItems.update(i => [...i, { product }]); }
-  removeFromWishlist(productId: number) { this.wishlistItems.update(i => i.filter(x => x.product.id !== productId)); }
-  toggleWishlist(product: Product)      { this.isInWishlist(product.id) ? this.removeFromWishlist(product.id) : this.addToWishlist(product); }
+  addToWishlist(product: any)       { if (!this.isInWishlist(product.id)) this.wishlistItems.update(i => [...i, { product }]); }
+  removeFromWishlist(productId: any) { this.wishlistItems.update(i => i.filter(x => x.product.id !== productId)); }
+  toggleWishlist(product: any)      { this.isInWishlist(product.id) ? this.removeFromWishlist(product.id) : this.addToWishlist(product); }
   isInWishlist(productId: number)       { return this.wishlistItems().some(i => i.product.id === productId); }
-  moveToCart(product: Product, size: string) { this.addToCart(product, size); this.removeFromWishlist(product.id); }
+  moveToCart(product: any, size: string) { this.addToCart(product, size); this.removeFromWishlist(product.id); }
   getWishlistTotal()                    { return this.wishlist().reduce((t, i) => t + i.product.price, 0); }
 }

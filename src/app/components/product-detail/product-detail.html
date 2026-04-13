@@ -73,10 +73,8 @@
     <!-- Sticky price bar at TOP — always visible while scrolling -->
     <div class="m-sticky-price">
       <div class="m-sticky-price-left">
-        <div class="m-sticky-price-name">{{ product.name }}</div>
-        <div class="m-sticky-delivery">Rs. {{ currentPrice | number }} + Rs. {{ deliveryFee }} courier fees</div>
-        <div class="m-sticky-price-val">Rs. {{ grandTotal | number }}</div>
-        
+        <div class="m-sticky-cod-badge">💵 COD Available</div>
+        <div class="m-sticky-price-val">Rs. {{ currentPrice | number }}</div>
       </div>
       <div class="m-sticky-actions">
          
@@ -192,6 +190,8 @@
 
       <!-- PRICE BOX MOBILE -->
       <div class="delivery-total-box">
+
+        <!-- Product price row -->
         <div class="price-breakdown-row">
           <span class="pb-label">Product Price</span>
           <span class="pb-val">Rs. {{ currentPrice | number }}</span>
@@ -202,20 +202,55 @@
             <span class="pb-val pb-sub">Rs. {{ productTotal | number }}</span>
           </div>
         }
-        <div class="price-breakdown-row delivery-row-inner">
-          <span class="pb-label">
-            <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-            <span>
-              <span class="pb-courier-title">Courier Charges</span>
-              <span class="pb-courier-sub">{{ product?.deliveryDate ? 'By ' + product.deliveryDate : 'Delivered in 3–7 working days' }}</span>
-            </span>
-          </span>
-          <span class="pb-val">Rs. {{ deliveryFee | number }}</span>
+
+        <!-- Courier selector title -->
+        <div class="courier-selector-title">Select Delivery Option</div>
+
+        <!-- Koombiyo radio -->
+        <div class="courier-select-row" [class.selected]="selectedCourier === 'koombiyo'"
+             (click)="selectCourier('koombiyo')">
+          <div class="cs-radio">
+            @if (selectedCourier === 'koombiyo') { <div class="cs-dot"></div> }
+          </div>
+          <div class="cs-info">
+            <span class="cs-name">🚀 Koombiyo Express</span>
+            <span class="cs-days">1–2 days · Fast</span>
+          </div>
+          <span class="cs-price">Rs. {{ koombiyoFee | number }}</span>
         </div>
+
+        <!-- SL Post radio -->
+        <div class="courier-select-row" [class.selected]="selectedCourier === 'slpost'"
+             (click)="selectCourier('slpost')">
+          <div class="cs-radio">
+            @if (selectedCourier === 'slpost') { <div class="cs-dot"></div> }
+          </div>
+          <div class="cs-info">
+            <span class="cs-name">📮 Sri Lanka Post</span>
+            <span class="cs-days">3–7 days · Standard</span>
+          </div>
+          <span class="cs-price">Rs. {{ deliveryFee | number }}</span>
+        </div>
+
+        <div class="cod-notice">💵 Cash on Delivery available</div>
+
+        <!-- Total -->
         <div class="total-row">
           <span class="total-label">Total</span>
           <span class="total-val">Rs. {{ grandTotal | number }}</span>
         </div>
+
+        <!-- Add to Cart + Buy Now -->
+        <div class="pb-actions">
+          <button class="pb-btn-cart" [disabled]="isOutOfStock" (click)="addToCart()">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            {{ isOutOfStock ? 'Out of Stock' : 'Add to Cart' }}
+          </button>
+          <button class="pb-btn-buy" [disabled]="isOutOfStock" (click)="buyNow()">
+            {{ isOutOfStock ? 'Unavailable' : 'Buy Now →' }}
+          </button>
+        </div>
+
       </div>
     </div>
 
@@ -411,16 +446,35 @@
                   <span class="pb-val pb-sub">Rs. {{ productTotal | number }}</span>
                 </div>
               }
-              <div class="price-breakdown-row delivery-row-inner">
-                <span class="pb-label">
-                  <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                  <span>
-                    <span class="pb-courier-title">Courier Charges</span>
-                    <span class="pb-courier-sub">{{ product?.deliveryDate ? 'By ' + product.deliveryDate : 'Delivered in 3–7 working days' }}</span>
-                  </span>
-                </span>
-                <span class="pb-val">Rs. {{ deliveryFee | number }}</span>
+
+              <div class="courier-selector-title">Select Delivery Option</div>
+
+              <div class="courier-select-row" [class.selected]="selectedCourier === 'koombiyo'"
+                   (click)="selectCourier('koombiyo')">
+                <div class="cs-radio">
+                  @if (selectedCourier === 'koombiyo') { <div class="cs-dot"></div> }
+                </div>
+                <div class="cs-info">
+                  <span class="cs-name">🚀 Koombiyo Express</span>
+                  <span class="cs-days">1–2 days · Fast</span>
+                </div>
+                <span class="cs-price">Rs. {{ koombiyoFee | number }}</span>
               </div>
+
+              <div class="courier-select-row" [class.selected]="selectedCourier === 'slpost'"
+                   (click)="selectCourier('slpost')">
+                <div class="cs-radio">
+                  @if (selectedCourier === 'slpost') { <div class="cs-dot"></div> }
+                </div>
+                <div class="cs-info">
+                  <span class="cs-name">📮 Sri Lanka Post</span>
+                  <span class="cs-days">3–7 days · Standard</span>
+                </div>
+                <span class="cs-price">Rs. {{ deliveryFee | number }}</span>
+              </div>
+
+              <div class="cod-notice">💵 Cash on Delivery available</div>
+
               <div class="total-row">
                 <span class="total-label">Total</span>
                 <span class="total-val">Rs. {{ grandTotal | number }}</span>

@@ -57,6 +57,10 @@ export class ProductDetail implements OnInit {
   // Sticky image on mobile scroll
   isScrolled      = false;
 
+  // Delivery fees
+  koombiyoFee     = 0;
+  selectedCourier = 'koombiyo'; // 'koombiyo' | 'slpost'
+
   get allImages(): string[] {
     const productImgs = this.productImages ?? [];
     const variantImgs = this.variants
@@ -74,6 +78,12 @@ export class ProductDetail implements OnInit {
   ) {}
 
   ngOnInit() {
+
+    
+
+    const saved = localStorage.getItem('selected_courier');
+    if (saved) this.selectedCourier = saved;
+
     this.route.params.subscribe(params => this.loadProduct(+params['id']));
     const ref = this.route.snapshot.queryParams['ref'];
     if (ref) localStorage.setItem('ref_code', ref);
@@ -211,14 +221,29 @@ export class ProductDetail implements OnInit {
     this.recalculateDelivery();
   }
 
+  calcKoombiyo(weightGrams: number): number {
+    const kg = weightGrams / 1000;
+    if (kg <= 0) return 380;
+    if (kg <= 1) return 380;
+    return 380 + (Math.ceil(kg - 1) * 50);
+  }
+
   recalculateDelivery() {
     const unitWeight  = this.selectedVariantWeight ?? this.product?.weight_grams ?? 0;
     const totalWeight = unitWeight * this.quantity;
+
+    // Koombiyo fee — calculated locally
+    this.koombiyoFee = this.calcKoombiyo(totalWeight);
+
+    // SL Post fee — from API
     if (totalWeight > 0) {
       this.apiService.calculateShipping(totalWeight).subscribe({
-        next:  (res: any) => { this.deliveryFee = res.delivery_fee ?? 0; },
-        error: ()         => { this.deliveryFee = 300; }
+        next:  (res: any) => { this.deliveryFee = res.delivery_fee ?? 199; },
+        error: ()         => { this.deliveryFee = 199; }
       });
+    } else {
+      this.deliveryFee = 199;
+      this.koombiyoFee = 380;
     }
   }
 
@@ -236,10 +261,24 @@ export class ProductDetail implements OnInit {
   }
 
   get currentPrice(): number { return this.selectedVariantPrice ?? this.product?.price ?? 0; }
-  get currentStock(): number { return this.selectedVariantStock ?? this.product?.stock ?? 9999; }
+  get currentStock(): number {
+  // If product has no variants → unlimited stock
+  if (this.variants.length === 0) return 9999;
+  // If variant selected → use variant stock
+  if (this.selectedVariantStock !== null && this.selectedVariantStock !== undefined) {
+    return this.selectedVariantStock;
+  }
+  return 9999;
+}
   get productTotal(): number { return this.currentPrice * this.quantity; }
-  get grandTotal():   number { return this.productTotal + this.deliveryFee; }
-  get isOutOfStock(): boolean { return this.variants.length > 0 && this.currentStock === 0; }
+  get selectedDeliveryFee(): number {
+    return this.selectedCourier === 'koombiyo' ? this.koombiyoFee : this.deliveryFee;
+  }
+  get grandTotal():   number { return this.productTotal + this.selectedDeliveryFee; }
+get isOutOfStock(): boolean {
+  if (this.variants.length === 0) return false;
+  return this.currentStock === 0;
+}
 
   get stockLabel(): string {
     if (this.variants.length === 0) return '';
@@ -295,15 +334,45 @@ export class ProductDetail implements OnInit {
     }
   }
 
+
+
   // ── Cart ──────────────────────────────────────────────────────
 
-addToCart(event?: Event) {
-  if (event) event.stopPropagation();
-  if (!this.product || this.isOutOfStock) return;
+  addToCart(event?: Event) {
+    if (event) event.stopPropagation();
+    if (!this.product || this.isOutOfStock) return;
 
-  const variantLabel = Object.values(this.selections).filter(Boolean).join(' / ');
+
+
+  console.log('currentStock:', this.currentStock);
+  console.log('variants.length:', this.variants.length);
+  console.log('selectedVariantStock:', this.selectedVariantStock);
+
+    const variantLabel = Object.values(this.selections).filter(Boolean).join(' / ');
+    const result = this.cartService.addToCart(
+  { 
+    ...this.product, 
+    price: this.currentPrice,
+    stock: this.currentStock,  // ← ADD THIS
+  },
+  variantLabel,
+  this.quantity,
+);
+
+    if (result === 'stock') { this.stockWarning  = true; return; }
+    if (result === 'weight') { this.weightWarning = true; return; }
+
+    // Success — show popup, reset qty
+    this.cartAddedPopup = true;
+    setTimeout(() => { this.cartAddedPopup = false; }, 2500);
+    this.quantity = 1;
+    this.recalculateDelivery();
+  }
+
+buyNow() {
+  if (!this.product || this.isOutOfStock) return;
   
-  // Find the currently selected variant
+  const variantLabel = Object.values(this.selections).filter(Boolean).join(' / ');
   const selectedVariant = this.variants.find((v: any) => {
     if (!v.attributes) return false;
     return Object.entries(this.selections).every(([key, val]) => {
@@ -327,12 +396,9 @@ addToCart(event?: Event) {
   if (result === 'stock')  { this.stockWarning  = true; return; }
   if (result === 'weight') { this.weightWarning = true; return; }
 
-  this.cartAddedPopup = true;
-  setTimeout(() => { this.cartAddedPopup = false; }, 2500);
-  this.quantity = 1;
-  this.recalculateDelivery();
+  // Only navigate if cart add succeeded
+  this.router.navigate(['/cart']);
 }
-  buyNow() { this.addToCart(); this.router.navigate(['/cart']); }
 
   openSharePopup(event?: Event) {
     if (event) event.stopPropagation();
@@ -347,6 +413,13 @@ addToCart(event?: Event) {
     } catch {}
     this.descSections = [{ type: 'text', label: 'Description', content: raw }];
   }
+
+  selectCourier(method: string) {
+    this.selectedCourier = method;
+    localStorage.setItem('selected_courier', method); 
+  }
+
+
 
   setTab(tab: 'description' | 'reviews' | 'qa') { this.activeTab = tab; }
   goBack() { window.history.back(); }

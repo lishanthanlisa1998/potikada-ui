@@ -26,14 +26,18 @@ export class Checkout implements OnInit {
   menuOpen      = false;
 
   paymentMethod   = 'cod';
+  courierMethod   = 'koombiyo'; // 'koombiyo' | 'slpost'
   loading         = false;
   error           = '';
   validationError = '';
   touched         = false;
-  showSavePopup   = false;  // ask to save details
-  hasSavedData    = false;  // already has saved data
-  sameAsPhone    = false;
-  showErrorPopup = false;
+  showSavePopup   = false;
+  hasSavedData    = false;
+  sameAsPhone     = false;
+  showErrorPopup  = false;
+
+  koombiyoFee = 0;
+  slPostFee   = 0;
 
   districts = [
     'Ampara','Anuradhapura','Badulla','Batticaloa','Colombo',
@@ -52,7 +56,7 @@ export class Checkout implements OnInit {
     city:           '',
     district:       '',
     affiliate_code: '',
-    whatsappNo:''
+    whatsappNo:     ''
   };
 
   constructor(
@@ -61,28 +65,58 @@ export class Checkout implements OnInit {
     private router:      Router
   ) {}
 
-  ngOnInit() {
-    this.cartItems    = this.cartService.cartItems().filter(i => i.checked);
-    this.cartSubtotal = this.cartService.cartSubtotal();
-    this.cartDelivery = this.cartService.cartDelivery();
-    this.cartTotal    = this.cartService.cartTotal();
+ngOnInit() {
+  this.cartItems    = this.cartService.cartItems().filter(i => i.checked);
+  this.cartSubtotal = this.cartService.cartSubtotal();
 
-    if (this.cartItems.length === 0) this.router.navigate(['/']);
+  if (this.cartItems.length === 0) this.router.navigate(['/']);
 
-    const refCode = localStorage.getItem('ref_code');
-    if (refCode) this.form.affiliate_code = refCode;
+  const refCode = localStorage.getItem('ref_code');
+  if (refCode) this.form.affiliate_code = refCode;
 
-    // Auto-fill saved customer data
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        this.form = { ...this.form, ...data };
-        this.hasSavedData = true;
-      } catch {}
-    }
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      this.form = { ...this.form, ...data };
+      this.hasSavedData = true;
+    } catch {}
+  }
 
-    this.loadPayHereScript();
+  // Calculate delivery fees
+  const totalWeight    = this.cartService.cartWeight();
+  this.koombiyoFee     = this.calcKoombiyo(totalWeight);
+  this.cartDelivery    = this.koombiyoFee; // default koombiyo
+  this.updateTotal();
+
+  // Get SL Post fee from API
+  this.apiService.calculateShipping(totalWeight).subscribe({
+    next:  (res: any) => {
+      this.slPostFee = res.delivery_fee ?? 199;
+    },
+    error: () => { this.slPostFee = 199; }
+  });
+
+  this.loadPayHereScript();
+}
+
+  // Koombiyo: 1kg = Rs.380, each extra kg = +Rs.50
+  calcKoombiyo(weightGrams: number): number {
+    const kg = weightGrams / 1000;
+    if (kg <= 0)  return 380;
+    if (kg <= 1)  return 380;
+    const extra = Math.ceil(kg - 1);
+    return 380 + (extra * 50);
+  }
+
+  selectCourier(method: string) {
+    this.courierMethod = method;
+    this.cartDelivery  = method === 'koombiyo' ? this.koombiyoFee : this.slPostFee;
+    this.updateTotal();
+  }
+
+  updateTotal() {
+    this.cartTotal = this.cartSubtotal + this.cartDelivery;
   }
 
   loadPayHereScript() {
@@ -94,10 +128,8 @@ export class Checkout implements OnInit {
     document.body.appendChild(script);
   }
 
-  // Called when user clicks Pay/Place Order
   placeOrder() {
     this.touched = true;
-
     if (!this.form.first_name.trim()) { this.validationError = 'Please enter your first name.'; return; }
     if (!this.form.last_name.trim())  { this.validationError = 'Please enter your last name.'; return; }
     if (!this.form.email.trim())      { this.validationError = 'Please enter your email address.'; return; }
@@ -105,19 +137,16 @@ export class Checkout implements OnInit {
     if (!this.form.address.trim())    { this.validationError = 'Please enter your delivery address.'; return; }
     if (!this.form.city.trim())       { this.validationError = 'Please enter your city.'; return; }
     if (!this.form.district)          { this.validationError = 'Please select your district.'; return; }
-    if (!this.form.whatsappNo)          { this.validationError = 'Please select your whatsapp Number.'; return; }
-    // If no saved data yet — ask to save
+    if (!this.form.whatsappNo)        { this.validationError = 'Please enter your WhatsApp number.'; return; }
+
     if (!this.hasSavedData) {
       this.showSavePopup = true;
       return;
     }
-
-    // Already has saved data — update it silently and proceed
     this.saveCustomerData();
     this.submitOrder();
   }
 
-  // User responded to save popup
   onSaveChoice(save: boolean) {
     if (save) this.saveCustomerData();
     this.showSavePopup = false;
@@ -134,28 +163,23 @@ export class Checkout implements OnInit {
     localStorage.removeItem(STORAGE_KEY);
     this.hasSavedData = false;
   }
+
   onPhoneChange() {
-  if (this.sameAsPhone) {
-    this.form.whatsappNo = this.form.phone;
+    if (this.sameAsPhone) this.form.whatsappNo = this.form.phone;
   }
-}
 
-onSameAsPhone() {
-  if (this.sameAsPhone) {
-    this.form.whatsappNo = this.form.phone;
-  } else {
-    this.form.whatsappNo = '';
+  onSameAsPhone() {
+    this.form.whatsappNo = this.sameAsPhone ? this.form.phone : '';
   }
-}
 
-  // Actually place the order
   submitOrder() {
     this.loading = true;
     this.error   = '';
 
     const orderPayload = {
       ...this.form,
-      payment_method: this.paymentMethod,
+      payment_method:  this.paymentMethod,
+      delivery_method: this.courierMethod, // ← save courier
       items: this.cartItems.map(item => ({
         product_id: item.product.id,
         size:       item.size,
@@ -177,8 +201,8 @@ onSameAsPhone() {
         }
       },
       error: (err) => {
-       this.loading       = false;
-        this.error         = err.error?.message || 'Something went wrong. Please try again later.';
+        this.loading        = false;
+        this.error          = err.error?.message || 'Something went wrong. Please try again later.';
         this.showErrorPopup = true;
       }
     });
@@ -207,20 +231,12 @@ onSameAsPhone() {
           country:     paymentData.country,
           hash:        paymentData.hash,
         };
-
-        payhere.onCompleted = (orderId: string) => {
-          this.cartService.clearCart();
-          this.router.navigate(['/order-success', orderId]);
-        };
+        payhere.onCompleted = (orderId: string) => { this.cartService.clearCart(); this.router.navigate(['/order-success', orderId]); };
         payhere.onDismissed = () => { this.error = 'Payment was cancelled. You can try again.'; };
         payhere.onError     = (error: string) => { this.error = 'Payment error: ' + error; };
-
         payhere.startPayment(payment);
       },
-      error: () => {
-        this.loading = false;
-        this.error   = 'Could not initiate payment. Please try again.';
-      }
+      error: () => { this.loading = false; this.error = 'Could not initiate payment. Please try again.'; }
     });
   }
 }

@@ -111,16 +111,45 @@
             <span class="summary-value">Rs. {{ cartService.cartSubtotal() | number:'1.0-0' }}</span>
           </div>
 
-          <div class="summary-row">
-            <span class="summary-label">Delivery Charges</span>
-            <span class="summary-value">Rs. {{ cartService.cartDelivery() | number:'1.0-0' }}</span>
+          <!-- Courier Selector -->
+          <div class="cart-courier-title">Select Delivery</div>
+
+          <div class="cart-courier-option" [class.selected]="courierMethod === 'koombiyo'"
+               (click)="selectCourier('koombiyo')">
+            <div class="cc-radio">
+              @if (courierMethod === 'koombiyo') { <div class="cc-dot"></div> }
+            </div>
+            <div class="cc-info">
+              <span class="cc-name">🚀 Koombiyo Express</span>
+              <span class="cc-days">1–2 days</span>
+            </div>
+            <span class="cc-price">Rs. {{ koombiyoFee | number }}</span>
           </div>
+
+          <div class="cart-courier-option" [class.selected]="courierMethod === 'slpost'"
+               (click)="selectCourier('slpost')">
+            <div class="cc-radio">
+              @if (courierMethod === 'slpost') { <div class="cc-dot"></div> }
+            </div>
+            <div class="cc-info">
+              <span class="cc-name">📮 Sri Lanka Post</span>
+              <span class="cc-days">3–7 days</span>
+            </div>
+            <span class="cc-price">Rs. {{ slPostFee | number }}</span>
+          </div>
+
+          <div class="cart-cod-notice">💵 Cash on Delivery available</div>
 
           <div class="summary-divider"></div>
 
+          <div class="summary-row">
+            <span class="summary-label">Delivery</span>
+            <span class="summary-value">Rs. {{ cartDelivery | number:'1.0-0' }}</span>
+          </div>
+
           <div class="summary-row total">
             <span class="summary-label">Total Amount</span>
-            <span class="summary-value total-val">Rs. {{ cartService.cartTotal() | number:'1.0-0' }}</span>
+            <span class="summary-value total-val">Rs. {{ cartTotal | number:'1.0-0' }}</span>
           </div>
 
           <button class="btn-checkout" (click)="checkout()">
