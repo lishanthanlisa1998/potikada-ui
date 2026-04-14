@@ -83,25 +83,35 @@ ngOnInit() {
     } catch {}
   }
 
-  // Calculate delivery fees
-  const totalWeight    = this.cartService.cartWeight();
-  this.koombiyoFee     = this.calcKoombiyo(totalWeight);
-  this.cartDelivery    = this.koombiyoFee; // default koombiyo
-  this.updateTotal();
+  // Restore saved courier
+  const savedCourier = localStorage.getItem('selected_courier');
+  if (savedCourier) this.courierMethod = savedCourier;
 
-  // Get SL Post fee from API
+  const totalWeight = this.cartService.cartWeight();
+  this.koombiyoFee  = this.calcKoombiyo(totalWeight);
+
   this.apiService.calculateShipping(totalWeight).subscribe({
-    next:  (res: any) => {
-      this.slPostFee = res.delivery_fee ?? 199;
+    next: (res: any) => {
+      this.slPostFee    = res.delivery_fee ?? 199;
+      this.cartDelivery = this.courierMethod === 'koombiyo'
+        ? this.koombiyoFee : this.slPostFee;
+      this.updateTotal();
     },
-    error: () => { this.slPostFee = 199; }
+    error: () => {
+      this.slPostFee    = 199;
+      this.cartDelivery = this.courierMethod === 'koombiyo'
+        ? this.koombiyoFee : 199;
+      this.updateTotal();
+    }
   });
 
+  if (this.courierMethod === 'koombiyo') {
+    this.cartDelivery = this.koombiyoFee;
+    this.updateTotal();
+  }
+
   this.loadPayHereScript();
-
-  
 }
-
   // Koombiyo: 1kg = Rs.380, each extra kg = +Rs.50
   calcKoombiyo(weightGrams: number): number {
     const kg = weightGrams / 1000;
