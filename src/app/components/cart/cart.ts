@@ -36,23 +36,30 @@ export class Cart implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {
+ngOnInit() {
+  // Always use saved courier — no hardcoded default
+  const saved = localStorage.getItem('selected_courier');
+  this.courierMethod = saved ?? 'koombiyo'; // only fallback if never chosen before
 
-    const saved = localStorage.getItem('selected_courier');
-     if (saved) this.courierMethod = saved;
+  const totalWeight = this.cartService.cartWeight();
+  this.koombiyoFee  = this.calcKoombiyo(totalWeight);
 
-     
-    const totalWeight    = this.cartService.cartWeight();
-    this.koombiyoFee     = this.calcKoombiyo(totalWeight);
-    this.cartDelivery    = this.koombiyoFee;
-    this.updateTotal();
-
-    // Get SL Post fee from API
-    this.apiService.calculateShipping(totalWeight).subscribe({
-      next:  (res: any) => { this.slPostFee = res.delivery_fee ?? 199; },
-      error: ()         => { this.slPostFee = 199; }
-    });
-  }
+  // Get SL Post fee from API, then set correct delivery
+  this.apiService.calculateShipping(totalWeight).subscribe({
+    next: (res: any) => {
+      this.slPostFee    = res.delivery_fee ?? 199;
+      this.cartDelivery = this.courierMethod === 'koombiyo'
+        ? this.koombiyoFee : this.slPostFee;
+      this.updateTotal();
+    },
+    error: () => {
+      this.slPostFee    = 199;
+      this.cartDelivery = this.courierMethod === 'koombiyo'
+        ? this.koombiyoFee : 199;
+      this.updateTotal();
+    }
+  });
+}
 
   calcKoombiyo(weightGrams: number): number {
     const kg = weightGrams / 1000;
@@ -60,11 +67,12 @@ export class Cart implements OnInit {
     return 380 + (Math.ceil(kg - 1) * 50);
   }
 
-  selectCourier(method: string) {
-    this.courierMethod = method;
-    this.cartDelivery  = method === 'koombiyo' ? this.koombiyoFee : this.slPostFee;
-    this.updateTotal();
-  }
+selectCourier(method: string) {
+  this.courierMethod = method;
+  localStorage.setItem('selected_courier', method); // ← save!
+  this.cartDelivery  = method === 'koombiyo' ? this.koombiyoFee : this.slPostFee;
+  this.updateTotal();
+}
 
   updateTotal() {
     this.cartTotal = this.cartService.cartSubtotal() + this.cartDelivery;

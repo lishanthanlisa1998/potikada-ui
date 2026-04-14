@@ -98,6 +98,8 @@ ngOnInit() {
   });
 
   this.loadPayHereScript();
+
+  
 }
 
   // Koombiyo: 1kg = Rs.380, each extra kg = +Rs.50
@@ -109,11 +111,12 @@ ngOnInit() {
     return 380 + (extra * 50);
   }
 
-  selectCourier(method: string) {
-    this.courierMethod = method;
-    this.cartDelivery  = method === 'koombiyo' ? this.koombiyoFee : this.slPostFee;
-    this.updateTotal();
-  }
+selectCourier(method: string) {
+  this.courierMethod = method;
+  localStorage.setItem('selected_courier', method); // ← add this
+  this.cartDelivery  = method === 'koombiyo' ? this.koombiyoFee : this.slPostFee;
+  this.updateTotal();
+}
 
   updateTotal() {
     this.cartTotal = this.cartSubtotal + this.cartDelivery;
